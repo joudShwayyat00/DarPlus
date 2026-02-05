@@ -1,0 +1,524 @@
+import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/models/property_item.dart';
+import 'package:dar_plus_app/screens/property_details/property_details_screen.dart';
+import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
+
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+
+  final List<String> _recentSearches = [
+    "Sea View Chalet",
+    "Dead Sea",
+    "Family Apartments",
+  ];
+
+  final List<String> _popularSearches = [
+    "Chalets",
+    "Farms",
+    "Pool",
+    "BBQ",
+    "Near Beach",
+  ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header with Search Field
+            _buildSearchHeader(context),
+
+            // Content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 2.5.h),
+
+                    // Recent Searches Section
+                    _buildSectionTitle("Recent Searches"),
+                    SizedBox(height: 1.2.h),
+                    _buildRecentSearches(),
+
+                    SizedBox(height: 2.8.h),
+
+                    // Popular Searches Section
+                    _buildSectionTitle("Popular Searches"),
+                    SizedBox(height: 1.2.h),
+                    _buildPopularSearches(),
+
+                    SizedBox(height: 2.8.h),
+
+                    // Featured Properties Section
+                    _buildSectionTitle("Featured Properties"),
+                    SizedBox(height: 1.2.h),
+                    _buildFeaturedProperties(),
+
+                    SizedBox(height: 3.h),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 2.h),
+      decoration: BoxDecoration(
+        color: AppColors.whiteColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(8),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Search",
+            style: appTextStyle(
+              context,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.black.withAlpha(240),
+            ),
+          ),
+          SizedBox(height: 1.5.h),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.black.withAlpha(12)),
+            ),
+            child: TextField(
+              controller: _searchController,
+              focusNode: _searchFocusNode,
+              style: appTextStyle(
+                context,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black.withAlpha(220),
+              ),
+              decoration: InputDecoration(
+                hintText: "Search properties, locations...",
+                hintStyle: appTextStyle(
+                  context,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black.withAlpha(100),
+                ),
+                prefixIcon: Icon(
+                  Icons.search_rounded,
+                  color: AppColors.goldBrandColor,
+                  size: 22,
+                ),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _searchController.clear();
+                          });
+                        },
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: Colors.black.withAlpha(140),
+                          size: 20,
+                        ),
+                      )
+                    : Icon(
+                        Icons.tune_rounded,
+                        color: Colors.black.withAlpha(140),
+                        size: 20,
+                      ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 4.w,
+                  vertical: 1.6.h,
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {});
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: appTextStyle(
+        context,
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w900,
+        color: Colors.black.withAlpha(240),
+      ),
+    );
+  }
+
+  Widget _buildRecentSearches() {
+    return Column(
+      children: _recentSearches.map((search) {
+        return _RecentSearchTile(
+          text: search,
+          onTap: () {
+            _searchController.text = search;
+            setState(() {});
+          },
+          onRemove: () {
+            setState(() {
+              _recentSearches.remove(search);
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildPopularSearches() {
+    return Wrap(
+      spacing: 2.5.w,
+      runSpacing: 1.2.h,
+      children: _popularSearches.map((search) {
+        return _SearchChip(
+          text: search,
+          onTap: () {
+            _searchController.text = search;
+            setState(() {});
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildFeaturedProperties() {
+    return SizedBox(
+      height: 24.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: recommendedProperties.length > 3
+            ? 3
+            : recommendedProperties.length,
+        separatorBuilder: (_, __) => SizedBox(width: 3.w),
+        itemBuilder: (context, index) {
+          final property = recommendedProperties[index];
+          return _FeaturedPropertyCard(
+            property: property,
+            onTap: () {
+              AppNavigator.of(
+                context,
+              ).push(PropertyDetailsScreen(item: property));
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _RecentSearchTile extends StatelessWidget {
+  final String text;
+  final VoidCallback onTap;
+  final VoidCallback onRemove;
+
+  const _RecentSearchTile({
+    required this.text,
+    required this.onTap,
+    required this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 1.2.h),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(2.2.w),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.history_rounded,
+                size: 18,
+                color: Colors.black.withAlpha(150),
+              ),
+            ),
+            SizedBox(width: 3.w),
+            Expanded(
+              child: Text(
+                text,
+                style: appTextStyle(
+                  context,
+                  fontSize: 11.5.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black.withAlpha(200),
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: onRemove,
+              icon: Icon(
+                Icons.close_rounded,
+                size: 18,
+                color: Colors.black.withAlpha(120),
+              ),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchChip extends StatelessWidget {
+  final String text;
+  final VoidCallback onTap;
+
+  const _SearchChip({required this.text, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        splashColor: AppColors.goldBrandColor.withAlpha(35),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.1.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: AppColors.goldBrandColor.withAlpha(80)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(8),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.trending_up_rounded,
+                size: 16,
+                color: AppColors.goldBrandColor,
+              ),
+              SizedBox(width: 1.5.w),
+              Text(
+                text,
+                style: appTextStyle(
+                  context,
+                  fontSize: 10.5.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black.withAlpha(200),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FeaturedPropertyCard extends StatelessWidget {
+  final PropertyItem property;
+  final VoidCallback onTap;
+
+  const _FeaturedPropertyCard({required this.property, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 42.w,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.black.withAlpha(10)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(10),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image
+              SizedBox(
+                height: 14.h,
+                width: double.infinity,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: property.images.first,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey.shade200,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.goldBrandColor,
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey.shade200,
+                        child: Icon(
+                          Icons.image_not_supported_rounded,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                    // Rating badge
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 2.w,
+                          vertical: 0.4.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(230),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.star_rounded,
+                              size: 14,
+                              color: AppColors.goldBrandColor,
+                            ),
+                            SizedBox(width: 0.8.w),
+                            Text(
+                              property.rating.toStringAsFixed(1),
+                              style: appTextStyle(
+                                context,
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black.withAlpha(220),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Info
+              Padding(
+                padding: EdgeInsets.all(2.5.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      property.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 10.5.sp,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black.withAlpha(230),
+                      ),
+                    ),
+                    SizedBox(height: 0.3.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.place_rounded,
+                          size: 12,
+                          color: Colors.black.withAlpha(130),
+                        ),
+                        SizedBox(width: 1.w),
+                        Expanded(
+                          child: Text(
+                            property.location,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black.withAlpha(150),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 0.3.h),
+                    Text(
+                      property.price,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 9.5.sp,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.goldBrandColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
