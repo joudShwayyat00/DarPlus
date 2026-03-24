@@ -3,6 +3,7 @@ import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class GetHelpScreen extends StatefulWidget {
   const GetHelpScreen({super.key});
@@ -42,7 +43,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
           ),
         ),
         title: Text(
-          "Get Help",
+          tr.get_help,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -93,7 +94,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                   ),
                   SizedBox(height: 2.h),
                   Text(
-                    "How can we help you?",
+                    tr.how_can_we_help_you,
                     style: appTextStyle(
                       context,
                       fontSize: 14.sp,
@@ -103,7 +104,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                   ),
                   SizedBox(height: 0.5.h),
                   Text(
-                    "Send us a message and we'll get back to you within 24 hours",
+                    tr.send_us_a_message,
                     textAlign: TextAlign.center,
                     style: appTextStyle(
                       context,
@@ -140,7 +141,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                   children: [
                     // Name Field
                     Text(
-                      "Full Name",
+                      tr.full_name,
                       style: appTextStyle(
                         context,
                         fontSize: 11.sp,
@@ -151,7 +152,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                     SizedBox(height: 1.h),
                     TextFormField(
                       controller: _nameController,
-                      decoration: _inputDecoration(context, "Enter your name"),
+                      decoration: _inputDecoration(context, tr.enter_your_name),
                       style: appTextStyle(
                         context,
                         fontSize: 11.sp,
@@ -159,7 +160,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return "Name is required";
+                          return tr.name_required;
                         }
                         return null;
                       },
@@ -169,7 +170,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
 
                     // Subject
                     Text(
-                      "Subject",
+                      tr.subject,
                       style: appTextStyle(
                         context,
                         fontSize: 11.sp,
@@ -180,7 +181,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                     SizedBox(height: 1.h),
                     TextFormField(
                       controller: _subjectController,
-                      decoration: _inputDecoration(context, "Enter subject"),
+                      decoration: _inputDecoration(context, tr.enter_subject),
                       style: appTextStyle(
                         context,
                         fontSize: 11.sp,
@@ -188,7 +189,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return "Subject is required";
+                          return tr.subject_is_required;
                         }
                         return null;
                       },
@@ -198,7 +199,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
 
                     // Message
                     Text(
-                      "Message",
+                      tr.message,
                       style: appTextStyle(
                         context,
                         fontSize: 11.sp,
@@ -210,10 +211,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                     TextFormField(
                       controller: _messageController,
                       maxLines: 5,
-                      decoration: _inputDecoration(
-                        context,
-                        "Describe your issue or question...",
-                      ),
+                      decoration: _inputDecoration(context, tr.describe_issue),
                       style: appTextStyle(
                         context,
                         fontSize: 11.sp,
@@ -221,10 +219,10 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return "Message is required";
+                          return tr.message_is_required;
                         }
                         if (value.trim().length < 10) {
-                          return "Message must be at least 10 characters";
+                          return tr.message_min_chars;
                         }
                         return null;
                       },
@@ -239,7 +237,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                           // TODO: Send message
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text("Message sent successfully!"),
+                              content: Text(tr.message_sent_successfully),
                               backgroundColor: Colors.green,
                             ),
                           );
@@ -247,7 +245,7 @@ class _GetHelpScreenState extends State<GetHelpScreen> {
                         }
                       },
                       child: Text(
-                        "Send Message",
+                        tr.send_message,
                         style: appTextStyle(
                           context,
                           fontSize: 12.2.sp,

@@ -6,6 +6,7 @@ import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class BookingScreen extends StatefulWidget {
   final PropertyItem item;
@@ -89,7 +90,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
         title: Text(
-          "Book Now",
+          tr.book_now,
           style: appTextStyle(
             context,
             fontSize: 13.sp,
@@ -107,7 +108,7 @@ class _BookingScreenState extends State<BookingScreen> {
           children: [
             _HeroSummary(item: item),
             SizedBox(height: 1.5.h),
-            _SectionTitle(text: "Your stay"),
+            _SectionTitle(text: tr.your_stay),
             SizedBox(height: 1.2.h),
             _StayCard(
               checkIn: _checkIn,
@@ -188,7 +189,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
             SizedBox(height: 2.0.h),
 
-            _SectionTitle(text: "Guests"),
+            _SectionTitle(text: tr.guests),
             SizedBox(height: 1.2.h),
             _GuestsCard(
               value: _guests,
@@ -198,7 +199,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
             SizedBox(height: 2.0.h),
 
-            _SectionTitle(text: "Payment"),
+            _SectionTitle(text: tr.payment),
             SizedBox(height: 1.2.h),
             _PaymentCard(
               value: _payment,
@@ -207,13 +208,13 @@ class _BookingScreenState extends State<BookingScreen> {
 
             SizedBox(height: 2.0.h),
 
-            _SectionTitle(text: "Notes"),
+            _SectionTitle(text: tr.notes),
             SizedBox(height: 1.2.h),
             _NotesCard(controller: _notes),
 
             SizedBox(height: 2.0.h),
 
-            _SectionTitle(text: "Price summary"),
+            _SectionTitle(text: tr.price_summary),
             SizedBox(height: 1.2.h),
             _PriceCard(
               enabled: _checkIn != null,
@@ -253,17 +254,17 @@ class _BookingScreenState extends State<BookingScreen> {
                 backgroundColor: AppColors.goldBrandColor,
                 onPressed: () {
                   if (_checkIn == null) {
-                    _toast(context, "Please select check-in date.");
+                    _toast(context, tr.please_select_checkin_date);
                     return;
                   }
                   if (!_agree) {
-                    _toast(context, "Please accept the booking policy.");
+                    _toast(context, tr.please_accept_booking_policy);
                     return;
                   }
                   _showSuccessDialog(context);
                 },
                 child: Text(
-                  "Confirm Booking",
+                  tr.confirm_booking,
                   style: appTextStyle(
                     context,
                     fontSize: 14.sp,
@@ -279,7 +280,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Total",
+                      tr.total,
                       style: appTextStyle(
                         context,
                         fontSize: 10.5.sp,
@@ -289,7 +290,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     SizedBox(height: 0.2.h),
                     Text(
-                      _checkIn == null ? "--" : "$total JOD",
+                      _checkIn == null ? "--" : "$total ${tr.currency_jod}",
                       style: appTextStyle(
                         context,
                         fontSize: 13.sp,
@@ -350,7 +351,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               SizedBox(height: 1.8.h),
               Text(
-                "Booking Confirmed!",
+                tr.booking_confirmed,
                 style: appTextStyle(
                   context,
                   fontSize: 15.sp,
@@ -360,7 +361,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               SizedBox(height: 1.h),
               Text(
-                "Your reservation has been successfully submitted. You will receive a confirmation soon.",
+                tr.reservation_submitted,
                 textAlign: TextAlign.center,
                 style: appTextStyle(
                   context,
@@ -382,7 +383,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         Navigator.pop(context); // Go back to property details
                       },
                       child: Text(
-                        "Back",
+                        tr.back,
                         style: appTextStyle(
                           context,
                           fontSize: 11.sp,
@@ -401,7 +402,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         Navigator.pop(context); // Close dialog
                       },
                       child: Text(
-                        "Done",
+                        tr.done,
                         style: appTextStyle(
                           context,
                           fontSize: 11.sp,
@@ -465,7 +466,13 @@ class _HeroSummary extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.title,
+                  item.title == "Sea View Chalet"
+                      ? tr.sample_sea_view_chalet
+                      : item.title == "Cozy Nature Chalet"
+                      ? tr.sample_cozy_nature_chalet
+                      : item.title == "Family Chalet with Pool"
+                      ? tr.sample_family_chalet_with_pool
+                      : item.title,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
                   style: appTextStyle(
@@ -591,7 +598,7 @@ class _StayCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Check-in date",
+                          tr.check_in_date,
                           style: appTextStyle(
                             context,
                             fontSize: 10.6.sp,
@@ -601,7 +608,7 @@ class _StayCard extends StatelessWidget {
                         ),
                         SizedBox(height: 0.35.h),
                         Text(
-                          has ? _fmt(checkIn!) : "Select date",
+                          has ? _fmt(checkIn!) : tr.select_date,
                           style: appTextStyle(
                             context,
                             fontSize: 12.sp,
@@ -612,7 +619,7 @@ class _StayCard extends StatelessWidget {
                         if (has && checkOut != null) ...[
                           SizedBox(height: 0.25.h),
                           Text(
-                            "Check-out: ${_fmt(checkOut!)}",
+                            "${tr.check_out}: ${_fmt(checkOut!)}",
                             style: appTextStyle(
                               context,
                               fontSize: 10.2.sp,
@@ -649,7 +656,7 @@ class _StayCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Nights",
+                  tr.nights,
                   style: appTextStyle(
                     context,
                     fontSize: 11.2.sp,
@@ -668,7 +675,7 @@ class _StayCard extends StatelessWidget {
           ),
           SizedBox(height: 0.4.h),
           Text(
-            "Tip: One night = 1 ✅ (No need to pick time)",
+            tr.one_night_tip,
             style: appTextStyle(
               context,
               fontSize: 10.2.sp,
@@ -716,7 +723,7 @@ class _GuestsCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Number of guests",
+                  tr.number_of_guests,
                   style: appTextStyle(
                     context,
                     fontSize: 10.8.sp,
@@ -756,16 +763,16 @@ class _PaymentCard extends StatelessWidget {
       child: Column(
         children: [
           _RadioRow(
-            title: "Cash on arrival",
-            subtitle: "Pay when you check-in",
+            title: tr.cash_on_arrival,
+            subtitle: tr.pay_when_checkin,
             icon: Icons.payments_outlined,
             selected: value == PaymentMethod.cash,
             onTap: () => onChanged(PaymentMethod.cash),
           ),
           Divider(color: Colors.black.withAlpha(18), height: 2.2.h),
           _RadioRow(
-            title: "Credit / Debit Card",
-            subtitle: "Pay securely online",
+            title: tr.credit_debit_card,
+            subtitle: tr.pay_securely_online,
             icon: Icons.credit_card,
             selected: value == PaymentMethod.card,
             onTap: () => onChanged(PaymentMethod.card),
@@ -788,7 +795,7 @@ class _NotesCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Any special requests?",
+            tr.any_special_requests,
             style: appTextStyle(
               context,
               fontSize: 11.sp,
@@ -808,7 +815,7 @@ class _NotesCard extends StatelessWidget {
               height: 1.4,
             ),
             decoration: InputDecoration(
-              hintText: "Example: Late check-in, extra towels...",
+              hintText: tr.example_hint,
               hintStyle: appTextStyle(
                 context,
                 fontSize: 10.5.sp,
@@ -864,22 +871,27 @@ class _PriceCard extends StatelessWidget {
         child: Column(
           children: [
             _PriceRow(
-              label: "Nightly price",
-              value: pricePerNight == 0 ? "--" : "$pricePerNight JOD",
+              label: tr.nightly_price,
+              value: pricePerNight == 0
+                  ? "--"
+                  : "$pricePerNight ${tr.currency_jod}${tr.per_night}",
             ),
             SizedBox(height: 1.h),
-            _PriceRow(label: "Nights", value: enabled ? "$nights" : "--"),
+            _PriceRow(label: tr.nights, value: enabled ? "$nights" : "--"),
             Divider(color: Colors.black.withAlpha(18), height: 2.4.h),
             _PriceRow(
-              label: "Subtotal",
-              value: enabled ? "$subtotal JOD" : "--",
+              label: tr.subtotal,
+              value: enabled ? "$subtotal ${tr.currency_jod}" : "--",
             ),
             SizedBox(height: 0.8.h),
-            _PriceRow(label: "Service fee", value: enabled ? "$fee JOD" : "--"),
+            _PriceRow(
+              label: tr.service_fee,
+              value: enabled ? "$fee ${tr.currency_jod}" : "--",
+            ),
             Divider(color: Colors.black.withAlpha(18), height: 2.4.h),
             _PriceRow(
-              label: "Total",
-              value: enabled ? "$total JOD" : "--",
+              label: tr.total_label,
+              value: enabled ? "$total ${tr.currency_jod}" : "--",
               bold: true,
             ),
           ],
@@ -924,7 +936,7 @@ class _PolicyRow extends StatelessWidget {
             SizedBox(width: 3.w),
             Expanded(
               child: Text(
-                "I agree to the booking policy and cancellation terms.",
+                tr.booking_policy_consent,
                 style: appTextStyle(
                   context,
                   fontSize: 10.6.sp,

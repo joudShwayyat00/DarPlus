@@ -56,7 +56,7 @@ final List<PropertyItem> recommendedProperties = [
   PropertyItem(
     title: "Sea View Chalet",
     location: "Dead Sea",
-    price: "120 JOD / night",
+    price: "120",
     rating: 4.8,
     images: [
       "https://eu2.contabostorage.com/e4d9c3eca4674c9dbce474abbb48ddea:files/avatar/images/7iZoVcVpWCBG2nGDZ478xVBu7HHPraaH47cS7f8a.jpg",
@@ -67,7 +67,7 @@ final List<PropertyItem> recommendedProperties = [
       "https://i.imgur.com/U9qdhq2.jpg",
     ],
     description:
-    "Luxury sea view chalet located at the Dead Sea. Perfect for families and couples looking for relaxation, featuring a private pool and stunning sunset views.",
+        "Luxury sea view chalet located at the Dead Sea. Perfect for families and couples looking for relaxation, featuring a private pool and stunning sunset views.",
     guests: 6,
     bedrooms: 2,
     bathrooms: 2,
@@ -88,14 +88,14 @@ final List<PropertyItem> recommendedProperties = [
   PropertyItem(
     title: "Cozy Nature Chalet",
     location: "Jerash",
-    price: "70 JOD / night",
+    price: "70",
     rating: 4.2,
     images: [
       "https://md4000.com/wp-content/uploads/1497_8_B-768x432.jpg",
       "https://md4000.com/wp-content/uploads/1497_2_B-768x432.jpg",
     ],
     description:
-    "A peaceful chalet surrounded by nature and forests. Ideal for weekend getaways, fresh air lovers, and small families.",
+        "A peaceful chalet surrounded by nature and forests. Ideal for weekend getaways, fresh air lovers, and small families.",
     guests: 4,
     bedrooms: 1,
     bathrooms: 1,
@@ -114,13 +114,11 @@ final List<PropertyItem> recommendedProperties = [
   PropertyItem(
     title: "Family Chalet with Pool",
     location: "Aqaba",
-    price: "150 JOD / night",
+    price: "150",
     rating: 4.9,
-    images: [
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750",
-    ],
+    images: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750"],
     description:
-    "Spacious family chalet in Aqaba with a private pool and garden. Close to the beach and perfect for large families and gatherings.",
+        "Spacious family chalet in Aqaba with a private pool and garden. Close to the beach and perfect for large families and gatherings.",
     guests: 8,
     bedrooms: 3,
     bathrooms: 3,
@@ -136,4 +134,3 @@ final List<PropertyItem> recommendedProperties = [
     tiktokUrl: "https://www.tiktok.com/@familychaletaqaba",
   ),
 ];
-

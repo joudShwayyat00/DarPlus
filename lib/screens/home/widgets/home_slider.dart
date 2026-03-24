@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -30,13 +31,16 @@ class _HomeSliderState extends State<HomeSlider> {
               setState(() => _currentIndex = index);
             },
           ),
-          items: _slides.map((slide) {
+          items: List.generate(_slides.length, (index) {
+            final slide = _slides[index];
+            final title = index == 0 ? tr.luxury_living : index == 1 ? tr.modern_apartments : tr.find_your_space;
+            final subtitle = index == 0 ? tr.discover_premium_villas : index == 1 ? tr.comfort_elegance : tr.homes_match_lifestyle;
             return _SliderItem(
               imageUrl: slide.imageUrl,
-              title: slide.title,
-              subtitle: slide.subtitle,
+              title: title,
+              subtitle: subtitle,
             );
-          }).toList(),
+          }),
         ),
 
         SizedBox(height: 1.2.h),
@@ -44,7 +48,7 @@ class _HomeSliderState extends State<HomeSlider> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             _slides.length,
-                (index) => AnimatedContainer(
+            (index) => AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.symmetric(horizontal: 4),
               width: _currentIndex == index ? 18 : 7,
@@ -88,10 +92,7 @@ class _SliderItem extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                colors: [
-                  Colors.black.withAlpha(170),
-                  Colors.transparent,
-                ],
+                colors: [Colors.black.withAlpha(170), Colors.transparent],
               ),
             ),
           ),

@@ -14,7 +14,10 @@ import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/auth/presentation/providers/auth_providers.dart';
+import '../../features/auth/data/models/user_model.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -35,7 +38,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               SizedBox(height: 2.h),
 
               // Profile Header
-              _buildProfileHeader(context),
+              ref.watch(profileControllerProvider).when(
+                data: (user) => _buildProfileHeader(context, user),
+                loading: () => _buildProfileHeaderLoading(context),
+                error: (err, stack) => _buildProfileHeaderError(context, err),
+              ),
 
               SizedBox(height: 2.5.h),
 
@@ -46,14 +53,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Account Section
-                    _buildSectionTitle(context, "Account"),
+                    _buildSectionTitle(context, tr.account),
                     SizedBox(height: 1.2.h),
                     _buildMenuCard(
                       context,
                       items: [
                         _MenuItem(
                           icon: Icons.person_outline_rounded,
-                          title: "Edit Profile",
+                          title: tr.edit_profile,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -65,7 +72,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         _MenuItem(
                           icon: Icons.calendar_month_rounded,
-                          title: "My Reservations",
+                          title: tr.my_reservations,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -78,7 +85,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         _MenuItem(
                           icon: Icons.card_membership_rounded,
-                          title: "Subscriptions",
+                          title: tr.subscriptions,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -91,7 +98,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         _MenuItem(
                           icon: Icons.notifications_outlined,
-                          title: "Notifications",
+                          title: tr.notifications,
                           trailing: _buildNotificationBadge(context, 3),
                           onTap: () {
                             Navigator.push(
@@ -109,16 +116,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     SizedBox(height: 2.5.h),
 
                     // Preferences Section
-                    _buildSectionTitle(context, "Preferences"),
+                    _buildSectionTitle(context, tr.preferences),
                     SizedBox(height: 1.2.h),
                     _buildMenuCard(
                       context,
                       items: [
                         _MenuItem(
                           icon: Icons.language_rounded,
-                          title: "Change Language",
+                          title: tr.change_language,
                           trailing: Text(
-                            "English",
+                            tr.english,
                             style: appTextStyle(
                               context,
                               fontSize: 10.5.sp,
@@ -136,14 +143,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     SizedBox(height: 2.5.h),
 
                     // Support Section
-                    _buildSectionTitle(context, "Support"),
+                    _buildSectionTitle(context, tr.support),
                     SizedBox(height: 1.2.h),
                     _buildMenuCard(
                       context,
                       items: [
                         _MenuItem(
                           icon: Icons.help_outline_rounded,
-                          title: "Get Help",
+                          title: tr.get_help,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -155,7 +162,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         _MenuItem(
                           icon: Icons.headset_mic_outlined,
-                          title: "Contact Us",
+                          title: tr.contact_us,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -171,14 +178,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     SizedBox(height: 2.5.h),
 
                     // Legal Section
-                    _buildSectionTitle(context, "Legal"),
+                    _buildSectionTitle(context, tr.legal),
                     SizedBox(height: 1.2.h),
                     _buildMenuCard(
                       context,
                       items: [
                         _MenuItem(
                           icon: Icons.info_outline_rounded,
-                          title: "About",
+                          title: tr.about,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -190,7 +197,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         _MenuItem(
                           icon: Icons.privacy_tip_outlined,
-                          title: "Privacy Policy",
+                          title: tr.privacy_policy,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -203,7 +210,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         _MenuItem(
                           icon: Icons.description_outlined,
-                          title: "Terms and Conditions",
+                          title: tr.terms_and_conditions,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -225,18 +232,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       items: [
                         _MenuItem(
                           icon: Icons.logout_rounded,
-                          title: "Logout",
+                          title: tr.logout,
                           iconColor: AppColors.goldBrandColor,
                           titleColor: AppColors.goldBrandColor,
                           onTap: () {
+                            ref.read(profileControllerProvider.notifier).logout();
                             AppNavigator.of(
                               context,
-                            ).push(const WelcomeScreen());
+                            ).pushAndRemoveUntil(const WelcomeScreen());
                           },
                         ),
                         _MenuItem(
                           icon: Icons.delete_outline_rounded,
-                          title: "Delete Account",
+                          title: tr.delete_account,
                           iconColor: Colors.red,
                           titleColor: Colors.red,
                           showDivider: false,
@@ -252,7 +260,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     // App Version
                     Center(
                       child: Text(
-                        "Version 1.0.0",
+                        '${tr.version} 1.0.0',
                         style: appTextStyle(
                           context,
                           fontSize: 10.sp,
@@ -273,7 +281,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context) {
+  Widget _buildProfileHeader(BuildContext context, UserModel user) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5.w),
       padding: EdgeInsets.all(4.w),
@@ -297,32 +305,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             height: 18.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.goldBrandColor.withAlpha(180),
-                  AppColors.goldBrandColor,
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.goldBrandColor.withAlpha(40),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              color: AppColors.goldBrandColor.withAlpha(30),
             ),
-            child: Center(
-              child: Text(
-                "JD",
-                style: appTextStyle(
-                  context,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                ),
-              ),
+            child: ClipOval(
+              child: user.image != null
+                  ? Image.network(
+                      user.image!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _buildInitials(context, user.name),
+                    )
+                  : _buildInitials(context, user.name),
             ),
           ),
 
@@ -334,7 +327,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "John Doe",
+                  user.name,
                   style: appTextStyle(
                     context,
                     fontSize: 14.sp,
@@ -344,7 +337,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 SizedBox(height: 0.4.h),
                 Text(
-                  "johndoe@email.com",
+                  user.email,
                   style: appTextStyle(
                     context,
                     fontSize: 10.5.sp,
@@ -363,7 +356,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
-                    "Premium Member",
+                    tr.premium_member,
                     style: appTextStyle(
                       context,
                       fontSize: 9.sp,
@@ -374,6 +367,73 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInitials(BuildContext context, String name) {
+    final initials = name.isNotEmpty
+        ? name.trim().split(' ').map((l) => l[0]).take(2).join().toUpperCase()
+        : "U";
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.goldBrandColor.withAlpha(180),
+            AppColors.goldBrandColor,
+          ],
+        ),
+      ),
+      child: Center(
+        child: Text(
+          initials,
+          style: appTextStyle(
+            context,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileHeaderLoading(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 5.w),
+      padding: EdgeInsets.all(4.w),
+      height: 15.h,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.black.withAlpha(10)),
+      ),
+      child: const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _buildProfileHeaderError(BuildContext context, Object error) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 5.w),
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.red.withAlpha(10),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.red.withAlpha(30)),
+      ),
+      child: Column(
+        children: [
+          Text(
+            tr.error_occurred,
+            style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => ref.read(profileControllerProvider.notifier).refreshProfile(),
           ),
         ],
       ),
@@ -528,7 +588,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             SizedBox(height: 2.h),
             Text(
-              "Select Language",
+              tr.select_language,
               style: appTextStyle(
                 context,
                 fontSize: 14.sp,
@@ -538,7 +598,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             SizedBox(height: 2.h),
             _LanguageOption(
-              title: "English",
+              title: tr.english,
               isSelected: true,
               onTap: () {
                 ref.read(localeProvider.notifier).setLocale(const Locale('en'));
@@ -568,7 +628,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         backgroundColor: AppColors.whiteColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          "Delete Account",
+          tr.delete_account,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -577,7 +637,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
         content: Text(
-          "This action cannot be undone. All your data will be permanently deleted. Are you sure you want to continue?",
+          tr.delete_confirm_message,
           style: appTextStyle(
             context,
             fontSize: 11.5.sp,
@@ -589,7 +649,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              "Cancel",
+              tr.cancel,
               style: appTextStyle(
                 context,
                 fontSize: 11.sp,
@@ -604,7 +664,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               AppNavigator.of(context).push(WelcomeScreen());
             },
             child: Text(
-              "Delete",
+              tr.delete,
               style: appTextStyle(
                 context,
                 fontSize: 11.sp,

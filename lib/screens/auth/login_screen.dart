@@ -1,35 +1,63 @@
+import 'package:dar_plus_app/features/auth/data/models/register_response.dart';
+import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/bottom_nav_bar_screen.dart';
 import 'package:dar_plus_app/screens/auth/sign_up_screen.dart';
+import 'package:dar_plus_app/screens/auth/forgot_password_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_auth_background.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/configuration/app_images.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final emailController = TextEditingController();
-  final FocusNode emailFocusNode =FocusNode();
+  final FocusNode emailFocusNode = FocusNode();
 
   final passwordController = TextEditingController();
-  final FocusNode passwordFocusNode =FocusNode();
+  final FocusNode passwordFocusNode = FocusNode();
 
   bool _obscure = true;
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<RegisterResponse?>>(
+      loginControllerProvider,
+      (previous, next) {
+        next.when(
+          data: (data) {
+            if (data != null) {
+              EasyLoading.dismiss();
+              EasyLoading.showSuccess(tr.done);
+              AppNavigator.of(context).pushAndRemoveUntil(const BottomNavBarScreen());
+            }
+          },
+          error: (error, stackTrace) {
+            EasyLoading.dismiss();
+            EasyLoading.showError(error.toString());
+          },
+          loading: () {
+            EasyLoading.show(status: tr.loading);
+          },
+        );
+      },
+    );
+
     return AppAuthBackground(
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -46,9 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: 1.h),
                       Column(
                         children: [
-                          Image.asset(appLogo, height: 15.h, fit: BoxFit.contain),
+                          Image.asset(
+                            appLogo,
+                            height: 15.h,
+                            fit: BoxFit.contain,
+                          ),
                           Text(
-                            "Premium Real Estate",
+                            tr.premium_real_estate,
                             style: appTextStyle(
                               context,
                               fontSize: 10.5.sp,
@@ -58,9 +90,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-            
+
                       SizedBox(height: 3.h),
-            
+
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(
@@ -83,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Welcome Back",
+                              tr.welcome_back,
                               style: appTextStyle(
                                 context,
                                 fontSize: 16.sp,
@@ -104,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 SizedBox(width: 2.2.w),
                                 Text(
-                                  "Sign in to continue",
+                                  tr.sign_in_to_continue,
                                   style: appTextStyle(
                                     context,
                                     fontSize: 10.6.sp,
@@ -113,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-            
+
                             SizedBox(height: 3.h),
                             Form(
                               key: _formKey,
@@ -122,30 +154,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                   AppInputField(
                                     controller: emailController,
                                     focusNode: emailFocusNode,
-                                    hint: "Email",
+                                    hint: tr.email,
                                     prefixIcon: Icons.email_outlined,
                                     keyboardType: TextInputType.emailAddress,
                                     textInputAction: TextInputAction.next,
                                     onFieldSubmitted: (_) {
-                                      FocusScope.of(context).requestFocus(passwordFocusNode);
+                                      FocusScope.of(
+                                        context,
+                                      ).requestFocus(passwordFocusNode);
                                     },
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return "Email is required";
+                                        return tr.email_required;
                                       }
-                                      if (!isValidEmail(value)){
-                                        return "Enter a valid email";
+                                      if (!isValidEmail(value)) {
+                                        return tr.enter_valid_email;
                                       }
                                       return null;
                                     },
                                   ),
-            
+
                                   SizedBox(height: 2.h),
-            
+
                                   AppInputField(
                                     controller: passwordController,
                                     focusNode: passwordFocusNode,
-                                    hint: "Password",
+                                    hint: tr.password,
                                     prefixIcon: Icons.lock_outline,
                                     obscure: _obscure,
                                     textInputAction: TextInputAction.done,
@@ -164,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     validator: (value) {
                                       if (value == null || value.length < 6) {
-                                        return "Password must be at least 6 characters";
+                                        return tr.password_min_length;
                                       }
                                       return null;
                                     },
@@ -176,13 +210,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  AppNavigator.of(context).push(const ForgotPasswordScreen());
+                                },
                                 style: TextButton.styleFrom(
                                   padding: const EdgeInsets.all(10),
                                   foregroundColor: AppColors.goldBrandColor,
                                 ),
                                 child: Text(
-                                  "Forgot password?",
+                                  tr.forgot_password,
                                   style: appTextStyle(
                                     context,
                                     fontSize: 10.2.sp,
@@ -192,16 +228,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-            
+
                             SizedBox(height: 2.h),
                             AppButton(
                               backgroundColor: AppColors.goldBrandColor,
                               onPressed: () {
-                                AppNavigator.of(context).push(BottomNavBarScreen());
-                                // if (_formKey.currentState!.validate()) {}
+                                if (_formKey.currentState!.validate()) {
+                                  ref.read(loginControllerProvider.notifier).login(
+                                        email: emailController.text.trim(),
+                                        password: passwordController.text.trim(),
+                                      );
+                                }
                               },
                               child: Text(
-                                "Login",
+                                tr.login,
                                 style: appTextStyle(
                                   context,
                                   fontSize: 12.2.sp,
@@ -219,9 +259,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 3.w,
+                                  ),
                                   child: Text(
-                                    "or",
+                                    tr.or,
                                     style: appTextStyle(
                                       context,
                                       fontSize: 11.sp,
@@ -236,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-            
+
                             SizedBox(height: 2.h),
                             AppButton(
                               backgroundColor: Colors.transparent,
@@ -245,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 AppNavigator.of(context).push(SignUpScreen());
                               },
                               child: Text(
-                                "Create Account",
+                                tr.create_account,
                                 style: appTextStyle(
                                   context,
                                   fontSize: 12.2.sp,
@@ -257,11 +299,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                       ),
-            
+
                       const Spacer(),
-            
+
                       Text(
-                        "By continuing, you agree to our Terms & Privacy.",
+                        tr.by_continuing_you_agree_to_our_terms_and_privacy,
                         textAlign: TextAlign.center,
                         style: appTextStyle(
                           context,
@@ -272,7 +314,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: 2.h),
                     ],
                   ),
-            
                 ),
               ),
             ),

@@ -1,3 +1,5 @@
+import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/screens/bottom_nav_bar_screen.dart';
 import 'package:dar_plus_app/screens/auth/login_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_auth_background.dart';
@@ -9,15 +11,18 @@ import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/configuration/app_images.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
@@ -25,7 +30,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final phoneController = TextEditingController();
   final FocusNode phoneFocusNode = FocusNode();
-
 
   final emailController = TextEditingController();
   final FocusNode emailFocusNode = FocusNode();
@@ -57,7 +61,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       children: [
                         Image.asset(appLogo, height: 15.h, fit: BoxFit.contain),
                         Text(
-                          "Premium Real Estate",
+                          tr.premium_real_estate,
                           style: appTextStyle(
                             context,
                             fontSize: 10.5.sp,
@@ -90,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Create Account",
+                            tr.create_account,
                             style: appTextStyle(
                               context,
                               fontSize: 16.sp,
@@ -111,7 +115,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               SizedBox(width: 2.2.w),
                               Text(
-                                "Sign up to get started",
+                                tr.sign_up_to_get_started,
                                 style: appTextStyle(
                                   context,
                                   fontSize: 10.6.sp,
@@ -130,16 +134,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 AppInputField(
                                   controller: nameController,
                                   focusNode: nameFocusNode,
-                                  hint: "Full Name",
+                                  hint: tr.full_name,
                                   prefixIcon: Icons.person_outline,
                                   textInputAction: TextInputAction.next,
                                   onFieldSubmitted: (_) {
-                                    FocusScope.of(context)
-                                        .requestFocus(phoneFocusNode);
+                                    FocusScope.of(
+                                      context,
+                                    ).requestFocus(phoneFocusNode);
                                   },
                                   validator: (value) {
                                     if (value == null || value.trim().isEmpty) {
-                                      return "Name is required";
+                                      return tr.name_required;
                                     }
                                     return null;
                                   },
@@ -147,36 +152,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                                 SizedBox(height: 2.h),
 
-                                AppPhoneField(
-                                  controller: phoneController,
-                                  focusNode: phoneFocusNode,
-                                  hint: "Phone Number",
-                                  initialCountryCode: "JO",
-                                  textInputAction: TextInputAction.next,
-                                  onFieldSubmitted: (_) {
-                                    FocusScope.of(context).requestFocus(emailFocusNode);
-                                  },
+                                Directionality(
+                                  textDirection: TextDirection.ltr,
+                                  child: AppPhoneField(
+                                    controller: phoneController,
+                                    focusNode: phoneFocusNode,
+                                    hint: tr.phone_number,
+                                    initialCountryCode: "JO",
+                                    textInputAction: TextInputAction.next,
+                                    onFieldSubmitted: (_) {
+                                      FocusScope.of(
+                                        context,
+                                      ).requestFocus(emailFocusNode);
+                                    },
+                                  ),
                                 ),
                                 SizedBox(height: 2.h),
 
                                 AppInputField(
                                   controller: emailController,
                                   focusNode: emailFocusNode,
-                                  hint: "Email",
+                                  hint: tr.email,
                                   prefixIcon: Icons.email_outlined,
                                   keyboardType: TextInputType.emailAddress,
                                   textInputAction: TextInputAction.next,
                                   onFieldSubmitted: (_) {
-                                    FocusScope.of(context)
-                                        .requestFocus(passwordFocusNode);
+                                    FocusScope.of(
+                                      context,
+                                    ).requestFocus(passwordFocusNode);
                                   },
                                   validator: (value) {
                                     if (value == null || value.trim().isEmpty) {
-                                      return "Email is required";
+                                      return tr.email_required;
                                     }
                                     final email = value.trim();
                                     if (!isValidEmail(email)) {
-                                      return "Enter a valid email";
+                                      return tr.enter_valid_email;
                                     }
                                     return null;
                                   },
@@ -186,13 +197,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 AppInputField(
                                   controller: passwordController,
                                   focusNode: passwordFocusNode,
-                                  hint: "Password",
+                                  hint: tr.password,
                                   prefixIcon: Icons.lock_outline,
                                   obscure: _obscurePassword,
                                   textInputAction: TextInputAction.next,
                                   onFieldSubmitted: (_) {
-                                    FocusScope.of(context)
-                                        .requestFocus(confirmPasswordFocusNode);
+                                    FocusScope.of(
+                                      context,
+                                    ).requestFocus(confirmPasswordFocusNode);
                                   },
                                   suffixIcon: IconButton(
                                     onPressed: () => setState(() {
@@ -207,7 +219,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.length < 6) {
-                                      return "Password must be at least 6 characters";
+                                      return tr.password_min_length;
                                     }
                                     return null;
                                   },
@@ -218,7 +230,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 AppInputField(
                                   controller: confirmPasswordController,
                                   focusNode: confirmPasswordFocusNode,
-                                  hint: "Confirm Password",
+                                  hint: tr.confirm_password,
                                   prefixIcon: Icons.lock_outline,
                                   obscure: _obscureConfirm,
                                   textInputAction: TextInputAction.done,
@@ -238,10 +250,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return "Confirm password is required";
+                                      return tr.confirm_password_required;
                                     }
                                     if (value != passwordController.text) {
-                                      return "Passwords do not match";
+                                      return tr.passwords_do_not_match;
                                     }
                                     return null;
                                   },
@@ -250,23 +262,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                           SizedBox(height: 2.4.h),
+                          const RegisterListener(),
                           AppButton(
                             backgroundColor: AppColors.goldBrandColor,
                             onPressed: () {
                               FocusScope.of(context).unfocus();
                               if (_formKey.currentState!.validate()) {
-                                // TODO: Sign Up
+                                ref.read(registerControllerProvider.notifier).register(
+                                      name: nameController.text.trim(),
+                                      email: emailController.text.trim(),
+                                      password: passwordController.text,
+                                      passwordConfirmation: confirmPasswordController.text,
+                                      phoneNumber: phoneController.text.trim(),
+                                    );
                               }
                             },
-                            child: Text(
-                              "Create Account",
-                              style: appTextStyle(
-                                context,
-                                fontSize: 12.2.sp,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.whiteColor,
-                              ),
-                            ),
+                            child: ref.watch(registerControllerProvider).maybeWhen(
+                                  loading: () => const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                  orElse: () => Text(
+                                    tr.create_account,
+                                    style: appTextStyle(
+                                      context,
+                                      fontSize: 12.2.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.whiteColor,
+                                    ),
+                                  ),
+                                ),
                           ),
                         ],
                       ),
@@ -282,7 +311,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         foregroundColor: AppColors.goldBrandColor,
                       ),
                       child: Text(
-                        "Already have an account? Login",
+                        tr.already_have_account_login,
                         style: appTextStyle(
                           context,
                           fontSize: 10.2.sp,
@@ -325,5 +354,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
     confirmPasswordFocusNode.dispose();
 
     super.dispose();
+  }
+}
+
+class RegisterListener extends ConsumerWidget {
+  const RegisterListener({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(registerControllerProvider, (previous, next) {
+      next.whenOrNull(
+        data: (_) {
+          EasyLoading.showSuccess(tr.done);
+          AppNavigator.of(context).pushAndRemoveUntil(const BottomNavBarScreen());
+        },
+        error: (error, stack) {
+          EasyLoading.showError(error.toString());
+        },
+      );
+    });
+    return const SizedBox.shrink();
   }
 }

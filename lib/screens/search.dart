@@ -6,6 +6,7 @@ import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -59,21 +60,21 @@ class _SearchScreenState extends State<SearchScreen> {
                     SizedBox(height: 2.5.h),
 
                     // Recent Searches Section
-                    _buildSectionTitle("Recent Searches"),
+                    _buildSectionTitle(tr.recent_searches),
                     SizedBox(height: 1.2.h),
                     _buildRecentSearches(),
 
                     SizedBox(height: 2.8.h),
 
                     // Popular Searches Section
-                    _buildSectionTitle("Popular Searches"),
+                    _buildSectionTitle(tr.popular_searches),
                     SizedBox(height: 1.2.h),
                     _buildPopularSearches(),
 
                     SizedBox(height: 2.8.h),
 
                     // Featured Properties Section
-                    _buildSectionTitle("Featured Properties"),
+                    _buildSectionTitle(tr.featured_properties),
                     SizedBox(height: 1.2.h),
                     _buildFeaturedProperties(),
 
@@ -105,7 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Search",
+            tr.search,
             style: appTextStyle(
               context,
               fontSize: 18.sp,
@@ -130,7 +131,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 color: Colors.black.withAlpha(220),
               ),
               decoration: InputDecoration(
-                hintText: "Search properties, locations...",
+                hintText: tr.search_hint,
                 hintStyle: appTextStyle(
                   context,
                   fontSize: 12.sp,
@@ -191,10 +192,15 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget _buildRecentSearches() {
     return Column(
       children: _recentSearches.map((search) {
+        final display = search == "Sea View Chalet"
+            ? tr.sample_sea_view_chalet
+            : search == "Dead Sea"
+            ? tr.sample_dead_sea
+            : tr.sample_family_apartments;
         return _RecentSearchTile(
-          text: search,
+          text: display,
           onTap: () {
-            _searchController.text = search;
+            _searchController.text = display;
             setState(() {});
           },
           onRemove: () {
@@ -212,10 +218,19 @@ class _SearchScreenState extends State<SearchScreen> {
       spacing: 2.5.w,
       runSpacing: 1.2.h,
       children: _popularSearches.map((search) {
+        final display = search == "Chalets"
+            ? tr.chalets
+            : search == "Farms"
+            ? tr.farms
+            : search == "Pool"
+            ? tr.pool
+            : search == "BBQ"
+            ? tr.bbq
+            : tr.near_beach;
         return _SearchChip(
-          text: search,
+          text: display,
           onTap: () {
-            _searchController.text = search;
+            _searchController.text = display;
             setState(() {});
           },
         );
@@ -502,7 +517,12 @@ class _FeaturedPropertyCard extends StatelessWidget {
                     ),
                     SizedBox(height: 0.3.h),
                     Text(
-                      property.price,
+                      (() {
+                        final m = RegExp(r'\\d+').firstMatch(property.price);
+                        return m != null
+                            ? '${m.group(0)} ${tr.currency_jod}${tr.per_night}'
+                            : property.price;
+                      })(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: appTextStyle(

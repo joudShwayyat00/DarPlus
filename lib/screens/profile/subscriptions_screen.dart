@@ -3,6 +3,7 @@ import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class SubscriptionsScreen extends StatefulWidget {
   const SubscriptionsScreen({super.key});
@@ -68,7 +69,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
           ),
         ),
         title: Text(
-          "Subscriptions",
+          tr.subscriptions,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -126,7 +127,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Current Plan: Premium",
+                          '${tr.current_plan}: ${tr.premium}',
                           style: appTextStyle(
                             context,
                             fontSize: 12.sp,
@@ -136,12 +137,21 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                         ),
                         SizedBox(height: 0.3.h),
                         Text(
-                          "Renews on March 15, 2026",
+                          '${tr.renews_on} March 15, 2026',
                           style: appTextStyle(
                             context,
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w600,
                             color: Colors.white.withAlpha(200),
+                          ),
+                        ),
+                        Text(
+                          tr.choose_your_plan,
+                          style: appTextStyle(
+                            context,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black.withAlpha(220),
                           ),
                         ),
                       ],
@@ -154,7 +164,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
             SizedBox(height: 3.h),
 
             Text(
-              "Choose Your Plan",
+              tr.choose_your_plan,
               style: appTextStyle(
                 context,
                 fontSize: 13.sp,
@@ -178,7 +188,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                 // TODO: Process subscription
               },
               child: Text(
-                "Upgrade Plan",
+                tr.upgrade_plan,
                 style: appTextStyle(
                   context,
                   fontSize: 12.2.sp,
@@ -196,7 +206,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                   // TODO: Cancel subscription
                 },
                 child: Text(
-                  "Cancel Subscription",
+                  tr.cancel_subscription,
                   style: appTextStyle(
                     context,
                     fontSize: 10.5.sp,
@@ -206,6 +216,8 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                 ),
               ),
             ),
+
+            SizedBox(height: 3.h),
 
             SizedBox(height: 3.h),
           ],
@@ -257,7 +269,11 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                       Row(
                         children: [
                           Text(
-                            plan.name,
+                            plan.name == 'Basic'
+                                ? tr.basic
+                                : plan.name == 'Premium'
+                                ? tr.premium
+                                : tr.elite,
                             style: appTextStyle(
                               context,
                               fontSize: 13.sp,
@@ -277,7 +293,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                "Popular",
+                                tr.popular,
                                 style: appTextStyle(
                                   context,
                                   fontSize: 8.sp,
@@ -351,7 +367,31 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                     ),
                     SizedBox(width: 2.w),
                     Text(
-                      feature,
+                      feature == 'Browse properties'
+                          ? tr.features_browse_properties
+                          : feature == 'Save favorites'
+                          ? tr.features_save_favorites
+                          : feature == 'Basic search filters'
+                          ? tr.features_basic_search_filters
+                          : feature == 'All Basic features'
+                          ? tr.all_basic_features
+                          : feature == 'Priority booking'
+                          ? tr.priority_booking
+                          : feature == 'Exclusive deals'
+                          ? tr.exclusive_deals
+                          : feature == 'No ads'
+                          ? tr.no_ads
+                          : feature == 'Personal concierge'
+                          ? tr.personal_concierge
+                          : feature == 'VIP property access'
+                          ? tr.vip_property_access
+                          : feature == 'Cashback rewards'
+                          ? tr.cashback_rewards
+                          : feature == 'Free cancellation'
+                          ? tr.free_cancellation
+                          : feature == 'Luxury perks'
+                          ? tr.luxury_perks
+                          : feature,
                       style: appTextStyle(
                         context,
                         fontSize: 10.5.sp,

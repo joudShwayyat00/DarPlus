@@ -8,6 +8,7 @@ import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class PropertyDetailsScreen extends StatelessWidget {
   final PropertyItem item;
@@ -30,22 +31,16 @@ class PropertyDetailsScreen extends StatelessWidget {
             snap: false,
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading:Padding(
+            leading: Padding(
               padding: EdgeInsets.only(left: 1.8.w),
               child: IconButton(
                 onPressed: () {
                   AppNavigator.of(context).pop();
                 },
-                icon: const Icon(
-                  Icons.arrow_back_rounded,
-                  color: Colors.black,
-                ),
+                icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
                 iconSize: 18.sp,
                 padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(
-                  minWidth: 30,
-                  minHeight: 30,
-                ),
+                constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.white.withAlpha(235),
                   shape: const CircleBorder(),
@@ -84,10 +79,16 @@ class PropertyDetailsScreen extends StatelessWidget {
                   _InfoCard(item: item),
                   SizedBox(height: 1.2.h),
 
-                  const _SectionTitle(title: "Overview"),
+                  _SectionTitle(title: tr.overview),
                   SizedBox(height: 1.2.h),
                   Text(
-                    item.description,
+                    item.title == "Sea View Chalet"
+                        ? tr.sample_sea_view_chalet_description
+                        : item.title == "Cozy Nature Chalet"
+                        ? tr.sample_cozy_nature_chalet_description
+                        : item.title == "Family Chalet with Pool"
+                        ? tr.sample_family_chalet_description
+                        : item.description,
                     style: appTextStyle(
                       context,
                       fontSize: 11.5.sp,
@@ -98,35 +99,65 @@ class PropertyDetailsScreen extends StatelessWidget {
 
                   SizedBox(height: 2.4.h),
 
-                  const _SectionTitle(title: "Highlights"),
+                  _SectionTitle(title: tr.highlights),
                   SizedBox(height: 1.2.h),
                   Wrap(
                     spacing: 2.5.w,
                     runSpacing: 1.2.h,
                     children: [
-                      _ChipInfo(icon: Icons.group, text: "${item.guests} Guests"),
-                      _ChipInfo(icon: Icons.bed, text: "${item.bedrooms} Bedrooms"),
-                      _ChipInfo(icon: Icons.bathtub, text: "${item.bathrooms} Bathrooms"),
-                      _ChipInfo(icon: Icons.square_foot, text: "${item.size.toStringAsFixed(0)} m²"),
+                      _ChipInfo(
+                        icon: Icons.group,
+                        text: "${item.guests} ${tr.guests}",
+                      ),
+                      _ChipInfo(
+                        icon: Icons.bed,
+                        text: "${item.bedrooms} ${tr.bedrooms}",
+                      ),
+                      _ChipInfo(
+                        icon: Icons.bathtub,
+                        text: "${item.bathrooms} ${tr.bathrooms}",
+                      ),
+                      _ChipInfo(
+                        icon: Icons.square_foot,
+                        text: "${item.size.toStringAsFixed(0)} m²",
+                      ),
                     ],
                   ),
 
                   SizedBox(height: 2.6.h),
 
-                  const _SectionTitle(title: "Amenities"),
+                  _SectionTitle(title: tr.amenities),
                   SizedBox(height: 1.2.h),
                   Row(
                     children: [
-                      Expanded(child: _AmenityTile(icon: Icons.pool, title: "Pool", isAvailable: item.hasPool)),
+                      Expanded(
+                        child: _AmenityTile(
+                          icon: Icons.pool,
+                          title: tr.pool,
+                          isAvailable: item.hasPool,
+                        ),
+                      ),
                       SizedBox(width: 2.6.w),
-                      Expanded(child: _AmenityTile(icon: Icons.outdoor_grill, title: "BBQ", isAvailable: item.hasBbq)),
+                      Expanded(
+                        child: _AmenityTile(
+                          icon: Icons.outdoor_grill,
+                          title: tr.bbq,
+                          isAvailable: item.hasBbq,
+                        ),
+                      ),
                       SizedBox(width: 2.6.w),
-                      Expanded(child: _AmenityTile(icon: Icons.wifi, title: "Wi-Fi", isAvailable: item.hasWifi)),
+                      Expanded(
+                        child: _AmenityTile(
+                          icon: Icons.wifi,
+                          title: tr.wifi,
+                          isAvailable: item.hasWifi,
+                        ),
+                      ),
                     ],
                   ),
 
                   SizedBox(height: 2.8.h),
-                  const _SectionTitle(title: "Contact & Social"),
+                  _SectionTitle(title: tr.contact_and_social),
                   _ContactLinksCard(item: item),
                 ],
               ),
@@ -145,7 +176,7 @@ class PropertyDetailsScreen extends StatelessWidget {
                 blurRadius: 18,
                 offset: const Offset(0, -6),
                 color: Colors.black.withAlpha(15),
-              )
+              ),
             ],
           ),
           child: Row(
@@ -156,8 +187,8 @@ class PropertyDetailsScreen extends StatelessWidget {
                 onPressed: () {
                   AppNavigator.of(context).push(BookingScreen(item: item));
                 },
-                child:  Text(
-                  "Book Now",
+                child: Text(
+                  tr.book_now,
                   style: appTextStyle(
                     context,
                     fontSize: 12.sp,
@@ -173,7 +204,7 @@ class PropertyDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Price",
+                      tr.price_label,
                       style: appTextStyle(
                         context,
                         fontSize: 10.5.sp,
@@ -183,7 +214,12 @@ class PropertyDetailsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 0.2.h),
                     Text(
-                      item.price,
+                      (() {
+                        final m = RegExp(r'\\d+').firstMatch(item.price);
+                        return m != null
+                            ? '${m.group(0)} ${tr.currency_jod}${tr.per_night}'
+                            : item.price;
+                      })(),
                       style: appTextStyle(
                         context,
                         fontSize: 13.sp,
@@ -227,7 +263,13 @@ class _InfoCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            item.title,
+            item.title == "Sea View Chalet"
+                ? tr.sample_sea_view_chalet
+                : item.title == "Cozy Nature Chalet"
+                ? tr.sample_cozy_nature_chalet
+                : item.title == "Family Chalet with Pool"
+                ? tr.sample_family_chalet_with_pool
+                : item.title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: appTextStyle(
@@ -274,11 +316,27 @@ class _ContactLinksCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final socialItems = <_SocialItem>[
-      _SocialItem(label: "YouTube", assetPath: youtubeLogo, url: item.youtubeUrl),
-      _SocialItem(label: "Facebook", assetPath: facebookLogo, url: item.facebookUrl),
-      _SocialItem(label: "Snapchat", assetPath: snapLogo, url: item.snapchatUrl),
-      _SocialItem(label: "Instagram", assetPath: instagramLogo, url: item.instagramUrl),
-      _SocialItem(label: "TikTok", assetPath: tikTokLogo, url: item.tiktokUrl),
+      _SocialItem(
+        label: tr.youtube,
+        assetPath: youtubeLogo,
+        url: item.youtubeUrl,
+      ),
+      _SocialItem(
+        label: tr.facebook,
+        assetPath: facebookLogo,
+        url: item.facebookUrl,
+      ),
+      _SocialItem(
+        label: tr.snapchat,
+        assetPath: snapLogo,
+        url: item.snapchatUrl,
+      ),
+      _SocialItem(
+        label: tr.instagram,
+        assetPath: instagramLogo,
+        url: item.instagramUrl,
+      ),
+      _SocialItem(label: tr.tiktok, assetPath: tikTokLogo, url: item.tiktokUrl),
     ].where((e) => _has(e.url)).toList();
 
     return Container(
@@ -299,8 +357,8 @@ class _ContactLinksCard extends StatelessWidget {
         children: [
           _ContactRow(
             icon: Icons.phone,
-            title: "Phone",
-            value: _has(item.phone) ? item.phone! : "Not provided",
+            title: tr.phone,
+            value: _has(item.phone) ? item.phone! : tr.not_provided,
             enabled: _has(item.phone),
             onTap: () {
               // TODO: launchUrl(Uri.parse("tel:${item.phone}"));
@@ -308,8 +366,8 @@ class _ContactLinksCard extends StatelessWidget {
           ),
           _ContactRow(
             icon: Icons.email,
-            title: "Email",
-            value: _has(item.email) ? item.email! : "Not provided",
+            title: tr.email,
+            value: _has(item.email) ? item.email! : tr.not_provided,
             enabled: _has(item.email),
             onTap: () {
               // TODO: launchUrl(Uri.parse("mailto:${item.email}"));
@@ -342,8 +400,7 @@ class _ContactLinksCard extends StatelessWidget {
                 );
               },
             ),
-          ]
-
+          ],
         ],
       ),
     );
@@ -557,7 +614,9 @@ class _AmenityTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = isAvailable ? Colors.green.withAlpha(18) : Colors.red.withAlpha(18);
+    final bg = isAvailable
+        ? Colors.green.withAlpha(18)
+        : Colors.red.withAlpha(18);
     final iconColor = isAvailable ? Colors.green : Colors.red;
 
     return Container(
@@ -581,7 +640,7 @@ class _AmenityTile extends StatelessWidget {
           ),
           SizedBox(height: 0.4.h),
           Text(
-            isAvailable ? "Available" : "Not available",
+            isAvailable ? tr.available : tr.not_available,
             style: appTextStyle(
               context,
               fontSize: 10.sp,
@@ -614,4 +673,3 @@ class _SectionTitle extends StatelessWidget {
     );
   }
 }
-

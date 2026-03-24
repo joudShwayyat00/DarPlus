@@ -1,4 +1,5 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -38,7 +39,8 @@ class SectionHeader extends StatelessWidget {
             foregroundColor: AppColors.goldBrandColor,
           ),
           child: Text(
-            "See all",
+            tr.see_all,
+            // "See all",
             style: appTextStyle(
               context,
               fontSize: 10.5.sp,

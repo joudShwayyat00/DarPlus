@@ -5,6 +5,7 @@ import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class MyReservationsScreen extends StatefulWidget {
   const MyReservationsScreen({super.key});
@@ -72,7 +73,7 @@ class _MyReservationsScreenState extends State<MyReservationsScreen>
         scrolledUnderElevation: 0,
 
         title: Text(
-          "My Bookings",
+          tr.my_bookings,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -103,9 +104,9 @@ class _MyReservationsScreenState extends State<MyReservationsScreen>
             fontSize: 11.sp,
             fontWeight: FontWeight.w600,
           ),
-          tabs: const [
-            Tab(text: "Upcoming"),
-            Tab(text: "Past"),
+          tabs: [
+            Tab(text: tr.upcoming),
+            Tab(text: tr.past),
           ],
         ),
       ),
@@ -135,7 +136,9 @@ class _MyReservationsScreenState extends State<MyReservationsScreen>
             ),
             SizedBox(height: 2.h),
             Text(
-              isUpcoming ? "No upcoming reservations" : "No past reservations",
+              isUpcoming
+                  ? tr.no_upcoming_reservations
+                  : tr.no_past_reservations,
               style: appTextStyle(
                 context,
                 fontSize: 12.sp,
@@ -236,7 +239,13 @@ class _MyReservationsScreenState extends State<MyReservationsScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  reservation.propertyName,
+                  reservation.propertyName == "Luxury Villa Marina"
+                      ? tr.sample_luxury_villa_marina
+                      : reservation.propertyName == "Penthouse Suite"
+                      ? tr.sample_penthouse_suite
+                      : reservation.propertyName == "Beach Resort Apartment"
+                      ? tr.sample_beach_resort_apartment
+                      : reservation.propertyName,
                   style: appTextStyle(
                     context,
                     fontSize: 12.5.sp,
@@ -268,13 +277,13 @@ class _MyReservationsScreenState extends State<MyReservationsScreen>
                 Row(
                   children: [
                     _buildDateInfo(
-                      "Check-in",
+                      tr.check_in,
                       reservation.checkIn,
                       Icons.login_rounded,
                     ),
                     SizedBox(width: 5.w),
                     _buildDateInfo(
-                      "Check-out",
+                      tr.check_out_label,
                       reservation.checkOut,
                       Icons.logout_rounded,
                     ),
@@ -340,22 +349,22 @@ class _MyReservationsScreenState extends State<MyReservationsScreen>
       case ReservationStatus.confirmed:
         bgColor = Colors.green.withAlpha(220);
         textColor = Colors.white;
-        text = "Confirmed";
+        text = tr.confirmed;
         break;
       case ReservationStatus.pending:
         bgColor = Colors.orange.withAlpha(220);
         textColor = Colors.white;
-        text = "Pending";
+        text = tr.pending;
         break;
       case ReservationStatus.completed:
         bgColor = Colors.blue.withAlpha(220);
         textColor = Colors.white;
-        text = "Completed";
+        text = tr.completed;
         break;
       case ReservationStatus.cancelled:
         bgColor = Colors.red.withAlpha(220);
         textColor = Colors.white;
-        text = "Cancelled";
+        text = tr.cancelled;
         break;
     }
 

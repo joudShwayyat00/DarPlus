@@ -1,6 +1,6 @@
 import 'dart:ui';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/screens/book_now_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
@@ -13,11 +13,7 @@ class PropertyTile extends StatelessWidget {
   final PropertyItem item;
   final VoidCallback? onBookNow;
 
-  const PropertyTile({
-    super.key,
-    required this.item,
-    this.onBookNow,
-  });
+  const PropertyTile({super.key, required this.item, this.onBookNow});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +41,7 @@ class PropertyTile extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  AppNetImage(url: item.images.first,),
+                  AppNetImage(url: item.images.first),
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -67,7 +63,13 @@ class PropertyTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.title,
+                    item.title == "Sea View Chalet"
+                        ? tr.sample_sea_view_chalet
+                        : item.title == "Cozy Nature Chalet"
+                        ? tr.sample_cozy_nature_chalet
+                        : item.title == "Family Chalet with Pool"
+                        ? tr.sample_family_chalet_with_pool
+                        : item.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: appTextStyle(
@@ -80,12 +82,21 @@ class PropertyTile extends StatelessWidget {
                   SizedBox(height: 0.7.h),
                   Row(
                     children: [
-                      Icon(Icons.location_on_outlined,
-                          size: 16, color: Colors.black.withAlpha(120)),
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 16,
+                        color: Colors.black.withAlpha(120),
+                      ),
                       SizedBox(width: 1.w),
                       Expanded(
                         child: Text(
-                          item.location,
+                          item.location == "Dead Sea"
+                              ? tr.sample_dead_sea
+                              : item.location == "Jerash"
+                              ? tr.sample_jerash
+                              : item.location == "Aqaba"
+                              ? tr.sample_aqaba
+                              : item.location,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: appTextStyle(
@@ -121,10 +132,14 @@ class PropertyTile extends StatelessWidget {
                   SizedBox(height: 1.6.h),
 
                   _LuxuryPrimaryButton(
-                    title: "Book Now",
-                    onPressed: onBookNow ?? () {
-                      AppNavigator.of(context).push(BookingScreen(item:item));
-                    },
+                    title: tr.book_now,
+                    onPressed:
+                        onBookNow ??
+                        () {
+                          AppNavigator.of(
+                            context,
+                          ).push(BookingScreen(item: item));
+                        },
                   ),
                 ],
               ),
@@ -144,6 +159,11 @@ class _PriceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final match = RegExp(r'\d+').firstMatch(price);
+    final displayPrice = match != null
+        ? '${match.group(0)} ${tr.currency_jod}${tr.per_night}'
+        : price;
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.75.h),
       decoration: BoxDecoration(
@@ -152,7 +172,7 @@ class _PriceChip extends StatelessWidget {
         border: Border.all(color: AppColors.goldBrandColor.withAlpha(70)),
       ),
       child: Text(
-        price,
+        displayPrice,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: appTextStyle(
@@ -194,10 +214,7 @@ class _LuxuryPrimaryButton extends StatelessWidget {
   final String title;
   final VoidCallback onPressed;
 
-  const _LuxuryPrimaryButton({
-    required this.title,
-    required this.onPressed,
-  });
+  const _LuxuryPrimaryButton({required this.title, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -216,8 +233,11 @@ class _LuxuryPrimaryButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.calendar_month_outlined,
-                size: 18, color: Colors.white.withAlpha(245)),
+            Icon(
+              Icons.calendar_month_outlined,
+              size: 18,
+              color: Colors.white.withAlpha(245),
+            ),
             SizedBox(width: 2.w),
             Text(
               title,
@@ -239,11 +259,7 @@ class RatingStars extends StatelessWidget {
   final double rating;
   final double size;
 
-  const RatingStars({
-    super.key,
-    required this.rating,
-    this.size = 12,
-  });
+  const RatingStars({super.key, required this.rating, this.size = 12});
 
   @override
   Widget build(BuildContext context) {

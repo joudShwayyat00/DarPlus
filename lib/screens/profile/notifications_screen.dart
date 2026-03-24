@@ -2,6 +2,7 @@ import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -13,37 +14,36 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   final List<_NotificationItem> _notifications = [
     _NotificationItem(
-      title: "Booking Confirmed",
-      message: "Your booking for Luxury Villa Marina has been confirmed.",
+      title: tr.notification_booking_confirmed_title,
+      message: tr.notification_booking_confirmed_message,
       time: "2 hours ago",
       type: NotificationType.booking,
       isRead: false,
     ),
     _NotificationItem(
-      title: "Special Offer",
-      message: "Get 20% off on your next booking! Limited time offer.",
+      title: tr.special_offer_title,
+      message: tr.special_offer_message,
       time: "5 hours ago",
       type: NotificationType.promo,
       isRead: false,
     ),
     _NotificationItem(
-      title: "Payment Received",
-      message: "We've received your payment of \$1,250 for your reservation.",
+      title: tr.payment_received_title,
+      message: tr.payment_received_message,
       time: "1 day ago",
       type: NotificationType.payment,
       isRead: true,
     ),
     _NotificationItem(
-      title: "Review Request",
-      message: "How was your stay at Beach Resort Apartment? Leave a review!",
+      title: tr.review_request_title,
+      message: tr.review_request_message,
       time: "2 days ago",
       type: NotificationType.review,
       isRead: true,
     ),
     _NotificationItem(
-      title: "New Property Alert",
-      message:
-          "A new luxury property matching your preferences is now available.",
+      title: tr.new_property_alert_title,
+      message: tr.new_property_alert_message,
       time: "3 days ago",
       type: NotificationType.alert,
       isRead: true,
@@ -67,7 +67,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
         ),
         title: Text(
-          "Notifications",
+          tr.notifications,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -86,7 +86,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               });
             },
             child: Text(
-              "Mark all read",
+              tr.mark_all_read,
               style: appTextStyle(
                 context,
                 fontSize: 10.sp,
@@ -121,7 +121,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           SizedBox(height: 2.h),
           Text(
-            "No notifications yet",
+            tr.no_notifications_yet,
             style: appTextStyle(
               context,
               fontSize: 12.sp,
@@ -131,7 +131,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           SizedBox(height: 0.5.h),
           Text(
-            "We'll notify you when something arrives",
+            tr.will_notify_when_something_arrives,
             style: appTextStyle(
               context,
               fontSize: 10.sp,

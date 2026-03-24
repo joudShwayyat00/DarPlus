@@ -7,6 +7,7 @@ import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class BottomNavBarScreen extends StatefulWidget {
   const BottomNavBarScreen({super.key});
@@ -71,11 +72,11 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
               color: AppColors.goldBrandColor,
             ),
 
-            tabs: const [
-              GButton(icon: Icons.home_rounded, text: 'Home'),
-              GButton(icon: Icons.search_rounded, text: 'Explore'),
-              GButton(icon: Icons.bookmark_rounded, text: 'Bookings'),
-              GButton(icon: Icons.person_rounded, text: 'Profile'),
+            tabs: [
+              GButton(icon: Icons.home_rounded, text: tr.nav_home),
+              GButton(icon: Icons.search_rounded, text: tr.nav_explore),
+              GButton(icon: Icons.bookmark_rounded, text: tr.nav_bookings),
+              GButton(icon: Icons.person_rounded, text: tr.nav_profile),
             ],
           ),
         ),

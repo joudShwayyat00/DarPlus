@@ -2,6 +2,7 @@ import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class TermsConditionsScreen extends StatelessWidget {
   const TermsConditionsScreen({super.key});
@@ -23,7 +24,7 @@ class TermsConditionsScreen extends StatelessWidget {
           ),
         ),
         title: Text(
-          "Terms and Conditions",
+          tr.terms_and_conditions,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -48,7 +49,7 @@ class TermsConditionsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                "Effective Date: January 1, 2026",
+                tr.terms_effective_date,
                 style: appTextStyle(
                   context,
                   fontSize: 10.sp,
@@ -61,7 +62,7 @@ class TermsConditionsScreen extends StatelessWidget {
             SizedBox(height: 2.h),
 
             Text(
-              "Welcome to Dar Plus. By accessing or using our application, you agree to be bound by these Terms and Conditions. Please read them carefully before using our services.",
+              tr.terms_intro,
               style: appTextStyle(
                 context,
                 fontSize: 10.5.sp,
@@ -76,165 +77,85 @@ class TermsConditionsScreen extends StatelessWidget {
             _buildSection(
               context,
               number: "1",
-              title: "Acceptance of Terms",
-              content:
-                  """By creating an account or using Dar Plus, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions and our Privacy Policy. If you do not agree to these terms, please do not use our services.
-
-These terms apply to all users, including guests, registered users, and property owners.""",
+              title: tr.terms_section_1_title,
+              content: tr.terms_section_1_content,
             ),
 
             _buildSection(
               context,
               number: "2",
-              title: "Eligibility",
-              content: """To use Dar Plus, you must:
-
-• Be at least 18 years of age
-• Have the legal capacity to enter into contracts
-• Provide accurate and complete registration information
-• Maintain the security of your account credentials
-
-We reserve the right to refuse service to anyone for any reason at any time.""",
+              title: tr.terms_section_2_title,
+              content: tr.terms_section_2_content,
             ),
 
             _buildSection(
               context,
               number: "3",
-              title: "User Accounts",
-              content: """When you create an account:
-
-• You are responsible for maintaining account confidentiality
-• You must notify us of any unauthorized access
-• You are responsible for all activities under your account
-• You may not share your account with others
-• We may suspend or terminate accounts that violate our terms
-
-One person may only maintain one account.""",
+              title: tr.terms_section_3_title,
+              content: tr.terms_section_3_content,
             ),
 
             _buildSection(
               context,
               number: "4",
-              title: "Booking and Reservations",
-              content: """When making a booking:
-
-• All bookings are subject to availability and confirmation
-• Prices are displayed in the local currency and may change
-• You agree to pay all charges at the prices in effect
-• Booking confirmations will be sent via email
-• You must review all booking details before confirming
-
-Bookings are binding contracts between you and the property owner.""",
+              title: tr.terms_section_4_title,
+              content: tr.terms_section_4_content,
             ),
 
             _buildSection(
               context,
               number: "5",
-              title: "Cancellation Policy",
-              content: """Cancellation terms vary by property:
-
-• Free cancellation may be available up to a specified time
-• Late cancellations may incur fees
-• No-shows may be charged the full booking amount
-• Refunds are processed within 5-10 business days
-• Force majeure events are handled case by case
-
-Always review the specific cancellation policy before booking.""",
+              title: tr.terms_section_5_title,
+              content: tr.terms_section_5_content,
             ),
 
             _buildSection(
               context,
               number: "6",
-              title: "Payments",
-              content: """Payment terms:
-
-• We accept major credit cards and digital payment methods
-• Payment is required to confirm your booking
-• All transactions are processed securely
-• Prices include applicable taxes unless stated otherwise
-• Currency conversion fees may apply for international payments
-
-We do not store complete credit card information on our servers.""",
+              title: tr.terms_section_6_title,
+              content: tr.terms_section_6_content,
             ),
 
             _buildSection(
               context,
               number: "7",
-              title: "User Conduct",
-              content: """You agree not to:
-
-• Use the service for any illegal purpose
-• Violate any applicable laws or regulations
-• Infringe on intellectual property rights
-• Post false, misleading, or defamatory content
-• Harass, abuse, or harm other users
-• Attempt to gain unauthorized access
-• Use automated systems to access the service
-• Interfere with the proper functioning of the service""",
+              title: tr.terms_section_7_title,
+              content: tr.terms_section_7_content,
             ),
 
             _buildSection(
               context,
               number: "8",
-              title: "Intellectual Property",
-              content:
-                  """All content on Dar Plus, including but not limited to text, graphics, logos, images, and software, is the property of Dar Plus or its content suppliers and is protected by intellectual property laws.
-
-You may not reproduce, distribute, modify, or create derivative works without our express written permission.""",
+              title: tr.terms_section_8_title,
+              content: tr.terms_section_8_content,
             ),
 
             _buildSection(
               context,
               number: "9",
-              title: "Limitation of Liability",
-              content:
-                  """Dar Plus provides the platform "as is" without warranties of any kind. We are not liable for:
-
-• Actions or conduct of property owners or guests
-• Property conditions or amenities
-• Service interruptions or errors
-• Loss of data or unauthorized access
-• Any indirect, incidental, or consequential damages
-
-Our maximum liability shall not exceed the amount paid for the booking.""",
+              title: tr.terms_section_9_title,
+              content: tr.terms_section_9_content,
             ),
 
             _buildSection(
               context,
               number: "10",
-              title: "Dispute Resolution",
-              content: """In case of disputes:
-
-• First attempt to resolve through our customer service
-• Mediation may be offered for unresolved issues
-• Arbitration may be required for certain disputes
-• Legal proceedings shall be in courts of Jordan
-• These terms are governed by Jordanian law
-
-We encourage open communication to resolve issues amicably.""",
+              title: tr.terms_section_10_title,
+              content: tr.terms_section_10_content,
             ),
 
             _buildSection(
               context,
               number: "11",
-              title: "Modifications",
-              content:
-                  """We reserve the right to modify these Terms and Conditions at any time. Changes will be effective upon posting to the application. Your continued use of the service after changes constitutes acceptance of the modified terms.
-
-We will notify users of significant changes via email or in-app notification.""",
+              title: tr.terms_section_11_title,
+              content: tr.terms_section_11_content,
             ),
 
             _buildSection(
               context,
               number: "12",
-              title: "Contact Information",
-              content: """For questions about these Terms and Conditions:
-
-Email: legal@darplus.com
-Phone: +962 7 9999 9999
-Address: Amman, Jordan
-
-Our customer service team is available 24/7 to assist you.""",
+              title: tr.terms_section_12_title,
+              content: tr.terms_section_12_content,
             ),
 
             SizedBox(height: 2.h),
@@ -245,7 +166,9 @@ Our customer service team is available 24/7 to assist you.""",
               decoration: BoxDecoration(
                 color: AppColors.goldBrandColor.withAlpha(10),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.goldBrandColor.withAlpha(40)),
+                border: Border.all(
+                  color: AppColors.goldBrandColor.withAlpha(40),
+                ),
               ),
               child: Row(
                 children: [
@@ -257,7 +180,7 @@ Our customer service team is available 24/7 to assist you.""",
                   SizedBox(width: 3.w),
                   Expanded(
                     child: Text(
-                      "By using Dar Plus, you acknowledge that you have read and agree to these Terms and Conditions.",
+                      tr.terms_agreement_statement,
                       style: appTextStyle(
                         context,
                         fontSize: 10.sp,

@@ -3,6 +3,7 @@ import 'package:dar_plus_app/configuration/app_images.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -24,7 +25,7 @@ class AboutScreen extends StatelessWidget {
           ),
         ),
         title: Text(
-          "About",
+          tr.about,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -41,11 +42,7 @@ class AboutScreen extends StatelessWidget {
             SizedBox(height: 3.h),
 
             // Logo and App Name
-            Image.asset(
-              appLogo,
-              height: 15.h,
-              fit: BoxFit.contain,
-            ),
+            Image.asset(appLogo, height: 15.h, fit: BoxFit.contain),
             SizedBox(height: 2.h),
             Text(
               "Dar Plus",
@@ -57,7 +54,7 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
             Text(
-              "Premium Real Estate",
+              tr.premium_real_estate,
               style: appTextStyle(
                 context,
                 fontSize: 11.sp,
@@ -67,7 +64,7 @@ class AboutScreen extends StatelessWidget {
             ),
             SizedBox(height: 1.h),
             Text(
-              "Version 1.0.0",
+              '${tr.version} 1.0.0',
               style: appTextStyle(
                 context,
                 fontSize: 10.sp,
@@ -98,7 +95,7 @@ class AboutScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Our Story",
+                    tr.our_story,
                     style: appTextStyle(
                       context,
                       fontSize: 13.sp,
@@ -108,7 +105,7 @@ class AboutScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 1.5.h),
                   Text(
-                    "Dar Plus was founded with a vision to revolutionize the real estate experience. We believe that finding your perfect property should be an exciting journey, not a stressful task.\n\nOur platform connects you with premium properties across the region, offering a seamless booking experience with transparent pricing and exceptional service.",
+                    tr.our_story_body,
                     style: appTextStyle(
                       context,
                       fontSize: 10.5.sp,
@@ -129,17 +126,15 @@ class AboutScreen extends StatelessWidget {
                 _buildInfoCard(
                   context,
                   icon: Icons.flag_rounded,
-                  title: "Our Mission",
-                  description:
-                      "To provide exceptional real estate services with integrity and innovation.",
+                  title: tr.our_mission,
+                  description: tr.our_mission_body,
                 ),
                 SizedBox(width: 3.w),
                 _buildInfoCard(
                   context,
                   icon: Icons.visibility_rounded,
-                  title: "Our Vision",
-                  description:
-                      "To be the leading real estate platform in the region.",
+                  title: tr.our_vision,
+                  description: tr.our_vision_body,
                 ),
               ],
             ),
@@ -163,11 +158,11 @@ class AboutScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildStat(context, "500+", "Properties"),
+                  _buildStat(context, "500+", tr.properties),
                   _buildDivider(),
-                  _buildStat(context, "10K+", "Users"),
+                  _buildStat(context, "10K+", tr.users),
                   _buildDivider(),
-                  _buildStat(context, "50+", "Cities"),
+                  _buildStat(context, "50+", tr.cities),
                 ],
               ),
             ),
@@ -194,7 +189,7 @@ class AboutScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Our Values",
+                    tr.our_values,
                     style: appTextStyle(
                       context,
                       fontSize: 13.sp,
@@ -206,26 +201,26 @@ class AboutScreen extends StatelessWidget {
                   _buildValueItem(
                     context,
                     Icons.verified_rounded,
-                    "Trust & Transparency",
-                    "We maintain honesty in all our dealings",
+                    tr.value_trust_title,
+                    tr.value_trust_desc,
                   ),
                   _buildValueItem(
                     context,
                     Icons.star_rounded,
-                    "Excellence",
-                    "We strive to exceed expectations",
+                    tr.value_excellence_title,
+                    tr.value_excellence_desc,
                   ),
                   _buildValueItem(
                     context,
                     Icons.people_rounded,
-                    "Customer First",
-                    "Your satisfaction is our priority",
+                    tr.value_customer_title,
+                    tr.value_customer_desc,
                   ),
                   _buildValueItem(
                     context,
                     Icons.lightbulb_rounded,
-                    "Innovation",
-                    "We embrace technology for better service",
+                    tr.value_innovation_title,
+                    tr.value_innovation_desc,
                   ),
                 ],
               ),
@@ -281,11 +276,7 @@ class AboutScreen extends StatelessWidget {
                 color: AppColors.goldBrandColor.withAlpha(15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                icon,
-                color: AppColors.goldBrandColor,
-                size: 20,
-              ),
+              child: Icon(icon, color: AppColors.goldBrandColor, size: 20),
             ),
             SizedBox(height: 1.5.h),
             Text(
@@ -341,11 +332,7 @@ class AboutScreen extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return Container(
-      height: 40,
-      width: 1,
-      color: Colors.white.withAlpha(60),
-    );
+    return Container(height: 40, width: 1, color: Colors.white.withAlpha(60));
   }
 
   Widget _buildValueItem(
@@ -364,11 +351,7 @@ class AboutScreen extends StatelessWidget {
               color: AppColors.goldBrandColor.withAlpha(15),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              icon,
-              color: AppColors.goldBrandColor,
-              size: 18,
-            ),
+            child: Icon(icon, color: AppColors.goldBrandColor, size: 18),
           ),
           SizedBox(width: 3.w),
           Expanded(

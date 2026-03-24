@@ -3,6 +3,7 @@ import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
@@ -24,7 +25,7 @@ class ContactUsScreen extends StatelessWidget {
           ),
         ),
         title: Text(
-          "Contact Us",
+          tr.contact_us,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -47,7 +48,7 @@ class ContactUsScreen extends StatelessWidget {
                 _buildContactMethod(
                   context,
                   icon: Icons.phone_rounded,
-                  title: "Phone",
+                  title: tr.phone,
                   subtitle: "+962 7 9999 9999",
                   onTap: () {
                     // TODO: Open phone
@@ -57,7 +58,7 @@ class ContactUsScreen extends StatelessWidget {
                 _buildContactMethod(
                   context,
                   icon: Icons.email_rounded,
-                  title: "Email",
+                  title: tr.email,
                   subtitle: "support@darplus.com",
                   onTap: () {
                     // TODO: Open email
@@ -73,7 +74,7 @@ class ContactUsScreen extends StatelessWidget {
                 _buildContactMethod(
                   context,
                   icon: Icons.location_on_rounded,
-                  title: "Address",
+                  title: tr.address,
                   subtitle: "Amman, Jordan",
                   onTap: () {
                     // TODO: Open map
@@ -83,7 +84,7 @@ class ContactUsScreen extends StatelessWidget {
                 _buildContactMethod(
                   context,
                   icon: Icons.access_time_rounded,
-                  title: "Hours",
+                  title: tr.hours,
                   subtitle: "24/7 Support",
                   onTap: () {},
                 ),
@@ -104,7 +105,7 @@ class ContactUsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    "Connect With Us",
+                    tr.connect_with_us,
                     style: appTextStyle(
                       context,
                       fontSize: 13.sp,
@@ -114,7 +115,7 @@ class ContactUsScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 0.5.h),
                   Text(
-                    "Follow us on social media",
+                    tr.follow_us_on_social_media,
                     style: appTextStyle(
                       context,
                       fontSize: 9.5.sp,

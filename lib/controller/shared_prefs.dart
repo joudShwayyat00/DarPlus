@@ -40,6 +40,17 @@ class SharedPerfManager {
     _isLoggedIn = SharedPerHelper().setBool('isLoggedIn', value);
   }
 
+  static late String _token;
+
+  String get token {
+    _token = SharedPerHelper().getString('token');
+    return _token;
+  }
+
+  set token(String value) {
+    _token = SharedPerHelper().setString('token', value);
+  }
+
   void clear() {
     _prefs.clear();
   }

@@ -2,6 +2,7 @@ import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dar_plus_app/main.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -23,7 +24,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
           ),
         ),
         title: Text(
-          "Privacy Policy",
+          tr.privacy_policy,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -48,7 +49,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                "Last Updated: January 1, 2026",
+                tr.privacy_last_updated,
                 style: appTextStyle(
                   context,
                   fontSize: 10.sp,
@@ -61,7 +62,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
             SizedBox(height: 2.h),
 
             Text(
-              "Your privacy is important to us. This Privacy Policy explains how Dar Plus collects, uses, discloses, and safeguards your information.",
+              tr.privacy_intro,
               style: appTextStyle(
                 context,
                 fontSize: 10.5.sp,
@@ -76,115 +77,64 @@ class PrivacyPolicyScreen extends StatelessWidget {
             _buildSection(
               context,
               number: "1",
-              title: "Information We Collect",
-              content: """We collect information you provide directly to us, such as:
-
-• Personal Information: Name, email address, phone number, and profile picture.
-• Account Information: Username, password, and account preferences.
-• Payment Information: Credit card details and billing address (processed securely through our payment providers).
-• Property Preferences: Search history, saved properties, and booking preferences.
-• Communications: Messages, feedback, and support requests.""",
+              title: tr.privacy_section_1_title,
+              content: tr.privacy_section_1_content,
             ),
 
             _buildSection(
               context,
               number: "2",
-              title: "How We Use Your Information",
-              content: """We use the information we collect to:
-
-• Provide, maintain, and improve our services
-• Process transactions and send related information
-• Send promotional communications (with your consent)
-• Respond to your comments, questions, and requests
-• Monitor and analyze trends, usage, and activities
-• Detect, investigate, and prevent fraudulent transactions
-• Personalize and improve your experience""",
+              title: tr.privacy_section_2_title,
+              content: tr.privacy_section_2_content,
             ),
 
             _buildSection(
               context,
               number: "3",
-              title: "Information Sharing",
-              content: """We may share your information with:
-
-• Property Owners: To facilitate bookings and communication
-• Service Providers: Who assist in our operations
-• Legal Authorities: When required by law or to protect rights
-• Business Partners: With your consent for joint offerings
-
-We do not sell your personal information to third parties.""",
+              title: tr.privacy_section_3_title,
+              content: tr.privacy_section_3_content,
             ),
 
             _buildSection(
               context,
               number: "4",
-              title: "Data Security",
-              content: """We implement appropriate security measures to protect your information:
-
-• SSL encryption for data transmission
-• Secure servers and databases
-• Regular security audits
-• Limited access to personal information
-• Two-factor authentication options
-
-However, no method of transmission over the Internet is 100% secure.""",
+              title: tr.privacy_section_4_title,
+              content: tr.privacy_section_4_content,
             ),
 
             _buildSection(
               context,
               number: "5",
-              title: "Your Rights",
-              content: """You have the right to:
-
-• Access your personal information
-• Correct inaccurate data
-• Delete your account and data
-• Opt-out of marketing communications
-• Export your data
-• Restrict processing of your data
-
-To exercise these rights, contact us at privacy@darplus.com""",
+              title: tr.privacy_section_5_title,
+              content: tr.privacy_section_5_content,
             ),
 
             _buildSection(
               context,
               number: "6",
-              title: "Cookies and Tracking",
-              content: """We use cookies and similar technologies to:
-
-• Remember your preferences
-• Analyze site traffic
-• Personalize content
-• Improve our services
-
-You can control cookies through your browser settings.""",
+              title: tr.privacy_section_6_title,
+              content: tr.privacy_section_6_content,
             ),
 
             _buildSection(
               context,
               number: "7",
-              title: "Children's Privacy",
-              content:
-                  """Our services are not intended for children under 18. We do not knowingly collect personal information from children. If you believe we have collected information from a child, please contact us immediately.""",
+              title: tr.privacy_section_7_title,
+              content: tr.privacy_section_7_content,
             ),
 
             _buildSection(
               context,
               number: "8",
-              title: "Changes to This Policy",
-              content:
-                  """We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date. Your continued use of our services after changes indicates acceptance of the updated policy.""",
+              title: tr.privacy_section_8_title,
+              content: tr.privacy_section_8_content,
             ),
 
             _buildSection(
               context,
               number: "9",
-              title: "Contact Us",
-              content: """If you have questions about this Privacy Policy, please contact us:
-
-Email: privacy@darplus.com
-Phone: +962 7 9999 9999
-Address: Amman, Jordan""",
+              title: tr.contact_us,
+              content: tr.privacy_section_9_content,
             ),
 
             SizedBox(height: 3.h),

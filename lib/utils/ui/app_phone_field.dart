@@ -1,4 +1,5 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,9 +44,10 @@ class AppPhoneField extends StatelessWidget {
       validator: (_) {
         final value = controller.text.trim();
 
-        if (value.isEmpty) return "Phone is required";
-        if (!RegExp(r'^\d+$').hasMatch(value)) return "Digits only";
-        if (value.length < 10) return "Enter a valid phone number";
+        if (value.isEmpty) return tr.phone_is_required;
+
+        if (!RegExp(r'^\d+$').hasMatch(value)) return tr.digits_only;
+        if (value.length < 10) return tr.enter_valid_phone_number;
 
         if (validator != null) return validator!(value);
 
@@ -81,7 +83,7 @@ class AppPhoneField extends StatelessWidget {
             LengthLimitingTextInputFormatter(10),
           ],
           decoration: InputDecoration(
-            hintText: hint ?? "Phone Number",
+            hintText: hint ?? tr.phone_number,
             hintStyle: appTextStyle(
               context,
               fontSize: 10.8.sp,
@@ -97,8 +99,10 @@ class AppPhoneField extends StatelessWidget {
             ),
             filled: true,
             fillColor: Colors.white,
-            contentPadding:
-            EdgeInsets.symmetric(vertical: 1.55.h, horizontal: 3.w),
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 1.55.h,
+              horizontal: 3.w,
+            ),
             enabledBorder: outlineInputBorder(),
             focusedBorder: outlineInputBorder(),
             errorBorder: outlineInputBorder(borderColor: Colors.red),

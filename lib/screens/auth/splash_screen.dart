@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/configuration/app_images.dart';
+import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/controller/shared_prefs.dart';
 import 'package:dar_plus_app/screens/auth/welcome_screen.dart';
+import 'package:dar_plus_app/screens/bottom_nav_bar_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +26,11 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _startSplashTimer() async {
     await Future.delayed(const Duration(seconds: 3));
     if (!mounted) return;
-    AppNavigator.of(context).pushAndRemoveUntil(const WelcomeScreen());
+    if (SharedPerfManager().isLoggedIn) {
+      AppNavigator.of(context).pushAndRemoveUntil(const BottomNavBarScreen());
+    } else {
+      AppNavigator.of(context).pushAndRemoveUntil(const WelcomeScreen());
+    }
   }
 
   @override
@@ -92,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen>
                             ),
                             SizedBox(height: 2.h),
                             Text(
-                              "Loading...",
+                              tr.loading,
                               style: appTextStyle(
                                 context,
                                 fontSize: 11.sp,

@@ -1,4 +1,5 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/screens/home/widgets/category_card.dart';
 import 'package:dar_plus_app/screens/home/widgets/home_slider.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 class HomeScreen extends StatefulWidget {
-   const HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -25,23 +26,19 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<_CategoryItem> _categories = [
     _CategoryItem(
       title: "Hotel Apartments",
-      imageUrl:
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+      imageUrl: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
     ),
     _CategoryItem(
       title: "Family Apartments",
-      imageUrl:
-      "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
+      imageUrl: "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
     ),
     _CategoryItem(
       title: "Chalets",
-      imageUrl:
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511",
+      imageUrl: "https://images.unsplash.com/photo-1505691938895-1758d7feb511",
     ),
     _CategoryItem(
       title: "Farms",
-      imageUrl:
-      "https://images.unsplash.com/photo-1599423300746-b62533397364",
+      imageUrl: "https://images.unsplash.com/photo-1599423300746-b62533397364",
     ),
   ];
 
@@ -61,7 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SectionHeader(
-                      title: "Browse by Category",
+                      title: tr.browse_by_category,
+
+                      //  "Browse by Category",
                       seeAll: false,
                     ),
                     SizedBox(height: 1.5.h),
@@ -73,9 +72,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: _categories.length,
                         separatorBuilder: (_, __) => SizedBox(width: 2.w),
                         itemBuilder: (context, index) {
-                          final category = _categories[index];
+                          final localizedTitle = index == 0
+                              ? tr.hotel_apartments
+                              : index == 1
+                              ? tr.family_apartments
+                              : index == 2
+                              ? tr.chalets
+                              : tr.farms;
                           return CategoryBox(
-                            title: category.title,
+                            title: localizedTitle,
                             onTap: () {
                               // TODO: Filter by category
                             },
@@ -84,17 +89,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     SectionHeader(
-                      title: "Top Rated",
+                      title: tr.top_rated,
+                      // "Top Rated",
                       onSeeAll: () {},
                     ),
                     SizedBox(
                       height: 43.h,
                       child: GestureDetector(
-                        onTap: (){
-                          final selected = recommendedProperties[_currentRecommendedIndex];
-                          AppNavigator.of(context).push(
-                            PropertyDetailsScreen(item: selected),
-                          );
+                        onTap: () {
+                          final selected =
+                              recommendedProperties[_currentRecommendedIndex];
+                          AppNavigator.of(
+                            context,
+                          ).push(PropertyDetailsScreen(item: selected));
                         },
                         child: NotificationListener<ScrollNotification>(
                           onNotification: (notification) {
@@ -102,7 +109,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               final page = _recommendedController.page ?? 0;
                               final newIndex = page.round();
                               if (newIndex != _currentRecommendedIndex) {
-                                setState(() => _currentRecommendedIndex = newIndex);
+                                setState(
+                                  () => _currentRecommendedIndex = newIndex,
+                                );
                               }
                             }
                             return false;
@@ -113,9 +122,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: EdgeInsets.only(
-                                  right: index == recommendedProperties.length - 1 ? 0 : 3.w,
+                                  right:
+                                      index == recommendedProperties.length - 1
+                                      ? 0
+                                      : 3.w,
                                 ),
-                                child: PropertyTile(item: recommendedProperties[index]),
+                                child: PropertyTile(
+                                  item: recommendedProperties[index],
+                                ),
                               );
                             },
                           ),
@@ -127,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
                         recommendedProperties.length,
-                            (index) => AnimatedContainer(
+                        (index) => AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           margin: const EdgeInsets.symmetric(horizontal: 4),
                           width: _currentRecommendedIndex == index ? 18 : 7,
@@ -152,14 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-
 class _CategoryItem {
   final String title;
   final String imageUrl;
 
-  const _CategoryItem({
-    required this.title,
-    required this.imageUrl,
-  });
+  const _CategoryItem({required this.title, required this.imageUrl});
 }
-

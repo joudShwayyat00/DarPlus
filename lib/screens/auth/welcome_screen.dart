@@ -2,10 +2,11 @@ import 'dart:ui';
 
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/configuration/app_images.dart';
+import 'package:dar_plus_app/controller/shared_prefs.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/auth/login_screen.dart';
 import 'package:dar_plus_app/screens/auth/sign_up_screen.dart';
 import 'package:dar_plus_app/screens/bottom_nav_bar_screen.dart';
-import 'package:dar_plus_app/screens/home/home_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -53,7 +54,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final topHeight = 53.h;
+    // final topHeight = 53.h;
+    final topHeight = (SharedPerfManager().languageCode == "en") ? 53.h : 58.h;
+
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -86,7 +89,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               ),
               Positioned(
                 top: topHeight - 5.2.h,
-                left: 7.w,
+                left: (SharedPerfManager().languageCode == "en") ? 7.w : null,
+                right: (SharedPerfManager().languageCode == "ar") ? 7.w : null,
                 child: Container(
                   height: 0.45.h,
                   width: 22.w,
@@ -129,7 +133,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Where Real Estate Meets Elegance",
+                                tr.where_real_estate_meets_elegance,
+                                //"Where Real Estate Meets Elegance",
                                 style: appTextStyle(
                                   context,
                                   color: AppColors.whiteColor,
@@ -141,8 +146,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               SizedBox(height: 1.2.h),
 
                               Text(
-                                "Discover, manage, and elevate premium properties "
-                                "with a seamless digital experience.",
+                                "  ${tr.discover_manage_and_elevate_premium_properties} \n${tr.with_a_seamless_digital_experience}",
+
+                                // "Discover, manage, and elevate premium properties "
+                                // "with a seamless digital experience.",
                                 style: appTextStyle(
                                   context,
                                   color: AppColors.grayBrandColor,
@@ -163,7 +170,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                   ),
                                   SizedBox(width: 2.5.w),
                                   Text(
-                                    "Showcase • Booking • Growth",
+                                    "${tr.showcase} • ${tr.booking} • ${tr.growth}",
                                     style: appTextStyle(
                                       context,
                                       color: AppColors.whiteColor.withAlpha(
@@ -185,7 +192,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                   ).push(const LoginScreen());
                                 },
                                 child: Text(
-                                  "Login",
+                                  tr.login,
                                   style: appTextStyle(
                                     context,
                                     fontSize: 12.2.sp,
@@ -202,7 +209,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                   AppNavigator.of(context).push(SignUpScreen());
                                 },
                                 child: Text(
-                                  "Sign Up",
+                                  tr.signup,
                                   style: appTextStyle(
                                     context,
                                     fontSize: 12.2.sp,
@@ -220,7 +227,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                 },
                                 child: Center(
                                   child: Text(
-                                    "Continue as Guest",
+                                    tr.continue_as_guest,
                                     style: appTextStyle(
                                       context,
                                       fontSize: 11.sp,
