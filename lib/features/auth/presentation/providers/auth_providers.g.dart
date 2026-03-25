@@ -101,8 +101,7 @@ String _$authRepositoryHash() => r'78ac713939f0c35741c5b74c13527c19c8f2d2a5';
 const registerControllerProvider = RegisterControllerProvider._();
 
 final class RegisterControllerProvider
-    extends
-        $NotifierProvider<RegisterController, AsyncValue<RegisterResponse?>> {
+    extends $AsyncNotifierProvider<RegisterController, RegisterResponse?> {
   const RegisterControllerProvider._()
     : super(
         from: null,
@@ -120,41 +119,23 @@ final class RegisterControllerProvider
   @$internal
   @override
   RegisterController create() => RegisterController();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<RegisterResponse?> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<RegisterResponse?>>(
-        value,
-      ),
-    );
-  }
 }
 
 String _$registerControllerHash() =>
-    r'c6b1adaed16c55f262e2cb334a27749252a25a2c';
+    r'10f195ab8bc9efe165338c62a0bc4eb8339c2bb5';
 
-abstract class _$RegisterController
-    extends $Notifier<AsyncValue<RegisterResponse?>> {
-  AsyncValue<RegisterResponse?> build();
+abstract class _$RegisterController extends $AsyncNotifier<RegisterResponse?> {
+  FutureOr<RegisterResponse?> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
     final ref =
-        this.ref
-            as $Ref<
-              AsyncValue<RegisterResponse?>,
-              AsyncValue<RegisterResponse?>
-            >;
+        this.ref as $Ref<AsyncValue<RegisterResponse?>, RegisterResponse?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<
-                AsyncValue<RegisterResponse?>,
-                AsyncValue<RegisterResponse?>
-              >,
+              AnyNotifier<AsyncValue<RegisterResponse?>, RegisterResponse?>,
               AsyncValue<RegisterResponse?>,
               Object?,
               Object?
@@ -167,7 +148,7 @@ abstract class _$RegisterController
 const loginControllerProvider = LoginControllerProvider._();
 
 final class LoginControllerProvider
-    extends $NotifierProvider<LoginController, AsyncValue<RegisterResponse?>> {
+    extends $AsyncNotifierProvider<LoginController, RegisterResponse?> {
   const LoginControllerProvider._()
     : super(
         from: null,
@@ -185,40 +166,22 @@ final class LoginControllerProvider
   @$internal
   @override
   LoginController create() => LoginController();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<RegisterResponse?> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<RegisterResponse?>>(
-        value,
-      ),
-    );
-  }
 }
 
-String _$loginControllerHash() => r'6ba46cf74b8f1c91773325bd9a246931313cf006';
+String _$loginControllerHash() => r'c51c5ce51f3cfe4e7980877cc24377dc2ad1a2a5';
 
-abstract class _$LoginController
-    extends $Notifier<AsyncValue<RegisterResponse?>> {
-  AsyncValue<RegisterResponse?> build();
+abstract class _$LoginController extends $AsyncNotifier<RegisterResponse?> {
+  FutureOr<RegisterResponse?> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
     final ref =
-        this.ref
-            as $Ref<
-              AsyncValue<RegisterResponse?>,
-              AsyncValue<RegisterResponse?>
-            >;
+        this.ref as $Ref<AsyncValue<RegisterResponse?>, RegisterResponse?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<
-                AsyncValue<RegisterResponse?>,
-                AsyncValue<RegisterResponse?>
-              >,
+              AnyNotifier<AsyncValue<RegisterResponse?>, RegisterResponse?>,
               AsyncValue<RegisterResponse?>,
               Object?,
               Object?
@@ -251,7 +214,7 @@ final class ProfileControllerProvider
   ProfileController create() => ProfileController();
 }
 
-String _$profileControllerHash() => r'f9ceb8b647bc24ac70c82cffa857bb0383b72a99';
+String _$profileControllerHash() => r'2e779025f0602994e8a259abea3139395dfafe6b';
 
 abstract class _$ProfileController extends $AsyncNotifier<UserModel> {
   FutureOr<UserModel> build();
@@ -277,9 +240,9 @@ const forgotPasswordControllerProvider = ForgotPasswordControllerProvider._();
 
 final class ForgotPasswordControllerProvider
     extends
-        $NotifierProvider<
+        $AsyncNotifierProvider<
           ForgotPasswordController,
-          AsyncValue<ForgotPasswordResponse?>
+          ForgotPasswordResponse?
         > {
   const ForgotPasswordControllerProvider._()
     : super(
@@ -298,24 +261,14 @@ final class ForgotPasswordControllerProvider
   @$internal
   @override
   ForgotPasswordController create() => ForgotPasswordController();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AsyncValue<ForgotPasswordResponse?> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<AsyncValue<ForgotPasswordResponse?>>(
-        value,
-      ),
-    );
-  }
 }
 
 String _$forgotPasswordControllerHash() =>
-    r'07550ec5bfe8cdc98f182fb89453b8dd44671c07';
+    r'899f89592a98c46704a93d37f125a891fe2c97af';
 
 abstract class _$ForgotPasswordController
-    extends $Notifier<AsyncValue<ForgotPasswordResponse?>> {
-  AsyncValue<ForgotPasswordResponse?> build();
+    extends $AsyncNotifier<ForgotPasswordResponse?> {
+  FutureOr<ForgotPasswordResponse?> build();
   @$mustCallSuper
   @override
   void runBuild() {
@@ -324,16 +277,69 @@ abstract class _$ForgotPasswordController
         this.ref
             as $Ref<
               AsyncValue<ForgotPasswordResponse?>,
-              AsyncValue<ForgotPasswordResponse?>
+              ForgotPasswordResponse?
             >;
     final element =
         ref.element
             as $ClassProviderElement<
               AnyNotifier<
                 AsyncValue<ForgotPasswordResponse?>,
-                AsyncValue<ForgotPasswordResponse?>
+                ForgotPasswordResponse?
               >,
               AsyncValue<ForgotPasswordResponse?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(EditProfileController)
+const editProfileControllerProvider = EditProfileControllerProvider._();
+
+final class EditProfileControllerProvider
+    extends
+        $AsyncNotifierProvider<EditProfileController, EditProfileResponse?> {
+  const EditProfileControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'editProfileControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$editProfileControllerHash();
+
+  @$internal
+  @override
+  EditProfileController create() => EditProfileController();
+}
+
+String _$editProfileControllerHash() =>
+    r'5c3da3af71a906fa432516eeff480746a6b85244';
+
+abstract class _$EditProfileController
+    extends $AsyncNotifier<EditProfileResponse?> {
+  FutureOr<EditProfileResponse?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<AsyncValue<EditProfileResponse?>, EditProfileResponse?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<EditProfileResponse?>,
+                EditProfileResponse?
+              >,
+              AsyncValue<EditProfileResponse?>,
               Object?,
               Object?
             >;

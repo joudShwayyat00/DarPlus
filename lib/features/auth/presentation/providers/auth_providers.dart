@@ -6,6 +6,7 @@ import '../../data/data_sources/auth_service_client.dart';
 import '../../data/models/register_response.dart';
 import '../../data/models/user_model.dart';
 import '../../data/models/forgot_password_response.dart';
+import '../../data/models/edit_profile_response.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 
@@ -26,8 +27,8 @@ AuthRepository authRepository(Ref ref) {
 @riverpod
 class RegisterController extends _$RegisterController {
   @override
-  AsyncValue<RegisterResponse?> build() {
-    return const AsyncData(null);
+  FutureOr<RegisterResponse?> build() {
+    return null;
   }
 
   Future<void> register({
@@ -52,6 +53,7 @@ class RegisterController extends _$RegisterController {
       final sharedPrefs = SharedPerfManager();
       sharedPrefs.token = response.accessToken;
       sharedPrefs.isLoggedIn = true;
+      DioFactory.updateAuthToken();
 
       return response;
     });
@@ -61,26 +63,21 @@ class RegisterController extends _$RegisterController {
 @riverpod
 class LoginController extends _$LoginController {
   @override
-  AsyncValue<RegisterResponse?> build() {
-    return const AsyncData(null);
+  FutureOr<RegisterResponse?> build() {
+    return null;
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard<RegisterResponse?>(() async {
       final repository = ref.read(authRepositoryProvider);
-      final response = await repository.login(
-        email: email,
-        password: password,
-      );
+      final response = await repository.login(email: email, password: password);
 
       // Save token and set logged in status
       final sharedPrefs = SharedPerfManager();
       sharedPrefs.token = response.accessToken;
       sharedPrefs.isLoggedIn = true;
+      DioFactory.updateAuthToken();
 
       return response;
     });
@@ -106,6 +103,7 @@ class ProfileController extends _$ProfileController {
   Future<void> logout() async {
     final repository = ref.read(authRepositoryProvider);
     await repository.logout();
+    DioFactory.updateAuthToken();
     // After logout, the token and isLoggedIn are cleared in repository implementation
   }
 }
@@ -113,8 +111,8 @@ class ProfileController extends _$ProfileController {
 @riverpod
 class ForgotPasswordController extends _$ForgotPasswordController {
   @override
-  AsyncValue<ForgotPasswordResponse?> build() {
-    return const AsyncData(null);
+  FutureOr<ForgotPasswordResponse?> build() {
+    return null;
   }
 
   Future<void> forgotPassword(String email) async {
@@ -122,6 +120,32 @@ class ForgotPasswordController extends _$ForgotPasswordController {
     state = await AsyncValue.guard<ForgotPasswordResponse?>(() async {
       final repository = ref.read(authRepositoryProvider);
       return await repository.forgotPassword(email);
+    });
+  }
+}
+
+@riverpod
+class EditProfileController extends _$EditProfileController {
+  @override
+  FutureOr<EditProfileResponse?> build() {
+    return null;
+  }
+
+  Future<void> editProfile({
+    required String name,
+    required String email,
+    required String phoneNumber,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard<EditProfileResponse?>(() async {
+      final repository = ref.read(authRepositoryProvider);
+      final response = await repository.editProfile(
+        name: name,
+        email: email,
+        phoneNumber: phoneNumber,
+      );
+
+      return response;
     });
   }
 }

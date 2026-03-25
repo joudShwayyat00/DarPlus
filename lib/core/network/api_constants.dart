@@ -5,6 +5,7 @@ class ApiConstants {
   static const String profile = '/api/profile';
   static const String logout = '/api/logout';
   static const String forgotPassword = "/api/forgot_password";
+  static const String editProfile = "/api/edit_profile";
 
   static const String contentType = "application/json";
   static const String accept = "application/json";

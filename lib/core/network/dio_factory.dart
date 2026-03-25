@@ -17,27 +17,39 @@ class DioFactory {
 
     if (_dio == null) {
       _dio = Dio();
+      _configureHeaders(_dio!);
       _dio!
         ..options.baseUrl = ApiConstants.baseUrl
         ..options.connectTimeout = timeOut
         ..options.connectTimeout = timeOut
-        ..options.receiveTimeout = timeOut
-        ..options.headers = {
-          ApiHeaders.acceptHeader: ApiConstants.accept,
-          if (SharedPerfManager().token.isNotEmpty)
-            ApiHeaders.authHeader: 'Bearer ${SharedPerfManager().token}',
-        };
+        ..options.receiveTimeout = timeOut;
 
       addDioInterceptor();
       return _dio!;
     } else {
+      _configureHeaders(_dio!); // refresh token header every call
       return _dio!;
     }
   }
 
+  static void _configureHeaders(Dio dio) {
+    final token = SharedPerfManager().token;
+
+    dio.options.headers = {
+      ApiHeaders.acceptHeader: ApiConstants.accept,
+      ApiHeaders.contentTypeHeader: ApiConstants.contentType,
+      if (token.isNotEmpty) ApiHeaders.authHeader: 'Bearer $token',
+    };
+  }
+
+  static void updateAuthToken() {
+    if (_dio == null)  return;
+    _configureHeaders(_dio!);
+  }
+
   static void addDioInterceptor() {
     final dio = _dio!;
-    
+
     // Add Retry Interceptor
     dio.interceptors.add(
       RetryInterceptor(

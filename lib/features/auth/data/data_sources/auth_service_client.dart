@@ -5,6 +5,7 @@ import '../models/register_response.dart';
 import '../models/user_model.dart';
 import '../models/logout_response.dart';
 import '../models/forgot_password_response.dart';
+import '../models/edit_profile_response.dart';
 
 part 'auth_service_client.g.dart';
 
@@ -19,15 +20,12 @@ abstract class AuthServiceClient {
     @Part() String email,
     @Part() String password,
     @Part(name: 'password_confirmation') String passwordConfirmation,
-  @Part(name: 'phone_number') String phoneNumber,
+    @Part(name: 'phone_number') String phoneNumber,
   );
 
   @POST(ApiConstants.login)
   @MultiPart()
-  Future<RegisterResponse> login(
-    @Part() String email,
-    @Part() String password,
-  );
+  Future<RegisterResponse> login(@Part() String email, @Part() String password);
 
   @GET(ApiConstants.profile)
   Future<UserModel> getProfile();
@@ -36,7 +34,13 @@ abstract class AuthServiceClient {
   Future<LogoutResponse> logout();
 
   @POST(ApiConstants.forgotPassword)
-  Future<ForgotPasswordResponse> forgotPassword(
-    @Field("email") String email,
+  Future<ForgotPasswordResponse> forgotPassword(@Field("email") String email);
+
+  @POST(ApiConstants.editProfile)
+  @MultiPart()
+  Future<EditProfileResponse> editProfile(
+    @Part() String name,
+    @Part() String email,
+    @Part() String phoneNumber,
   );
 }

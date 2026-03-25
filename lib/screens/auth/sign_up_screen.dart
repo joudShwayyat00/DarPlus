@@ -43,6 +43,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
 
+  String _completePhoneNumber = '';
+  String _nationalPhoneNumber = '';
+  String _countryCode = '';
+
   @override
   Widget build(BuildContext context) {
     return AppAuthBackground(
@@ -165,6 +169,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                         context,
                                       ).requestFocus(emailFocusNode);
                                     },
+                                    onChangedCompleteNumber: (completeNumber) {
+                                      _completePhoneNumber = completeNumber;
+                                    },
+                                    onChangedNationalNumber: (national) {
+                                      _nationalPhoneNumber = national;
+                                    },
+                                    onChangedCountryCode: (countryCode) {
+                                      _countryCode = countryCode;
+                                    },
                                   ),
                                 ),
                                 SizedBox(height: 2.h),
@@ -267,17 +280,36 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             backgroundColor: AppColors.goldBrandColor,
                             onPressed: () {
                               FocusScope.of(context).unfocus();
+                              final phoneNumber =
+                                  _nationalPhoneNumber.isNotEmpty
+                                  ? _nationalPhoneNumber
+                                  : phoneController.text.trim();
+
+                              debugPrint('countryCode: $_countryCode');
+                              debugPrint(
+                                'nationalNumber: $_nationalPhoneNumber',
+                              );
+                              debugPrint(
+                                'completeNumber: $_completePhoneNumber',
+                              );
+                              debugPrint('sendingPhoneNumber: $phoneNumber');
+
                               if (_formKey.currentState!.validate()) {
-                                ref.read(registerControllerProvider.notifier).register(
+                                ref
+                                    .read(registerControllerProvider.notifier)
+                                    .register(
                                       name: nameController.text.trim(),
                                       email: emailController.text.trim(),
                                       password: passwordController.text,
-                                      passwordConfirmation: confirmPasswordController.text,
-                                      phoneNumber: phoneController.text.trim(),
+                                      passwordConfirmation:
+                                          confirmPasswordController.text,
+                                      phoneNumber: phoneNumber,
                                     );
                               }
                             },
-                            child: ref.watch(registerControllerProvider).maybeWhen(
+                            child: ref
+                                .watch(registerControllerProvider)
+                                .maybeWhen(
                                   loading: () => const SizedBox(
                                     height: 20,
                                     width: 20,
@@ -366,7 +398,9 @@ class RegisterListener extends ConsumerWidget {
       next.whenOrNull(
         data: (_) {
           EasyLoading.showSuccess(tr.done);
-          AppNavigator.of(context).pushAndRemoveUntil(const BottomNavBarScreen());
+          AppNavigator.of(
+            context,
+          ).pushAndRemoveUntil(const BottomNavBarScreen());
         },
         error: (error, stack) {
           EasyLoading.showError(error.toString());

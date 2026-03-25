@@ -15,6 +15,8 @@ class AppPhoneField extends StatelessWidget {
   final ValueChanged<String>? onFieldSubmitted;
 
   final ValueChanged<String>? onChangedCompleteNumber;
+  final ValueChanged<String>? onChangedNationalNumber;
+  final ValueChanged<String>? onChangedCountryCode;
 
   final FormFieldValidator<String>? validator;
 
@@ -27,6 +29,8 @@ class AppPhoneField extends StatelessWidget {
     this.textInputAction,
     this.onFieldSubmitted,
     this.onChangedCompleteNumber,
+    this.onChangedNationalNumber,
+    this.onChangedCountryCode,
     this.validator,
   });
 
@@ -47,7 +51,7 @@ class AppPhoneField extends StatelessWidget {
         if (value.isEmpty) return tr.phone_is_required;
 
         if (!RegExp(r'^\d+$').hasMatch(value)) return tr.digits_only;
-        if (value.length < 10) return tr.enter_valid_phone_number;
+        if (value.length < 6) return tr.enter_valid_phone_number;
 
         if (validator != null) return validator!(value);
 
@@ -58,7 +62,7 @@ class AppPhoneField extends StatelessWidget {
           controller: controller,
           focusNode: focusNode,
           initialCountryCode: initialCountryCode,
-          disableLengthCheck: true,
+          disableLengthCheck: false,
           dropdownIconPosition: IconPosition.trailing,
           cursorColor: AppColors.blackColor,
           textInputAction: textInputAction,
@@ -78,10 +82,7 @@ class AppPhoneField extends StatelessWidget {
             color: AppColors.blackColor,
           ),
           textAlign: TextAlign.left,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(10),
-          ],
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           decoration: InputDecoration(
             hintText: hint ?? tr.phone_number,
             hintStyle: appTextStyle(
@@ -112,6 +113,8 @@ class AppPhoneField extends StatelessWidget {
             state.didChange(controller.text);
 
             onChangedCompleteNumber?.call(phone.completeNumber);
+            onChangedNationalNumber?.call(phone.number);
+            onChangedCountryCode?.call(phone.countryCode);
           },
         );
       },

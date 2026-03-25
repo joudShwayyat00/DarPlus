@@ -2,6 +2,7 @@ import '../../data/models/register_response.dart';
 import '../../data/models/user_model.dart';
 import '../../data/models/logout_response.dart';
 import '../../data/models/forgot_password_response.dart';
+import '../../data/models/edit_profile_response.dart';
 
 abstract class AuthRepository {
   Future<RegisterResponse> register({
@@ -21,4 +22,10 @@ abstract class AuthRepository {
 
   Future<LogoutResponse> logout();
   Future<ForgotPasswordResponse> forgotPassword(String email);
+
+  Future<EditProfileResponse> editProfile({
+    required String name,
+    required String email,
+    required String phoneNumber,
+  });
 }
