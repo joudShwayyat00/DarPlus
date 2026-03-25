@@ -346,3 +346,62 @@ abstract class _$EditProfileController
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(UpdatePasswordController)
+const updatePasswordControllerProvider = UpdatePasswordControllerProvider._();
+
+final class UpdatePasswordControllerProvider
+    extends
+        $AsyncNotifierProvider<
+          UpdatePasswordController,
+          UpdatePasswordResponse?
+        > {
+  const UpdatePasswordControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updatePasswordControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updatePasswordControllerHash();
+
+  @$internal
+  @override
+  UpdatePasswordController create() => UpdatePasswordController();
+}
+
+String _$updatePasswordControllerHash() =>
+    r'f3295e2fc60aca2d864718e3ab459653b073a5f4';
+
+abstract class _$UpdatePasswordController
+    extends $AsyncNotifier<UpdatePasswordResponse?> {
+  FutureOr<UpdatePasswordResponse?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<
+              AsyncValue<UpdatePasswordResponse?>,
+              UpdatePasswordResponse?
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<UpdatePasswordResponse?>,
+                UpdatePasswordResponse?
+              >,
+              AsyncValue<UpdatePasswordResponse?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

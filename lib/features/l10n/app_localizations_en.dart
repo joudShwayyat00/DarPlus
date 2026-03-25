@@ -97,6 +97,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phone_number => 'Phone Number';
 
   @override
+  String get new_password => 'New Password';
+
+  @override
+  String get password_required => 'Password is required';
+
+  @override
   String get confirm_password => 'Confirm Password';
 
   @override
@@ -161,6 +167,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get edit_profile => 'Edit Profile';
+
+  @override
+  String get change_password => 'Change Password';
+
+  @override
+  String get password_updated_successfully => 'Password updated successfully';
 
   @override
   String get my_reservations => 'My Reservations';

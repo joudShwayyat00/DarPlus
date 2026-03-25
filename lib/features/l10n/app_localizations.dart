@@ -266,6 +266,18 @@ abstract class AppLocalizations {
   /// **'Phone Number'**
   String get phone_number;
 
+  /// No description provided for @new_password.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get new_password;
+
+  /// No description provided for @password_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get password_required;
+
   /// No description provided for @confirm_password.
   ///
   /// In en, this message translates to:
@@ -397,6 +409,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit Profile'**
   String get edit_profile;
+
+  /// No description provided for @change_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get change_password;
+
+  /// No description provided for @password_updated_successfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated successfully'**
+  String get password_updated_successfully;
 
   /// No description provided for @my_reservations.
   ///

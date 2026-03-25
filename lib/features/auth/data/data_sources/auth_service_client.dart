@@ -6,6 +6,7 @@ import '../models/user_model.dart';
 import '../models/logout_response.dart';
 import '../models/forgot_password_response.dart';
 import '../models/edit_profile_response.dart';
+import '../models/update_password_response.dart';
 
 part 'auth_service_client.g.dart';
 
@@ -42,5 +43,12 @@ abstract class AuthServiceClient {
     @Part() String name,
     @Part() String email,
     @Part() String phoneNumber,
+  );
+
+  @POST(ApiConstants.updatePassword)
+  @MultiPart()
+  Future<UpdatePasswordResponse> updatePassword(
+    @Part() String password,
+    @Part(name: 'password_confirmation') String passwordConfirmation,
   );
 }

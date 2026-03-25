@@ -3,6 +3,7 @@ import '../../data/models/user_model.dart';
 import '../../data/models/logout_response.dart';
 import '../../data/models/forgot_password_response.dart';
 import '../../data/models/edit_profile_response.dart';
+import '../../data/models/update_password_response.dart';
 
 abstract class AuthRepository {
   Future<RegisterResponse> register({
@@ -27,5 +28,10 @@ abstract class AuthRepository {
     required String name,
     required String email,
     required String phoneNumber,
+  });
+
+  Future<UpdatePasswordResponse> updatePassword({
+    required String password,
+    required String passwordConfirmation,
   });
 }

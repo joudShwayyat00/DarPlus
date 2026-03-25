@@ -95,6 +95,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phone_number => 'رقم الهاتف';
 
   @override
+  String get new_password => 'كلمة مرور جديدة';
+
+  @override
+  String get password_required => 'كلمة المرور مطلوبة';
+
+  @override
   String get confirm_password => 'تأكيد كلمة المرور';
 
   @override
@@ -159,6 +165,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get edit_profile => 'تعديل الملف الشخصي';
+
+  @override
+  String get change_password => 'تغيير كلمة المرور';
+
+  @override
+  String get password_updated_successfully => 'تم تحديث كلمة المرور بنجاح';
 
   @override
   String get my_reservations => 'حجوزاتي';

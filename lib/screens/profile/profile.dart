@@ -4,6 +4,7 @@ import 'package:dar_plus_app/screens/auth/welcome_screen.dart';
 import 'package:dar_plus_app/screens/profile/about_screen.dart';
 import 'package:dar_plus_app/screens/profile/contact_us_screen.dart';
 import 'package:dar_plus_app/screens/profile/edit_profile_screen.dart';
+import 'package:dar_plus_app/screens/profile/update_password_screen.dart';
 import 'package:dar_plus_app/screens/profile/get_help_screen.dart';
 import 'package:dar_plus_app/screens/profile/my_reservations_screen.dart';
 import 'package:dar_plus_app/screens/profile/notifications_screen.dart';
@@ -38,11 +39,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               SizedBox(height: 2.h),
 
               // Profile Header
-              ref.watch(profileControllerProvider).when(
-                data: (user) => _buildProfileHeader(context, user),
-                loading: () => _buildProfileHeaderLoading(context),
-                error: (err, stack) => _buildProfileHeaderError(context, err),
-              ),
+              ref
+                  .watch(profileControllerProvider)
+                  .when(
+                    data: (user) => _buildProfileHeader(context, user),
+                    loading: () => _buildProfileHeaderLoading(context),
+                    error: (err, stack) =>
+                        _buildProfileHeaderError(context, err),
+                  ),
 
               SizedBox(height: 2.5.h),
 
@@ -66,6 +70,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const EditProfileScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _MenuItem(
+                          icon: Icons.lock_outline_rounded,
+                          title: tr.change_password,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const UpdatePasswordScreen(),
                               ),
                             );
                           },
@@ -236,7 +253,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           iconColor: AppColors.goldBrandColor,
                           titleColor: AppColors.goldBrandColor,
                           onTap: () {
-                            ref.read(profileControllerProvider.notifier).logout();
+                            ref
+                                .read(profileControllerProvider.notifier)
+                                .logout();
                             AppNavigator.of(
                               context,
                             ).pushAndRemoveUntil(const WelcomeScreen());
@@ -429,11 +448,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Text(
             tr.error_occurred,
-            style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => ref.read(profileControllerProvider.notifier).refreshProfile(),
+            onPressed: () =>
+                ref.read(profileControllerProvider.notifier).refreshProfile(),
           ),
         ],
       ),

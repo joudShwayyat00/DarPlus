@@ -5,6 +5,7 @@ import '../models/user_model.dart';
 import '../models/logout_response.dart';
 import '../models/forgot_password_response.dart';
 import '../models/edit_profile_response.dart';
+import '../models/update_password_response.dart';
 import '../../../../controller/shared_prefs.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -75,6 +76,19 @@ class AuthRepositoryImpl implements AuthRepository {
       name,
       email,
       phoneNumber,
+    );
+
+    return response;
+  }
+
+  @override
+  Future<UpdatePasswordResponse> updatePassword({
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final response = await _authServiceClient.updatePassword(
+      password,
+      passwordConfirmation,
     );
 
     return response;

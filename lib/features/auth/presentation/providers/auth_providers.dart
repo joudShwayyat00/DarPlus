@@ -7,6 +7,7 @@ import '../../data/models/register_response.dart';
 import '../../data/models/user_model.dart';
 import '../../data/models/forgot_password_response.dart';
 import '../../data/models/edit_profile_response.dart';
+import '../../data/models/update_password_response.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 
@@ -145,6 +146,29 @@ class EditProfileController extends _$EditProfileController {
         phoneNumber: phoneNumber,
       );
 
+      return response;
+    });
+  }
+}
+
+@riverpod
+class UpdatePasswordController extends _$UpdatePasswordController {
+  @override
+  FutureOr<UpdatePasswordResponse?> build() {
+    return null;
+  }
+
+  Future<void> updatePassword({
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard<UpdatePasswordResponse?>(() async {
+      final repository = ref.read(authRepositoryProvider);
+      final response = await repository.updatePassword(
+        password: password,
+        passwordConfirmation: passwordConfirmation,
+      );
       return response;
     });
   }
