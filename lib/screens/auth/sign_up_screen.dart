@@ -1,6 +1,8 @@
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/bottom_nav_bar_screen.dart';
 import 'package:dar_plus_app/screens/auth/login_screen.dart';
+import 'package:dar_plus_app/screens/profile/privacy_policy_screen.dart';
+import 'package:dar_plus_app/screens/profile/terms_conditions_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_auth_background.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
@@ -14,6 +16,8 @@ import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+
+enum UserType { ownerOrAgent, user }
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -42,6 +46,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
+  bool _agreedToTerms = false;
+  UserType _selectedUserType = UserType.user;
 
   String _completePhoneNumber = '';
   String _nationalPhoneNumber = '';
@@ -60,7 +66,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               child: IntrinsicHeight(
                 child: Column(
                   children: [
-                    SizedBox(height: 1.h),
+                    SizedBox(height: 0.2.h),
                     Column(
                       children: [
                         Image.asset(appLogo, height: 15.h, fit: BoxFit.contain),
@@ -101,7 +107,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             tr.create_account,
                             style: appTextStyle(
                               context,
-                              fontSize: 16.sp,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.w700,
                               color: AppColors.blackColor,
                             ),
@@ -135,6 +141,72 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             key: _formKey,
                             child: Column(
                               children: [
+                                // User type selector (single row, responsive)
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 1.h),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: ChoiceChip(
+                                          label: Text(
+                                            tr.role_owner_or_agent,
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.clip,
+                                            softWrap: true,
+                                            style: appTextStyle(
+                                              context,
+                                              fontSize: 10.sp,
+                                              color:
+                                                  _selectedUserType ==
+                                                      UserType.ownerOrAgent
+                                                  ? AppColors.whiteColor
+                                                  : Colors.black87,
+                                            ),
+                                          ),
+                                          selected:
+                                              _selectedUserType ==
+                                              UserType.ownerOrAgent,
+                                          onSelected: (_) => setState(
+                                            () => _selectedUserType =
+                                                UserType.ownerOrAgent,
+                                          ),
+                                          selectedColor:
+                                              AppColors.goldBrandColor,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: ChoiceChip(
+                                          label: Text(
+                                            tr.role_user,
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.clip,
+                                            softWrap: true,
+                                            style: appTextStyle(
+                                              context,
+                                              fontSize: 10.sp,
+                                              color:
+                                                  _selectedUserType ==
+                                                      UserType.user
+                                                  ? AppColors.whiteColor
+                                                  : Colors.black87,
+                                            ),
+                                          ),
+                                          selected:
+                                              _selectedUserType ==
+                                              UserType.user,
+                                          onSelected: (_) => setState(
+                                            () => _selectedUserType =
+                                                UserType.user,
+                                          ),
+                                          selectedColor:
+                                              AppColors.goldBrandColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 AppInputField(
                                   controller: nameController,
                                   focusNode: nameFocusNode,
@@ -274,12 +346,90 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               ],
                             ),
                           ),
+                          SizedBox(height: 2.h),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: Checkbox(
+                                  value: _agreedToTerms,
+                                  onChanged: (value) => setState(
+                                    () => _agreedToTerms = value ?? false,
+                                  ),
+                                  activeColor: AppColors.goldBrandColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              Expanded(
+                                child: Wrap(
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    Text(
+                                      tr.i_agree_to_the,
+                                      style: appTextStyle(
+                                        context,
+                                        fontSize: 9.8.sp,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => AppNavigator.of(
+                                        context,
+                                      ).push(const TermsConditionsScreen()),
+                                      child: Text(
+                                        tr.terms_and_conditions,
+                                        style: appTextStyle(
+                                          context,
+                                          fontSize: 9.8.sp,
+                                          color: AppColors.goldBrandColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      tr.and_the,
+                                      style: appTextStyle(
+                                        context,
+                                        fontSize: 9.8.sp,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => AppNavigator.of(
+                                        context,
+                                      ).push(const PrivacyPolicyScreen()),
+                                      child: Text(
+                                        tr.privacy_policy,
+                                        style: appTextStyle(
+                                          context,
+                                          fontSize: 9.8.sp,
+                                          color: AppColors.goldBrandColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                           SizedBox(height: 2.4.h),
                           const RegisterListener(),
                           AppButton(
                             backgroundColor: AppColors.goldBrandColor,
                             onPressed: () {
                               FocusScope.of(context).unfocus();
+                              if (!_agreedToTerms) {
+                                EasyLoading.showError(tr.please_agree_to_terms);
+                                return;
+                              }
                               final phoneNumber =
                                   _nationalPhoneNumber.isNotEmpty
                                   ? _nationalPhoneNumber

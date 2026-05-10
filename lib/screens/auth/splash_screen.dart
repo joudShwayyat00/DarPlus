@@ -64,59 +64,57 @@ class _SplashScreenState extends State<SplashScreen>
       ),
       child: Scaffold(
         backgroundColor: AppColors.blackColor,
-        body: SafeArea(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.asset(
-                splashImage,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-                filterQuality: FilterQuality.high,
-              ),
-              SafeArea(
-                child: FadeTransition(
-                  opacity: _fade,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 6.w),
-                    child: Column(
-                      children: [
-                        const Spacer(flex: 7),
-                        Column(
-                          children: [
-                            SizedBox(
-                              width: 6.w,
-                              height: 6.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.2,
-                                valueColor: const AlwaysStoppedAnimation<Color>(
-                                  AppColors.goldBrandColor,
-                                ),
-                                backgroundColor: AppColors.grayBrandColor
-                                    .withAlpha(89),
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              splashImage,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              filterQuality: FilterQuality.high,
+            ),
+            SafeArea(
+              child: FadeTransition(
+                opacity: _fade,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 6.w),
+                  child: Column(
+                    children: [
+                      const Spacer(flex: 7),
+                      Column(
+                        children: [
+                          SizedBox(
+                            width: 6.w,
+                            height: 6.w,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.2,
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                AppColors.goldBrandColor,
                               ),
+                              backgroundColor: AppColors.grayBrandColor
+                                  .withAlpha(89),
                             ),
-                            SizedBox(height: 2.h),
-                            Text(
-                              tr.loading,
-                              style: appTextStyle(
-                                context,
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.grayBrandColor.withAlpha(242),
-                              ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            tr.loading,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.grayBrandColor.withAlpha(242),
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 5.h),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5.h),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

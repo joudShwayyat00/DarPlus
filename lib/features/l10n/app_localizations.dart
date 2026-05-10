@@ -470,6 +470,36 @@ abstract class AppLocalizations {
   /// **'Terms and Conditions'**
   String get terms_and_conditions;
 
+  /// No description provided for @i_agree_to_the.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the '**
+  String get i_agree_to_the;
+
+  /// No description provided for @and_the.
+  ///
+  /// In en, this message translates to:
+  /// **' and the '**
+  String get and_the;
+
+  /// No description provided for @please_agree_to_terms.
+  ///
+  /// In en, this message translates to:
+  /// **'Please agree to the Terms and Conditions and Privacy Policy'**
+  String get please_agree_to_terms;
+
+  /// No description provided for @role_owner_or_agent.
+  ///
+  /// In en, this message translates to:
+  /// **'Real Estate Owner / Agent'**
+  String get role_owner_or_agent;
+
+  /// No description provided for @role_user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get role_user;
+
   /// No description provided for @save_changes.
   ///
   /// In en, this message translates to:

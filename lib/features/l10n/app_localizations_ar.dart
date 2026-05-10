@@ -197,6 +197,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get terms_and_conditions => 'الشروط والأحكام';
 
   @override
+  String get i_agree_to_the => 'أوافق على ';
+
+  @override
+  String get and_the => ' و';
+
+  @override
+  String get please_agree_to_terms =>
+      'يرجى الموافقة على الشروط والأحكام وسياسة الخصوصية';
+
+  @override
+  String get role_owner_or_agent => 'مالك / وكيل عقارات';
+
+  @override
+  String get role_user => 'مستخدم';
+
+  @override
   String get save_changes => 'حفظ التغييرات';
 
   @override

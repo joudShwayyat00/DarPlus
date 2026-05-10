@@ -199,6 +199,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get terms_and_conditions => 'Terms and Conditions';
 
   @override
+  String get i_agree_to_the => 'I agree to the ';
+
+  @override
+  String get and_the => ' and the ';
+
+  @override
+  String get please_agree_to_terms =>
+      'Please agree to the Terms and Conditions and Privacy Policy';
+
+  @override
+  String get role_owner_or_agent => 'Real Estate Owner / Agent';
+
+  @override
+  String get role_user => 'User';
+
+  @override
   String get save_changes => 'Save Changes';
 
   @override

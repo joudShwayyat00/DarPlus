@@ -57,198 +57,191 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     // final topHeight = 53.h;
     final topHeight = (SharedPerfManager().languageCode == "en") ? 53.h : 58.h;
 
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.black,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
       ),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: AppColors.blackColor,
-          body: Stack(
-            children: [
-              SizedBox(height: 100.h, width: 100.w),
-              SizedBox(
-                height: topHeight,
-                width: 100.w,
-                child: ClipPath(
-                  clipper: _ArchitectClipper(),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.asset(
-                        welcomeBgImage,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.topCenter,
-                      ),
-                    ],
-                  ),
+      child: Scaffold(
+        backgroundColor: AppColors.blackColor,
+        body: Stack(
+          children: [
+            SizedBox(height: 100.h, width: 100.w),
+            SizedBox(
+              height: topHeight,
+              width: 100.w,
+              child: ClipPath(
+                clipper: _ArchitectClipper(),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.asset(
+                      welcomeBgImage,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.topCenter,
+                    ),
+                  ],
                 ),
               ),
-              Positioned(
-                top: topHeight - 5.2.h,
-                left: (SharedPerfManager().languageCode == "en") ? 7.w : null,
-                right: (SharedPerfManager().languageCode == "ar") ? 7.w : null,
-                child: Container(
-                  height: 0.45.h,
-                  width: 22.w,
-                  decoration: BoxDecoration(
-                    color: AppColors.goldBrandColor,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
+            ),
+            Positioned(
+              top: topHeight - 5.2.h,
+              left: (SharedPerfManager().languageCode == "en") ? 7.w : null,
+              right: (SharedPerfManager().languageCode == "ar") ? 7.w : null,
+              child: Container(
+                height: 0.45.h,
+                width: 22.w,
+                decoration: BoxDecoration(
+                  color: AppColors.goldBrandColor,
+                  borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              Positioned(
-                left: 5.w,
-                right: 5.w,
-                bottom: 2.5.h,
-                child: FadeTransition(
-                  opacity: _fade,
-                  child: SlideTransition(
-                    position: _slide,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(22),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                        child: Container(
-                          width: 100.w,
-                          padding: EdgeInsets.fromLTRB(3.w, 2.2.h, 3.w, 2.2.h),
-                          decoration: BoxDecoration(
-                            color: AppColors.whiteColor.withAlpha(15),
-                            borderRadius: BorderRadius.circular(22),
-                            border: Border.all(
-                              color: AppColors.whiteColor.withAlpha(31),
+            ),
+            Positioned(
+              left: 5.w,
+              right: 5.w,
+              bottom: 2.5.h,
+              child: FadeTransition(
+                opacity: _fade,
+                child: SlideTransition(
+                  position: _slide,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(22),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                      child: Container(
+                        width: 100.w,
+                        padding: EdgeInsets.fromLTRB(3.w, 2.2.h, 3.w, 2.2.h),
+                        decoration: BoxDecoration(
+                          color: AppColors.whiteColor.withAlpha(15),
+                          borderRadius: BorderRadius.circular(22),
+                          border: Border.all(
+                            color: AppColors.whiteColor.withAlpha(31),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(89),
+                              blurRadius: 24,
+                              offset: const Offset(0, 18),
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withAlpha(89),
-                                blurRadius: 24,
-                                offset: const Offset(0, 18),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tr.where_real_estate_meets_elegance,
+                              //"Where Real Estate Meets Elegance",
+                              style: appTextStyle(
+                                context,
+                                color: AppColors.whiteColor,
+                                fontSize: 15.5.sp,
+                                fontWeight: FontWeight.w500,
+                                height: 1.2,
                               ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                tr.where_real_estate_meets_elegance,
-                                //"Where Real Estate Meets Elegance",
+                            ),
+                            SizedBox(height: 1.2.h),
+
+                            Text(
+                              "  ${tr.discover_manage_and_elevate_premium_properties} \n${tr.with_a_seamless_digital_experience}",
+
+                              // "Discover, manage, and elevate premium properties "
+                              // "with a seamless digital experience.",
+                              style: appTextStyle(
+                                context,
+                                color: AppColors.grayBrandColor,
+                                fontSize: 10.8.sp,
+                                fontWeight: FontWeight.w500,
+                                height: 1.5,
+                              ),
+                            ),
+
+                            SizedBox(height: 2.h),
+
+                            Row(
+                              children: [
+                                Container(
+                                  height: 0.15.h,
+                                  width: 8.w,
+                                  color: AppColors.goldBrandColor,
+                                ),
+                                SizedBox(width: 2.5.w),
+                                Text(
+                                  "${tr.showcase} • ${tr.booking} • ${tr.growth}",
+                                  style: appTextStyle(
+                                    context,
+                                    color: AppColors.whiteColor.withAlpha(179),
+                                    fontSize: 9.8.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: 2.2.h),
+                            AppButton(
+                              backgroundColor: AppColors.goldBrandColor,
+                              onPressed: () {
+                                AppNavigator.of(
+                                  context,
+                                ).push(const LoginScreen());
+                              },
+                              child: Text(
+                                tr.login,
                                 style: appTextStyle(
                                   context,
+                                  fontSize: 12.2.sp,
+                                  fontWeight: FontWeight.w700,
                                   color: AppColors.whiteColor,
-                                  fontSize: 15.5.sp,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.2,
                                 ),
                               ),
-                              SizedBox(height: 1.2.h),
-
-                              Text(
-                                "  ${tr.discover_manage_and_elevate_premium_properties} \n${tr.with_a_seamless_digital_experience}",
-
-                                // "Discover, manage, and elevate premium properties "
-                                // "with a seamless digital experience.",
+                            ),
+                            SizedBox(height: 1.4.h),
+                            AppButton(
+                              backgroundColor: Colors.transparent,
+                              borderColor: AppColors.goldBrandColor,
+                              onPressed: () {
+                                AppNavigator.of(context).push(SignUpScreen());
+                              },
+                              child: Text(
+                                tr.signup,
                                 style: appTextStyle(
                                   context,
-                                  color: AppColors.grayBrandColor,
-                                  fontSize: 10.8.sp,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.5,
+                                  fontSize: 12.2.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.goldBrandColor,
                                 ),
                               ),
-
-                              SizedBox(height: 2.h),
-
-                              Row(
-                                children: [
-                                  Container(
-                                    height: 0.15.h,
-                                    width: 8.w,
-                                    color: AppColors.goldBrandColor,
-                                  ),
-                                  SizedBox(width: 2.5.w),
-                                  Text(
-                                    "${tr.showcase} • ${tr.booking} • ${tr.growth}",
-                                    style: appTextStyle(
-                                      context,
-                                      color: AppColors.whiteColor.withAlpha(
-                                        179,
-                                      ),
-                                      fontSize: 9.8.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              SizedBox(height: 2.2.h),
-                              AppButton(
-                                backgroundColor: AppColors.goldBrandColor,
-                                onPressed: () {
-                                  AppNavigator.of(
-                                    context,
-                                  ).push(const LoginScreen());
-                                },
+                            ),
+                            SizedBox(height: 2.5.h),
+                            GestureDetector(
+                              onTap: () {
+                                AppNavigator.of(
+                                  context,
+                                ).push(const BottomNavBarScreen());
+                              },
+                              child: Center(
                                 child: Text(
-                                  tr.login,
+                                  tr.continue_as_guest,
                                   style: appTextStyle(
                                     context,
-                                    fontSize: 12.2.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.whiteColor,
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.whiteColor.withAlpha(179),
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 1.4.h),
-                              AppButton(
-                                backgroundColor: Colors.transparent,
-                                borderColor: AppColors.goldBrandColor,
-                                onPressed: () {
-                                  AppNavigator.of(context).push(SignUpScreen());
-                                },
-                                child: Text(
-                                  tr.signup,
-                                  style: appTextStyle(
-                                    context,
-                                    fontSize: 12.2.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.goldBrandColor,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 2.5.h),
-                              GestureDetector(
-                                onTap: () {
-                                  AppNavigator.of(
-                                    context,
-                                  ).push(const BottomNavBarScreen());
-                                },
-                                child: Center(
-                                  child: Text(
-                                    tr.continue_as_guest,
-                                    style: appTextStyle(
-                                      context,
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.whiteColor.withAlpha(
-                                        179,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
