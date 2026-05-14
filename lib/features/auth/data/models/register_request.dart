@@ -11,6 +11,7 @@ class RegisterRequest {
   final String passwordConfirmation;
   @JsonKey(name: 'phone_number')
   final String phoneNumber;
+  final String role;
 
   RegisterRequest({
     required this.name,
@@ -18,6 +19,7 @@ class RegisterRequest {
     required this.password,
     required this.passwordConfirmation,
     required this.phoneNumber,
+    required this.role,
   });
 
   factory RegisterRequest.fromJson(Map<String, dynamic> json) =>

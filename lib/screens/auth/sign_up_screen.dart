@@ -445,6 +445,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               debugPrint('sendingPhoneNumber: $phoneNumber');
 
                               if (_formKey.currentState!.validate()) {
+                                final role = _selectedUserType == UserType.ownerOrAgent
+                                    ? 'owner'
+                                    : 'user';
+
                                 ref
                                     .read(registerControllerProvider.notifier)
                                     .register(
@@ -454,6 +458,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                       passwordConfirmation:
                                           confirmPasswordController.text,
                                       phoneNumber: phoneNumber,
+                                      role: role,
                                     );
                               }
                             },

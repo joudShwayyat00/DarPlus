@@ -20,6 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
     required String passwordConfirmation,
     required String phoneNumber,
+    required String role,
   }) async {
     final response = await _authServiceClient.register(
       name,
@@ -27,6 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
       password,
       passwordConfirmation,
       phoneNumber,
+      role,
     );
     // Save token and set logged in
     SharedPerfManager().token = response.accessToken;

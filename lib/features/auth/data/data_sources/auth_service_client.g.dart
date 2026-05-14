@@ -28,6 +28,7 @@ class _AuthServiceClient implements AuthServiceClient {
     String password,
     String passwordConfirmation,
     String phoneNumber,
+    String role,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -38,6 +39,7 @@ class _AuthServiceClient implements AuthServiceClient {
     _data.fields.add(MapEntry('password', password));
     _data.fields.add(MapEntry('password_confirmation', passwordConfirmation));
     _data.fields.add(MapEntry('phone_number', phoneNumber));
+    _data.fields.add(MapEntry('role', role));
     final _options = _setStreamType<RegisterResponse>(
       Options(
             method: 'POST',

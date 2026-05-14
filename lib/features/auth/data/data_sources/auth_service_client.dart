@@ -22,6 +22,7 @@ abstract class AuthServiceClient {
     @Part() String password,
     @Part(name: 'password_confirmation') String passwordConfirmation,
     @Part(name: 'phone_number') String phoneNumber,
+    @Part(name: 'role') String role,
   );
 
   @POST(ApiConstants.login)

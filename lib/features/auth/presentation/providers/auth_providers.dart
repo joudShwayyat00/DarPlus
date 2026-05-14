@@ -38,6 +38,7 @@ class RegisterController extends _$RegisterController {
     required String password,
     required String passwordConfirmation,
     required String phoneNumber,
+    required String role,
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard<RegisterResponse?>(() async {
@@ -48,6 +49,7 @@ class RegisterController extends _$RegisterController {
         password: password,
         passwordConfirmation: passwordConfirmation,
         phoneNumber: phoneNumber,
+        role: role,
       );
 
       // Save token and set logged in status
