@@ -1933,6 +1933,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rental Period'**
   String get filter_rental_period;
+
+  /// No description provided for @for_sale.
+  ///
+  /// In en, this message translates to:
+  /// **'For Sale'**
+  String get for_sale;
+
+  /// No description provided for @for_rent.
+  ///
+  /// In en, this message translates to:
+  /// **'For Rent'**
+  String get for_rent;
+
+  /// No description provided for @all_assets.
+  ///
+  /// In en, this message translates to:
+  /// **'All Properties'**
+  String get all_assets;
+
+  /// No description provided for @try_again.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get try_again;
 }
 
 class _AppLocalizationsDelegate

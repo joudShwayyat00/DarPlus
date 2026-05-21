@@ -963,4 +963,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get filter_rental_period => 'فترة الإيجار';
+
+  @override
+  String get for_sale => 'للبيع';
+
+  @override
+  String get for_rent => 'للإيجار';
+
+  @override
+  String get all_assets => 'جميع العقارات';
+
+  @override
+  String get try_again => 'حاول مجددًا';
 }

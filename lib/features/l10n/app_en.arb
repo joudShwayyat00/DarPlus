@@ -305,5 +305,9 @@
   "filter_select_country": "Select Country",
   "filter_select_city": "Select City",
   "filter_select_area": "Select Area",
-  "filter_rental_period": "Rental Period"
+  "filter_rental_period": "Rental Period",
+  "for_sale": "For Sale",
+  "for_rent": "For Rent",
+  "all_assets": "All Properties",
+  "try_again": "Try Again"
 }

@@ -1,3 +1,5 @@
+enum ListingType { rent, sale }
+
 class PropertyItem {
   final String title;
   final String location;
@@ -14,6 +16,7 @@ class PropertyItem {
   final bool hasPool;
   final bool hasBbq;
   final bool hasWifi;
+  final ListingType listingType;
 
   // ✅ معلومات التواصل
   final String? phone;
@@ -40,6 +43,7 @@ class PropertyItem {
     required this.hasPool,
     required this.hasBbq,
     required this.hasWifi,
+    this.listingType = ListingType.rent,
 
     // optional
     this.phone,
@@ -75,6 +79,7 @@ final List<PropertyItem> recommendedProperties = [
     hasPool: true,
     hasBbq: true,
     hasWifi: true,
+    listingType: ListingType.rent,
 
     phone: "+962 79 123 4567",
     email: "info@seaviewchalet.com",
@@ -103,6 +108,7 @@ final List<PropertyItem> recommendedProperties = [
     hasPool: false,
     hasBbq: true,
     hasWifi: true,
+    listingType: ListingType.sale,
 
     phone: "+962 78 555 8899",
     email: "contact@cozynaturejo.com",
@@ -126,6 +132,7 @@ final List<PropertyItem> recommendedProperties = [
     hasPool: true,
     hasBbq: true,
     hasWifi: true,
+    listingType: ListingType.rent,
 
     phone: "+962 77 888 2222",
     email: "booking@familychaletaqaba.com",

@@ -54,6 +54,34 @@ class PropertyTile extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Listing type badge (For Sale / For Rent)
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 3.w,
+                        vertical: 0.6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: item.listingType == ListingType.sale
+                            ? const Color(0xFF1B6B2F)
+                            : AppColors.goldBrandColor,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        item.listingType == ListingType.sale
+                            ? tr.for_sale
+                            : tr.for_rent,
+                        style: appTextStyle(
+                          context,
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

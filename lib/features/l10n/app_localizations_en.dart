@@ -972,4 +972,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filter_rental_period => 'Rental Period';
+
+  @override
+  String get for_sale => 'For Sale';
+
+  @override
+  String get for_rent => 'For Rent';
+
+  @override
+  String get all_assets => 'All Properties';
+
+  @override
+  String get try_again => 'Try Again';
 }

@@ -14,7 +14,9 @@ import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key});
+  final bool showBackButton;
+
+  const SearchScreen({super.key, this.showBackButton = false});
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
@@ -95,14 +97,35 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            tr.search,
-            style: appTextStyle(
-              context,
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w900,
-              color: Colors.black.withAlpha(240),
-            ),
+          Row(
+            children: [
+              if (widget.showBackButton)
+                GestureDetector(
+                  onTap: () => AppNavigator.of(context).pop(),
+                  child: Container(
+                    padding: EdgeInsets.all(2.2.w),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 20,
+                      color: Colors.black.withAlpha(200),
+                    ),
+                  ),
+                ),
+              if (widget.showBackButton) SizedBox(width: 3.w),
+              Text(
+                tr.search,
+                style: appTextStyle(
+                  context,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black.withAlpha(240),
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 1.5.h),
           Container(

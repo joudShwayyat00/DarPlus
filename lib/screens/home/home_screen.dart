@@ -1,3 +1,4 @@
+import 'package:dar_plus_app/screens/assets/assets_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
 import 'package:dar_plus_app/main.dart';
@@ -25,7 +26,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentRecommendedIndex = 0;
-  int _selectedCategoryIndex = 0;
+  int? _selectedCategoryIndex;
   late _ListingType _listingType;
 
   final PageController _recommendedController = PageController(
@@ -143,9 +144,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   title: item.name,
                                   imageUrl: item.image,
                                   isSelected: _selectedCategoryIndex == index,
-                                  onTap: () => setState(
-                                    () => _selectedCategoryIndex = index,
-                                  ),
+                                  onTap: () {
+                                    setState(
+                                      () => _selectedCategoryIndex = index,
+                                    );
+                                    AppNavigator.of(context).push(
+                                      AssetsScreen(initialCategoryIndex: index),
+                                    );
+                                  },
                                 );
                               },
                             ),

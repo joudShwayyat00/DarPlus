@@ -305,5 +305,9 @@
   "filter_select_country": "اختر الدولة",
   "filter_select_city": "اختر المدينة",
   "filter_select_area": "اختر المنطقة",
-  "filter_rental_period": "فترة الإيجار"
+  "filter_rental_period": "فترة الإيجار",
+  "for_sale": "للبيع",
+  "for_rent": "للإيجار",
+  "all_assets": "جميع العقارات",
+  "try_again": "حاول مجددًا"
 }
