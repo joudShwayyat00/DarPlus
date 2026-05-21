@@ -1,7 +1,10 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 
 // ─── Public Data Model ────────────────────────────────────────────────────────
@@ -58,15 +61,15 @@ Future<FilterData?> showFilterBottomSheet(
 
 // ─── Widget ───────────────────────────────────────────────────────────────────
 
-class FilterBottomSheet extends StatefulWidget {
+class FilterBottomSheet extends ConsumerStatefulWidget {
   final FilterData initial;
   const FilterBottomSheet({super.key, required this.initial});
 
   @override
-  State<FilterBottomSheet> createState() => _FilterBottomSheetState();
+  ConsumerState<FilterBottomSheet> createState() => _FilterBottomSheetState();
 }
 
-class _FilterBottomSheetState extends State<FilterBottomSheet> {
+class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   // Filter state
   String? _listingType;
   final Set<String> _assetTypes = {};
@@ -122,16 +125,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     },
   };
 
-  // ── Asset types ────────────────────────────────────────────────────────
-  static const List<Map<String, dynamic>> _assetTypeOptions = [
-    {'key': 'house', 'icon': Icons.home_rounded},
-    {'key': 'villa', 'icon': Icons.villa_rounded},
-    {'key': 'chalet', 'icon': Icons.cabin_rounded},
-    {'key': 'farm', 'icon': Icons.grass_rounded},
-    {'key': 'hotel_apartment', 'icon': Icons.apartment_rounded},
-    {'key': 'family_apartment', 'icon': Icons.family_restroom_rounded},
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -151,25 +144,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   bool get _showRentalPeriod =>
       _listingType == 'rent' || _listingType == 'both';
-
-  String _assetTypeLabel(String key) {
-    switch (key) {
-      case 'house':
-        return tr.filter_house;
-      case 'villa':
-        return tr.filter_villa;
-      case 'chalet':
-        return tr.chalets;
-      case 'farm':
-        return tr.farms;
-      case 'hotel_apartment':
-        return tr.hotel_apartments;
-      case 'family_apartment':
-        return tr.family_apartments;
-      default:
-        return key;
-    }
-  }
 
   void _reset() {
     setState(() {
@@ -378,29 +352,43 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   // ── Property Type ──────────────────────────────────────────────────────────
 
   Widget _buildPropertyTypeSection() {
+    final categoriesAsync = ref.watch(homeCategoryControllerProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionLabel(tr.filter_property_type),
-        Wrap(
-          spacing: 2.5.w,
-          runSpacing: 1.2.h,
-          children: _assetTypeOptions.map((opt) {
-            final key = opt['key'] as String;
-            final icon = opt['icon'] as IconData;
-            return _FilterChip(
-              icon: icon,
-              label: _assetTypeLabel(key),
-              isSelected: _assetTypes.contains(key),
-              onTap: () => setState(() {
-                if (_assetTypes.contains(key)) {
-                  _assetTypes.remove(key);
-                } else {
-                  _assetTypes.add(key);
-                }
-              }),
-            );
-          }).toList(),
+        categoriesAsync.when(
+          data: (categories) => Wrap(
+            spacing: 2.5.w,
+            runSpacing: 1.2.h,
+            children: categories.map((cat) {
+              final key = cat.id.toString();
+              return _FilterChip(
+                label: cat.name,
+                isSelected: _assetTypes.contains(key),
+                onTap: () => setState(() {
+                  if (_assetTypes.contains(key)) {
+                    _assetTypes.remove(key);
+                  } else {
+                    _assetTypes.add(key);
+                  }
+                }),
+              );
+            }).toList(),
+          ),
+          loading: () => Wrap(
+            spacing: 2.5.w,
+            runSpacing: 1.2.h,
+            children: List.generate(
+              4,
+              (_) => ShimmerPlaceholder(
+                width: 25.w,
+                height: 4.5.h,
+                borderRadius: BorderRadius.circular(999),
+              ),
+            ),
+          ),
+          error: (_, __) => const SizedBox.shrink(),
         ),
       ],
     );
@@ -593,7 +581,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
 class _FilterChip extends StatelessWidget {
   final String label;
-  final IconData? icon;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -601,7 +588,6 @@ class _FilterChip extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
-    this.icon,
   });
 
   @override
@@ -646,16 +632,6 @@ class _FilterChip extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (icon != null) ...[
-                Icon(
-                  icon,
-                  size: 14,
-                  color: isSelected
-                      ? AppColors.goldBrandColor
-                      : AppColors.grayBrandColor,
-                ),
-                SizedBox(width: 1.5.w),
-              ],
               Text(
                 label,
                 style: appTextStyle(

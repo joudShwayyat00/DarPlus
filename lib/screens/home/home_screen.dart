@@ -1,4 +1,5 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/screens/home/widgets/category_card.dart';
@@ -8,19 +9,21 @@ import 'package:dar_plus_app/screens/home/widgets/property_tile.dart';
 import 'package:dar_plus_app/screens/home/widgets/section_header.dart';
 import 'package:dar_plus_app/screens/property_details/property_details_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 
 enum _ListingType { buy, rent, both }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentRecommendedIndex = 0;
   int _selectedCategoryIndex = 0;
   late _ListingType _listingType;
@@ -34,29 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _listingType = _ListingType.both;
   }
-
-  static const List<_CategoryItem> _categories = [
-    _CategoryItem(
-      title: "Hotel Apartments",
-      imageUrl:
-          "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400",
-    ),
-    _CategoryItem(
-      title: "Family Apartments",
-      imageUrl:
-          "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400",
-    ),
-    _CategoryItem(
-      title: "Chalets",
-      imageUrl:
-          "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=400",
-    ),
-    _CategoryItem(
-      title: "Farms",
-      imageUrl:
-          "https://images.unsplash.com/photo-1599423300746-b62533397364?w=400",
-    ),
-  ];
 
   static const List<_OwnerItem> _topOwners = [
     _OwnerItem(
@@ -148,28 +128,41 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(height: 1.5.h),
                     SizedBox(
                       height: 13.5.h,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.zero,
-                        itemCount: _categories.length,
-                        separatorBuilder: (_, __) => SizedBox(width: 2.5.w),
-                        itemBuilder: (context, index) {
-                          final localizedTitle = index == 0
-                              ? tr.hotel_apartments
-                              : index == 1
-                              ? tr.family_apartments
-                              : index == 2
-                              ? tr.chalets
-                              : tr.farms;
-                          return CategoryImageCard(
-                            title: localizedTitle,
-                            imageUrl: _categories[index].imageUrl,
-                            isSelected: _selectedCategoryIndex == index,
-                            onTap: () =>
-                                setState(() => _selectedCategoryIndex = index),
-                          );
-                        },
-                      ),
+                      child: ref
+                          .watch(homeCategoryControllerProvider)
+                          .when(
+                            data: (categories) => ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding: EdgeInsets.zero,
+                              itemCount: categories.length,
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(width: 2.5.w),
+                              itemBuilder: (context, index) {
+                                final item = categories[index];
+                                return CategoryImageCard(
+                                  title: item.name,
+                                  imageUrl: item.image,
+                                  isSelected: _selectedCategoryIndex == index,
+                                  onTap: () => setState(
+                                    () => _selectedCategoryIndex = index,
+                                  ),
+                                );
+                              },
+                            ),
+                            loading: () => ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding: EdgeInsets.zero,
+                              itemCount: 4,
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(width: 2.5.w),
+                              itemBuilder: (_, __) => ShimmerPlaceholder(
+                                width: 34.w,
+                                height: 13.5.h,
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                            error: (_, __) => const SizedBox.shrink(),
+                          ),
                     ),
 
                     SizedBox(height: 2.5.h),
@@ -277,13 +270,6 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 // ─── Data Models ─────────────────────────────────────────────────────────────
-
-class _CategoryItem {
-  final String title;
-  final String imageUrl;
-
-  const _CategoryItem({required this.title, required this.imageUrl});
-}
 
 class _OwnerItem {
   final String name;

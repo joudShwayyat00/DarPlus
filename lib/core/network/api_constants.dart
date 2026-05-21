@@ -10,6 +10,8 @@ class ApiConstants {
 
   // Sliders endpoint (language suffix is provided as path param)
   static const String sliders = "api/sliders";
+  // Categories endpoint (language suffix is provided as path param)
+  static const String categories = "api/categories/all";
   // Popular searches endpoint
   static const String popularSearches = "api/popular_searches";
   // Recent searches endpoint
