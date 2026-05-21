@@ -8,6 +8,7 @@ import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_auth_background.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_input_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,9 +53,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         },
         error: (error, stackTrace) {
           EasyLoading.dismiss();
-          EasyLoading.showError(tr.error_occurred);
-
-          // EasyLoading.showError(error.toString());
+          String message = tr.error_occurred;
+          if (error is DioException) {
+            final data = error.response?.data;
+            if (data is Map && data['message'] != null) {
+              message = data['message'].toString();
+            }
+          }
+          EasyLoading.showError(message);
         },
         loading: () {
           EasyLoading.show(status: tr.loading);

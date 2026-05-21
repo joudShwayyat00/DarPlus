@@ -1,4 +1,5 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/utils/widgets/filter_bottom_sheet.dart';
 import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/screens/property_details/property_details_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
@@ -22,6 +23,7 @@ class SearchScreen extends ConsumerStatefulWidget {
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  FilterData _activeFilter = FilterData.empty;
 
   // recent searches are fetched from the API; no local fallbacks kept here
 
@@ -144,10 +146,17 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           size: 20,
                         ),
                       )
-                    : Icon(
-                        Icons.tune_rounded,
-                        color: Colors.black.withAlpha(140),
-                        size: 20,
+                    : _FilterButton(
+                        activeCount: _activeFilter.activeCount,
+                        onTap: () async {
+                          final result = await showFilterBottomSheet(
+                            context,
+                            initial: _activeFilter,
+                          );
+                          if (result != null) {
+                            setState(() => _activeFilter = result);
+                          }
+                        },
                       ),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(
@@ -574,6 +583,60 @@ class _FeaturedPropertyCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Filter Icon Button with badge ───────────────────────────────────────────
+
+class _FilterButton extends StatelessWidget {
+  final int activeCount;
+  final VoidCallback onTap;
+
+  const _FilterButton({required this.activeCount, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.only(right: 2.w),
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Icon(
+              Icons.tune_rounded,
+              color: activeCount > 0
+                  ? AppColors.goldBrandColor
+                  : Colors.black.withAlpha(140),
+              size: 22,
+            ),
+            if (activeCount > 0)
+              Positioned(
+                top: -4,
+                right: -4,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: const BoxDecoration(
+                    color: AppColors.goldBrandColor,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '$activeCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );

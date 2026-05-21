@@ -221,7 +221,7 @@ abstract class AppLocalizations {
   /// No description provided for @password_min_length.
   ///
   /// In en, this message translates to:
-  /// **'Password must be at least 6 characters'**
+  /// **'Password must be at least 8 characters'**
   String get password_min_length;
 
   /// No description provided for @or.
@@ -325,6 +325,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Browse by Category'**
   String get browse_by_category;
+
+  /// No description provided for @buy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get buy;
+
+  /// No description provided for @rent.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get rent;
+
+  /// No description provided for @both.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get both;
+
+  /// No description provided for @what_are_you_interested_in.
+  ///
+  /// In en, this message translates to:
+  /// **'What are you interested in?'**
+  String get what_are_you_interested_in;
+
+  /// No description provided for @top_rated_owners.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Rated Owners'**
+  String get top_rated_owners;
 
   /// No description provided for @top_rated.
   ///
@@ -1813,6 +1843,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Role'**
   String get role;
+
+  /// No description provided for @filter_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filter_title;
+
+  /// No description provided for @filter_reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get filter_reset;
+
+  /// No description provided for @filter_apply_filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filters'**
+  String get filter_apply_filters;
+
+  /// No description provided for @filter_looking_to.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking To'**
+  String get filter_looking_to;
+
+  /// No description provided for @filter_owner_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner Type'**
+  String get filter_owner_type;
+
+  /// No description provided for @filter_individual_owner.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual Owner'**
+  String get filter_individual_owner;
+
+  /// No description provided for @filter_agency.
+  ///
+  /// In en, this message translates to:
+  /// **'Agency'**
+  String get filter_agency;
+
+  /// No description provided for @filter_property_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Type'**
+  String get filter_property_type;
+
+  /// No description provided for @filter_house.
+  ///
+  /// In en, this message translates to:
+  /// **'House'**
+  String get filter_house;
+
+  /// No description provided for @filter_villa.
+  ///
+  /// In en, this message translates to:
+  /// **'Villa'**
+  String get filter_villa;
+
+  /// No description provided for @filter_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get filter_location;
+
+  /// No description provided for @filter_select_country.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Country'**
+  String get filter_select_country;
+
+  /// No description provided for @filter_select_city.
+  ///
+  /// In en, this message translates to:
+  /// **'Select City'**
+  String get filter_select_city;
+
+  /// No description provided for @filter_select_area.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Area'**
+  String get filter_select_area;
+
+  /// No description provided for @filter_rental_period.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental Period'**
+  String get filter_rental_period;
 }
 
 class _AppLocalizationsDelegate

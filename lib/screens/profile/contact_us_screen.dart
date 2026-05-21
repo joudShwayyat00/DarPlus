@@ -239,7 +239,11 @@ class ContactUsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialButton(IconData icon, Color iconColor, {Color? bgColor}) {
+  Widget _buildSocialButton(
+    FaIconData icon,
+    Color iconColor, {
+    Color? bgColor,
+  }) {
     return GestureDetector(
       onTap: () {
         // TODO: Open social media

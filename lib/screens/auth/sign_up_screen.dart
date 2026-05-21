@@ -445,8 +445,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               debugPrint('sendingPhoneNumber: $phoneNumber');
 
                               if (_formKey.currentState!.validate()) {
-                                final role =
-                                    _selectedUserType == UserType.owner
+                                final role = _selectedUserType == UserType.owner
                                     ? 'owner'
                                     : 'customer';
 

@@ -72,7 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get submit => 'Submit';
 
   @override
-  String get password_min_length => 'Password must be at least 6 characters';
+  String get password_min_length => 'Password must be at least 8 characters';
 
   @override
   String get or => 'or';
@@ -125,6 +125,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browse_by_category => 'Browse by Category';
+
+  @override
+  String get buy => 'Buy';
+
+  @override
+  String get rent => 'Rent';
+
+  @override
+  String get both => 'Both';
+
+  @override
+  String get what_are_you_interested_in => 'What are you interested in?';
+
+  @override
+  String get top_rated_owners => 'Top Rated Owners';
 
   @override
   String get top_rated => 'Top Rated';
@@ -912,4 +927,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get role => 'Role';
+
+  @override
+  String get filter_title => 'Filters';
+
+  @override
+  String get filter_reset => 'Reset';
+
+  @override
+  String get filter_apply_filters => 'Apply Filters';
+
+  @override
+  String get filter_looking_to => 'Looking To';
+
+  @override
+  String get filter_owner_type => 'Owner Type';
+
+  @override
+  String get filter_individual_owner => 'Individual Owner';
+
+  @override
+  String get filter_agency => 'Agency';
+
+  @override
+  String get filter_property_type => 'Property Type';
+
+  @override
+  String get filter_house => 'House';
+
+  @override
+  String get filter_villa => 'Villa';
+
+  @override
+  String get filter_location => 'Location';
+
+  @override
+  String get filter_select_country => 'Select Country';
+
+  @override
+  String get filter_select_city => 'Select City';
+
+  @override
+  String get filter_select_area => 'Select Area';
+
+  @override
+  String get filter_rental_period => 'Rental Period';
 }

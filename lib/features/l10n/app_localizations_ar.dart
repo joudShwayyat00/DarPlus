@@ -70,7 +70,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get submit => 'إرسال';
 
   @override
-  String get password_min_length => 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+  String get password_min_length => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
 
   @override
   String get or => 'أو';
@@ -123,6 +123,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get browse_by_category => 'تصفح حسب الفئة';
+
+  @override
+  String get buy => 'شراء';
+
+  @override
+  String get rent => 'إيجار';
+
+  @override
+  String get both => 'كلاهما';
+
+  @override
+  String get what_are_you_interested_in => 'ما الذي تبحث عنه؟';
+
+  @override
+  String get top_rated_owners => 'أفضل الملاك';
 
   @override
   String get top_rated => 'الأعلى تقييماً';
@@ -903,4 +918,49 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get role => 'الدور';
+
+  @override
+  String get filter_title => 'التصفية';
+
+  @override
+  String get filter_reset => 'إعادة تعيين';
+
+  @override
+  String get filter_apply_filters => 'تطبيق الفلاتر';
+
+  @override
+  String get filter_looking_to => 'ما الذي تبحث عنه';
+
+  @override
+  String get filter_owner_type => 'نوع المالك';
+
+  @override
+  String get filter_individual_owner => 'مالك فردي';
+
+  @override
+  String get filter_agency => 'وكالة عقارية';
+
+  @override
+  String get filter_property_type => 'نوع العقار';
+
+  @override
+  String get filter_house => 'منزل';
+
+  @override
+  String get filter_villa => 'فيلا';
+
+  @override
+  String get filter_location => 'الموقع';
+
+  @override
+  String get filter_select_country => 'اختر الدولة';
+
+  @override
+  String get filter_select_city => 'اختر المدينة';
+
+  @override
+  String get filter_select_area => 'اختر المنطقة';
+
+  @override
+  String get filter_rental_period => 'فترة الإيجار';
 }
