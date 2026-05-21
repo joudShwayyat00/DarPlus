@@ -909,4 +909,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nav_profile => 'Profile';
+
+  @override
+  String get role => 'Role';
 }

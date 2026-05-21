@@ -284,5 +284,6 @@
   "nav_home": "الرئيسية",
   "nav_explore": "استكشاف",
   "nav_bookings": "الحجوزات",
-  "nav_profile": "الملف الشخصي"
+  "nav_profile": "الملف الشخصي", 
+  "role": "الدور"
 }

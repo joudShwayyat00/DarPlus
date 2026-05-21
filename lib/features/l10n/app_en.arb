@@ -284,5 +284,6 @@
   "nav_home": "Home",
   "nav_explore": "Explore",
   "nav_bookings": "Bookings",
-  "nav_profile": "Profile"
+  "nav_profile": "Profile", 
+  "role": "Role"
 }

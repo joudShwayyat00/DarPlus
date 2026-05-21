@@ -17,7 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-enum UserType { ownerOrAgent, user }
+enum UserType { owner, customer }
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -47,7 +47,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   bool _agreedToTerms = false;
-  UserType _selectedUserType = UserType.user;
+  UserType _selectedUserType = UserType.customer;
 
   String _completePhoneNumber = '';
   String _nationalPhoneNumber = '';
@@ -159,17 +159,17 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                               fontSize: 10.sp,
                                               color:
                                                   _selectedUserType ==
-                                                      UserType.ownerOrAgent
+                                                      UserType.owner
                                                   ? AppColors.whiteColor
                                                   : Colors.black87,
                                             ),
                                           ),
                                           selected:
                                               _selectedUserType ==
-                                              UserType.ownerOrAgent,
+                                              UserType.owner,
                                           onSelected: (_) => setState(
                                             () => _selectedUserType =
-                                                UserType.ownerOrAgent,
+                                                UserType.owner,
                                           ),
                                           selectedColor:
                                               AppColors.goldBrandColor,
@@ -188,17 +188,17 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                               fontSize: 10.sp,
                                               color:
                                                   _selectedUserType ==
-                                                      UserType.user
+                                                      UserType.customer
                                                   ? AppColors.whiteColor
                                                   : Colors.black87,
                                             ),
                                           ),
                                           selected:
                                               _selectedUserType ==
-                                              UserType.user,
+                                              UserType.customer,
                                           onSelected: (_) => setState(
                                             () => _selectedUserType =
-                                                UserType.user,
+                                                UserType.customer,
                                           ),
                                           selectedColor:
                                               AppColors.goldBrandColor,
@@ -303,7 +303,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                     ),
                                   ),
                                   validator: (value) {
-                                    if (value == null || value.length < 6) {
+                                    if (value == null || value.length < 8) {
                                       return tr.password_min_length;
                                     }
                                     return null;
@@ -445,9 +445,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               debugPrint('sendingPhoneNumber: $phoneNumber');
 
                               if (_formKey.currentState!.validate()) {
-                                final role = _selectedUserType == UserType.ownerOrAgent
+                                final role =
+                                    _selectedUserType == UserType.owner
                                     ? 'owner'
-                                    : 'user';
+                                    : 'customer';
 
                                 ref
                                     .read(registerControllerProvider.notifier)
@@ -549,19 +550,61 @@ class RegisterListener extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    String extractServerMessage(Object? error) {
+      try {
+        final resp = (error as dynamic).response;
+        final data = resp?.data;
+        if (data is Map) {
+          if (data['errors'] is Map) {
+            final Map errors = data['errors'] as Map;
+            final messages = errors.entries
+                .map((e) {
+                  final key = e.key.toString();
+                  final val = e.value;
+                  final joined = val is List ? val.join(', ') : val.toString();
+                  final fieldLabel = key == 'password'
+                      ? tr.password
+                      : key == 'role'
+                      ? tr.role
+                      : key;
+                  return '$fieldLabel: $joined';
+                })
+                .join('\n');
+            return messages;
+          } else if (data['message'] is String) {
+            return data['message'] as String;
+          }
+        }
+        return error.toString();
+      } catch (_) {
+        return error.toString();
+      }
+    }
+
     ref.listen(registerControllerProvider, (previous, next) {
-      next.whenOrNull(
-        data: (_) {
-          EasyLoading.showSuccess(tr.done);
-          AppNavigator.of(
-            context,
-          ).pushAndRemoveUntil(const BottomNavBarScreen());
+      next.when(
+        data: (data) {
+          if (data != null) {
+            EasyLoading.dismiss();
+            EasyLoading.showSuccess(tr.done);
+            AppNavigator.of(
+              context,
+            ).pushAndRemoveUntil(const BottomNavBarScreen());
+          }
+        },
+        loading: () {
+          EasyLoading.show(status: tr.loading);
         },
         error: (error, stack) {
-          EasyLoading.showError(error.toString());
+          EasyLoading.dismiss();
+          final msg = extractServerMessage(error);
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(msg)));
         },
       );
     });
+
     return const SizedBox.shrink();
   }
 }

@@ -36,27 +36,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<RegisterResponse?>>(
-      loginControllerProvider,
-      (previous, next) {
-        next.when(
-          data: (data) {
-            if (data != null) {
-              EasyLoading.dismiss();
-              EasyLoading.showSuccess(tr.done);
-              AppNavigator.of(context).pushAndRemoveUntil(const BottomNavBarScreen());
-            }
-          },
-          error: (error, stackTrace) {
+    ref.listen<AsyncValue<RegisterResponse?>>(loginControllerProvider, (
+      previous,
+      next,
+    ) {
+      next.when(
+        data: (data) {
+          if (data != null) {
             EasyLoading.dismiss();
-            EasyLoading.showError(error.toString());
-          },
-          loading: () {
-            EasyLoading.show(status: tr.loading);
-          },
-        );
-      },
-    );
+            EasyLoading.showSuccess(tr.done);
+            AppNavigator.of(
+              context,
+            ).pushAndRemoveUntil(const BottomNavBarScreen());
+          }
+        },
+        error: (error, stackTrace) {
+          EasyLoading.dismiss();
+          EasyLoading.showError(tr.error_occurred);
+
+          // EasyLoading.showError(error.toString());
+        },
+        loading: () {
+          EasyLoading.show(status: tr.loading);
+        },
+      );
+    });
 
     return AppAuthBackground(
       child: LayoutBuilder(
@@ -211,7 +215,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               alignment: Alignment.centerRight,
                               child: TextButton(
                                 onPressed: () {
-                                  AppNavigator.of(context).push(const ForgotPasswordScreen());
+                                  AppNavigator.of(
+                                    context,
+                                  ).push(const ForgotPasswordScreen());
                                 },
                                 style: TextButton.styleFrom(
                                   padding: const EdgeInsets.all(10),
@@ -234,9 +240,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               backgroundColor: AppColors.goldBrandColor,
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  ref.read(loginControllerProvider.notifier).login(
+                                  ref
+                                      .read(loginControllerProvider.notifier)
+                                      .login(
                                         email: emailController.text.trim(),
-                                        password: passwordController.text.trim(),
+                                        password: passwordController.text
+                                            .trim(),
                                       );
                                 }
                               },

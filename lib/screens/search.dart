@@ -5,33 +5,25 @@ import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dar_plus_app/features/search/presentation/providers/search_providers.dart';
+import 'package:dar_plus_app/features/search/presentation/providers/recent_search_providers.dart';
+import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
-  final List<String> _recentSearches = [
-    "Sea View Chalet",
-    "Dead Sea",
-    "Family Apartments",
-  ];
-
-  final List<String> _popularSearches = [
-    "Chalets",
-    "Farms",
-    "Pool",
-    "BBQ",
-    "Near Beach",
-  ];
+  // recent searches are fetched from the API; no local fallbacks kept here
 
   @override
   void dispose() {
@@ -59,12 +51,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     SizedBox(height: 2.5.h),
 
-                    // Recent Searches Section
-                    _buildSectionTitle(tr.recent_searches),
-                    SizedBox(height: 1.2.h),
-                    _buildRecentSearches(),
-
-                    SizedBox(height: 2.8.h),
+                    // Recent Searches Section (hidden on error/empty)
+                    _buildRecentSection(),
 
                     // Popular Searches Section
                     _buildSectionTitle(tr.popular_searches),
@@ -189,52 +177,101 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildRecentSearches() {
-    return Column(
-      children: _recentSearches.map((search) {
-        final display = search == "Sea View Chalet"
-            ? tr.sample_sea_view_chalet
-            : search == "Dead Sea"
-            ? tr.sample_dead_sea
-            : tr.sample_family_apartments;
-        return _RecentSearchTile(
-          text: display,
-          onTap: () {
-            _searchController.text = display;
-            setState(() {});
-          },
-          onRemove: () {
-            setState(() {
-              _recentSearches.remove(search);
-            });
-          },
+  Widget _buildRecentSection() {
+    final recentAsync = ref.watch(recentSearchControllerProvider);
+
+    return recentAsync.when(
+      data: (items) {
+        // Hide section when API returns empty
+        if (items.isEmpty) return const SizedBox.shrink();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitle(tr.recent_searches),
+            SizedBox(height: 1.2.h),
+            Column(
+              children: items.map((search) {
+                final display = search.toString() ?? '';
+                return _RecentSearchTile(
+                  text: display,
+                  onTap: () {
+                    _searchController.text = display;
+                    setState(() {});
+                  },
+                  onRemove: () {},
+                );
+              }).toList(),
+            ),
+            SizedBox(height: 2.8.h),
+          ],
         );
-      }).toList(),
+      },
+      loading: () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(tr.recent_searches),
+          SizedBox(height: 1.2.h),
+          Column(
+            children: List.generate(
+              3,
+              (index) => Padding(
+                padding: EdgeInsets.symmetric(vertical: 1.2.h),
+                child: ShimmerPlaceholder(
+                  width: double.infinity,
+                  height: 4.h,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 2.8.h),
+        ],
+      ),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 
   Widget _buildPopularSearches() {
-    return Wrap(
-      spacing: 2.5.w,
-      runSpacing: 1.2.h,
-      children: _popularSearches.map((search) {
-        final display = search == "Chalets"
-            ? tr.chalets
-            : search == "Farms"
-            ? tr.farms
-            : search == "Pool"
-            ? tr.pool
-            : search == "BBQ"
-            ? tr.bbq
-            : tr.near_beach;
-        return _SearchChip(
-          text: display,
-          onTap: () {
-            _searchController.text = display;
-            setState(() {});
-          },
+    final popularAsync = ref.watch(popularSearchControllerProvider);
+
+    return popularAsync.when(
+      data: (items) {
+        final list = items;
+        return Wrap(
+          spacing: 2.5.w,
+          runSpacing: 1.2.h,
+          children: list.map((search) {
+            final display = search;
+            return _SearchChip(
+              text: display,
+              onTap: () {
+                _searchController.text = display;
+                setState(() {});
+              },
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
+      loading: () => Wrap(
+        spacing: 2.5.w,
+        runSpacing: 1.2.h,
+        children: List.generate(
+          5,
+          (index) => Padding(
+            padding: EdgeInsets.only(bottom: 1.2.h),
+            child: ShimmerPlaceholder(
+              width: 28.w,
+              height: 3.6.h,
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
+        ),
+      ),
+      error: (err, st) {
+        // Fallback to empty or default items on error
+        return Wrap(spacing: 2.5.w, runSpacing: 1.2.h, children: []);
+      },
     );
   }
 

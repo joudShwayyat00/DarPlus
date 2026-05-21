@@ -900,4 +900,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get nav_profile => 'الملف الشخصي';
+
+  @override
+  String get role => 'الدور';
 }
