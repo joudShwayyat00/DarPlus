@@ -309,5 +309,9 @@
   "for_sale": "For Sale",
   "for_rent": "For Rent",
   "all_assets": "All Properties",
-  "try_again": "Try Again"
+  "try_again": "Try Again",
+  "attributes": "Attributes",
+  "currency_jod": "JOD",
+  "owner": "Owner",
+  "no_results_found": "No results found"
 }

@@ -984,4 +984,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get try_again => 'Try Again';
+
+  @override
+  String get attributes => 'Attributes';
+
+  @override
+  String get owner => 'Owner';
+
+  @override
+  String get no_results_found => 'No results found';
 }

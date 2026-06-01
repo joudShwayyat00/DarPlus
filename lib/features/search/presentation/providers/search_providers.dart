@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/network/dio_factory.dart';
+import '../../../assets/data/models/asset_item.dart';
+import '../../data/data_sources/asset_search_service_client.dart';
 import '../../data/data_sources/popular_search_service_client.dart';
 import '../../data/repositories/search_repository_impl.dart';
 import '../../domain/repositories/search_repository.dart';
@@ -16,9 +18,16 @@ PopularSearchServiceClient popularSearchServiceClient(Ref ref) {
 }
 
 @riverpod
+AssetSearchServiceClient assetSearchServiceClient(Ref ref) {
+  final dio = DioFactory.getDio();
+  return AssetSearchServiceClient(dio);
+}
+
+@riverpod
 SearchRepository searchRepository(Ref ref) {
   final client = ref.watch(popularSearchServiceClientProvider);
-  return SearchRepositoryImpl(client);
+  final searchClient = ref.watch(assetSearchServiceClientProvider);
+  return SearchRepositoryImpl(client, searchClient);
 }
 
 @riverpod
@@ -35,5 +44,17 @@ class PopularSearchController extends _$PopularSearchController {
       final repository = ref.read(searchRepositoryProvider);
       return await repository.getPopularSearches();
     });
+  }
+}
+
+/// Family provider — one instance per query string.
+/// Returns empty list immediately for empty queries.
+@riverpod
+class AssetSearchController extends _$AssetSearchController {
+  @override
+  FutureOr<List<AssetItem>> build(String query) async {
+    if (query.trim().isEmpty) return [];
+    final repository = ref.read(searchRepositoryProvider);
+    return await repository.searchAssets(query.trim());
   }
 }

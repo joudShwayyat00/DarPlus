@@ -1,4 +1,6 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
+import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/utils/widgets/filter_bottom_sheet.dart';
 import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/screens/property_details/property_details_screen.dart';
@@ -58,17 +60,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     // Recent Searches Section (hidden on error/empty)
                     _buildRecentSection(),
 
-                    // Popular Searches Section
-                    _buildSectionTitle(tr.popular_searches),
-                    SizedBox(height: 1.2.h),
-                    _buildPopularSearches(),
-
-                    SizedBox(height: 2.8.h),
-
-                    // Featured Properties Section
-                    _buildSectionTitle(tr.featured_properties),
-                    SizedBox(height: 1.2.h),
-                    _buildFeaturedProperties(),
+                    // Search results (when typing) or discovery content (idle)
+                    _buildSearchContent(),
 
                     SizedBox(height: 3.h),
                   ],
@@ -197,6 +190,99 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
+  /// Switches between search results and discovery sections.
+  Widget _buildSearchContent() {
+    final query = _searchController.text.trim();
+    if (query.isNotEmpty) {
+      return _buildSearchResults(query);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(tr.popular_searches),
+        SizedBox(height: 1.2.h),
+        _buildPopularSearches(),
+        SizedBox(height: 2.8.h),
+        _buildSectionTitle(tr.featured_properties),
+        SizedBox(height: 1.2.h),
+        _buildFeaturedProperties(),
+      ],
+    );
+  }
+
+  Widget _buildSearchResults(String query) {
+    final resultsAsync = ref.watch(assetSearchControllerProvider(query));
+
+    return resultsAsync.when(
+      loading: () => Column(
+        children: List.generate(
+          4,
+          (i) => Padding(
+            padding: EdgeInsets.only(bottom: 1.5.h),
+            child: ShimmerPlaceholder(
+              width: double.infinity,
+              height: 10.h,
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+      ),
+      error: (err, __) => Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 4.h),
+          child: Text(
+            err.toString(),
+            style: appTextStyle(
+              context,
+              fontSize: 11.sp,
+              color: Colors.red.shade400,
+            ),
+          ),
+        ),
+      ),
+      data: (assets) {
+        if (assets.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6.h),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.search_off_rounded,
+                    size: 48,
+                    color: Colors.black.withAlpha(60),
+                  ),
+                  SizedBox(height: 1.h),
+                  Text(
+                    tr.no_results_found,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black.withAlpha(120),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return Column(
+          children: assets
+              .map(
+                (asset) => _AssetResultTile(
+                  asset: asset,
+                  onTap: () => AppNavigator.of(context).push(
+                    AssetDetailsScreen(assetId: asset.id, initialAsset: asset),
+                  ),
+                ),
+              )
+              .toList(),
+        );
+      },
+    );
+  }
+
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
@@ -224,7 +310,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             SizedBox(height: 1.2.h),
             Column(
               children: items.map((search) {
-                final display = search.toString() ?? '';
+                final display = search.toString();
                 return _RecentSearchTile(
                   text: display,
                   onTap: () {
@@ -327,6 +413,160 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+// ─── Search Result Tile ───────────────────────────────────────────────────────
+
+class _AssetResultTile extends StatelessWidget {
+  final AssetItem asset;
+  final VoidCallback onTap;
+
+  const _AssetResultTile({required this.asset, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final isForSale = asset.isForSale;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 1.5.h),
+        padding: EdgeInsets.all(3.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.black.withAlpha(10)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(8),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Thumbnail
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: CachedNetworkImage(
+                imageUrl: asset.image,
+                width: 18.w,
+                height: 10.h,
+                fit: BoxFit.cover,
+                placeholder: (_, __) => Container(color: Colors.grey.shade200),
+                errorWidget: (_, __, ___) => Container(
+                  color: Colors.grey.shade200,
+                  child: Icon(
+                    Icons.image_not_supported_rounded,
+                    color: Colors.grey.shade400,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 3.w),
+            // Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 2.w,
+                          vertical: 0.3.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isForSale
+                              ? const Color(0xFF1B6B2F)
+                              : AppColors.goldBrandColor,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          isForSale ? tr.for_sale : tr.for_rent,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8.5.sp,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        Icons.star_rounded,
+                        size: 14,
+                        color: AppColors.goldBrandColor,
+                      ),
+                      SizedBox(width: 1.w),
+                      Text(
+                        asset.rating.toStringAsFixed(1),
+                        style: appTextStyle(
+                          context,
+                          fontSize: 9.5.sp,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black.withAlpha(210),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 0.5.h),
+                  Text(
+                    asset.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black.withAlpha(230),
+                    ),
+                  ),
+                  SizedBox(height: 0.3.h),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.place_rounded,
+                        size: 12,
+                        color: Colors.black.withAlpha(120),
+                      ),
+                      SizedBox(width: 1.w),
+                      Expanded(
+                        child: Text(
+                          asset.location,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: appTextStyle(
+                            context,
+                            fontSize: 9.5.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black.withAlpha(140),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 0.4.h),
+                  Text(
+                    '${asset.price} ${tr.currency_jod}',
+                    style: appTextStyle(
+                      context,
+                      fontSize: 10.5.sp,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.goldBrandColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.black.withAlpha(80),
+            ),
+          ],
+        ),
       ),
     );
   }

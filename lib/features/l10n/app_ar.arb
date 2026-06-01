@@ -309,5 +309,9 @@
   "for_sale": "للبيع",
   "for_rent": "للإيجار",
   "all_assets": "جميع العقارات",
-  "try_again": "حاول مجددًا"
+  "try_again": "حاول مجدداً",
+  "attributes": "المواصفات",
+  "currency_jod": "دينار",
+  "owner": "المالك",
+  "no_results_found": "لا توجد نتائج"
 }

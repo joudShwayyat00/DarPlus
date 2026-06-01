@@ -538,7 +538,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nightly_price => 'سعر الليلة';
 
   @override
-  String get currency_jod => 'د.ا';
+  String get currency_jod => 'دينار';
 
   @override
   String get per_night => ' / الليلة';
@@ -974,5 +974,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get all_assets => 'جميع العقارات';
 
   @override
-  String get try_again => 'حاول مجددًا';
+  String get try_again => 'حاول مجدداً';
+
+  @override
+  String get attributes => 'المواصفات';
+
+  @override
+  String get owner => 'المالك';
+
+  @override
+  String get no_results_found => 'لا توجد نتائج';
 }

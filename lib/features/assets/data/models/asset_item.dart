@@ -2,6 +2,8 @@ import 'package:dar_plus_app/features/home/data/models/category_item.dart';
 import 'package:dar_plus_app/models/property_item.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'asset_amenity.dart';
+import 'asset_attribute.dart';
 import 'asset_owner.dart';
 
 part 'asset_item.g.dart';
@@ -18,6 +20,19 @@ class AssetItem {
   // "sale" or "rent"
   final String type;
 
+  // Fields returned by the top-rated and detail endpoints (nullable on list endpoint)
+  final String? description;
+  final String? phone;
+  final String? email;
+  @JsonKey(name: 'months_count')
+  final int? monthsCount;
+  @JsonKey(name: 'rent_type')
+  final String? rentType;
+  @JsonKey(name: 'rent_price')
+  final String? rentPrice;
+  final List<AssetAttribute>? attributes;
+  final List<AssetAmenity>? amenities;
+
   const AssetItem({
     required this.id,
     required this.name,
@@ -27,6 +42,14 @@ class AssetItem {
     required this.category,
     required this.owner,
     required this.type,
+    this.description,
+    this.phone,
+    this.email,
+    this.monthsCount,
+    this.rentType,
+    this.rentPrice,
+    this.attributes,
+    this.amenities,
   });
 
   bool get isForSale => type == 'sale';
@@ -44,9 +67,9 @@ class AssetItem {
     title: name,
     location: location,
     price: price,
-    rating: owner.rating ?? 0.0,
+    rating: rating,
     images: [image],
-    description: '',
+    description: description ?? '',
     guests: 0,
     bedrooms: 0,
     bathrooms: 0,
@@ -55,7 +78,7 @@ class AssetItem {
     hasBbq: false,
     hasWifi: false,
     listingType: isForSale ? ListingType.sale : ListingType.rent,
-    phone: owner.phoneNumber,
-    email: owner.email,
+    phone: phone ?? owner.phoneNumber,
+    email: email ?? owner.email,
   );
 }

@@ -147,3 +147,157 @@ abstract class _$AssetsController extends $AsyncNotifier<List<AssetItem>> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(TopRatedAssetsController)
+const topRatedAssetsControllerProvider = TopRatedAssetsControllerProvider._();
+
+final class TopRatedAssetsControllerProvider
+    extends $AsyncNotifierProvider<TopRatedAssetsController, List<AssetItem>> {
+  const TopRatedAssetsControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'topRatedAssetsControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$topRatedAssetsControllerHash();
+
+  @$internal
+  @override
+  TopRatedAssetsController create() => TopRatedAssetsController();
+}
+
+String _$topRatedAssetsControllerHash() =>
+    r'7cc028d200602d3a14bd1f801313cd56a8803bfa';
+
+abstract class _$TopRatedAssetsController
+    extends $AsyncNotifier<List<AssetItem>> {
+  FutureOr<List<AssetItem>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<List<AssetItem>>, List<AssetItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<AssetItem>>, List<AssetItem>>,
+              AsyncValue<List<AssetItem>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+/// Family provider — one instance per [assetId].
+/// Usage: ref.watch(assetDetailControllerProvider(assetId))
+
+@ProviderFor(AssetDetailController)
+const assetDetailControllerProvider = AssetDetailControllerFamily._();
+
+/// Family provider — one instance per [assetId].
+/// Usage: ref.watch(assetDetailControllerProvider(assetId))
+final class AssetDetailControllerProvider
+    extends $AsyncNotifierProvider<AssetDetailController, AssetItem> {
+  /// Family provider — one instance per [assetId].
+  /// Usage: ref.watch(assetDetailControllerProvider(assetId))
+  const AssetDetailControllerProvider._({
+    required AssetDetailControllerFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'assetDetailControllerProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$assetDetailControllerHash();
+
+  @override
+  String toString() {
+    return r'assetDetailControllerProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  AssetDetailController create() => AssetDetailController();
+
+  @override
+  bool operator ==(Object other) {
+    return other is AssetDetailControllerProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$assetDetailControllerHash() =>
+    r'123cfa7b13fe588a0fa146a4ee755a0455045aeb';
+
+/// Family provider — one instance per [assetId].
+/// Usage: ref.watch(assetDetailControllerProvider(assetId))
+
+final class AssetDetailControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          AssetDetailController,
+          AsyncValue<AssetItem>,
+          AssetItem,
+          FutureOr<AssetItem>,
+          int
+        > {
+  const AssetDetailControllerFamily._()
+    : super(
+        retry: null,
+        name: r'assetDetailControllerProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Family provider — one instance per [assetId].
+  /// Usage: ref.watch(assetDetailControllerProvider(assetId))
+
+  AssetDetailControllerProvider call(int assetId) =>
+      AssetDetailControllerProvider._(argument: assetId, from: this);
+
+  @override
+  String toString() => r'assetDetailControllerProvider';
+}
+
+/// Family provider — one instance per [assetId].
+/// Usage: ref.watch(assetDetailControllerProvider(assetId))
+
+abstract class _$AssetDetailController extends $AsyncNotifier<AssetItem> {
+  late final _$args = ref.$arg as int;
+  int get assetId => _$args;
+
+  FutureOr<AssetItem> build(int assetId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<AsyncValue<AssetItem>, AssetItem>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<AssetItem>, AssetItem>,
+              AsyncValue<AssetItem>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

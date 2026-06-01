@@ -41,3 +41,40 @@ class AssetsController extends _$AssetsController {
     });
   }
 }
+
+@riverpod
+class TopRatedAssetsController extends _$TopRatedAssetsController {
+  @override
+  FutureOr<List<AssetItem>> build() async {
+    final repository = ref.read(assetsRepositoryProvider);
+    return await repository.getTopRatedAssets();
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ref.read(assetsRepositoryProvider).getTopRatedAssets(),
+    );
+  }
+}
+
+/// Family provider — one instance per [assetId].
+/// Usage: ref.watch(assetDetailControllerProvider(assetId))
+@riverpod
+class AssetDetailController extends _$AssetDetailController {
+  @override
+  FutureOr<AssetItem> build(int assetId) async {
+    final lang = ref.read(localeProvider).languageCode;
+    final repository = ref.read(assetsRepositoryProvider);
+    return await repository.getAssetDetail(id: assetId, lang: lang);
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final lang = ref.read(localeProvider).languageCode;
+      final repository = ref.read(assetsRepositoryProvider);
+      return await repository.getAssetDetail(id: assetId, lang: lang);
+    });
+  }
+}

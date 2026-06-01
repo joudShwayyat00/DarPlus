@@ -6,7 +6,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
-import 'package:dar_plus_app/screens/property_details/property_details_screen.dart';
+import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/screens/search.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -297,9 +297,9 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
               final asset = properties[index];
               return _AssetGridCard(
                 asset: asset,
-                onTap: () => AppNavigator.of(
-                  context,
-                ).push(PropertyDetailsScreen(item: asset.toPropertyItem())),
+                onTap: () => AppNavigator.of(context).push(
+                  AssetDetailsScreen(assetId: asset.id, initialAsset: asset),
+                ),
               );
             },
           ),

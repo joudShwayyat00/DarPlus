@@ -12,4 +12,19 @@ class AssetsRepositoryImpl implements AssetsRepository {
     final response = await _serviceClient.getAssets(lang);
     return response.result;
   }
+
+  @override
+  Future<List<AssetItem>> getTopRatedAssets() async {
+    final response = await _serviceClient.getTopRatedAssets();
+    return response.result;
+  }
+
+  @override
+  Future<AssetItem> getAssetDetail({
+    required int id,
+    required String lang,
+  }) async {
+    final response = await _serviceClient.getAssetDetail(id, lang);
+    return response.result;
+  }
 }
