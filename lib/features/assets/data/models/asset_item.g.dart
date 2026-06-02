@@ -20,7 +20,7 @@ AssetItem _$AssetItemFromJson(Map<String, dynamic> json) => AssetItem(
   email: json['email'] as String?,
   monthsCount: (json['months_count'] as num?)?.toInt(),
   rentType: json['rent_type'] as String?,
-  rentPrice: json['rent_price'] as String?,
+  rentPrice: json['rent_price'] as num?,
   attributes: (json['attributes'] as List<dynamic>?)
       ?.map((e) => AssetAttribute.fromJson(e as Map<String, dynamic>))
       .toList(),

@@ -146,6 +146,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get book_now => 'احجز الآن';
 
   @override
+  String get request_appointment => 'طلب موعد';
+
+  @override
   String get see_all => 'عرض الكل';
 
   @override
@@ -189,6 +192,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get my_reservations => 'حجوزاتي';
+
+  @override
+  String get my_assets => 'عقاراتي';
 
   @override
   String get subscriptions => 'الاشتراكات';

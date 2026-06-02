@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../controller/shared_prefs.dart';
 import '../../../../core/network/dio_factory.dart';
 import '../../../assets/data/models/asset_item.dart';
 import '../../data/data_sources/asset_search_service_client.dart';
@@ -34,6 +35,7 @@ SearchRepository searchRepository(Ref ref) {
 class PopularSearchController extends _$PopularSearchController {
   @override
   FutureOr<List<String>> build() async {
+    if (!SharedPerfManager().isLoggedIn) return [];
     final repository = ref.read(searchRepositoryProvider);
     return await repository.getPopularSearches();
   }
@@ -41,6 +43,7 @@ class PopularSearchController extends _$PopularSearchController {
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      if (!SharedPerfManager().isLoggedIn) return <String>[];
       final repository = ref.read(searchRepositoryProvider);
       return await repository.getPopularSearches();
     });

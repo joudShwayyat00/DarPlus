@@ -10,6 +10,9 @@ class UserModel {
   @JsonKey(name: 'phone_number')
   final String phoneNumber;
   final String? image;
+  final String? role;
+
+  bool get isOwner => role == 'owner';
 
   UserModel({
     required this.id,
@@ -17,6 +20,7 @@ class UserModel {
     required this.email,
     required this.phoneNumber,
     this.image,
+    this.role,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

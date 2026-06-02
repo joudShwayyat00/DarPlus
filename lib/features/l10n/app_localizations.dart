@@ -368,6 +368,12 @@ abstract class AppLocalizations {
   /// **'Book Now'**
   String get book_now;
 
+  /// No description provided for @request_appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Appointment'**
+  String get request_appointment;
+
   /// No description provided for @see_all.
   ///
   /// In en, this message translates to:
@@ -457,6 +463,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My Reservations'**
   String get my_reservations;
+
+  /// No description provided for @my_assets.
+  ///
+  /// In en, this message translates to:
+  /// **'My Assets'**
+  String get my_assets;
 
   /// No description provided for @subscriptions.
   ///

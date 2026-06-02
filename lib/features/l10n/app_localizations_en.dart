@@ -148,6 +148,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get book_now => 'Book Now';
 
   @override
+  String get request_appointment => 'Request Appointment';
+
+  @override
   String get see_all => 'See all';
 
   @override
@@ -191,6 +194,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get my_reservations => 'My Reservations';
+
+  @override
+  String get my_assets => 'My Assets';
 
   @override
   String get subscriptions => 'Subscriptions';

@@ -194,7 +194,7 @@ abstract class _$LoginController extends $AsyncNotifier<RegisterResponse?> {
 const profileControllerProvider = ProfileControllerProvider._();
 
 final class ProfileControllerProvider
-    extends $AsyncNotifierProvider<ProfileController, UserModel> {
+    extends $AsyncNotifierProvider<ProfileController, UserModel?> {
   const ProfileControllerProvider._()
     : super(
         from: null,
@@ -214,20 +214,20 @@ final class ProfileControllerProvider
   ProfileController create() => ProfileController();
 }
 
-String _$profileControllerHash() => r'2e779025f0602994e8a259abea3139395dfafe6b';
+String _$profileControllerHash() => r'a5eb560cf0a774fc1ab06408c666a345a21c052e';
 
-abstract class _$ProfileController extends $AsyncNotifier<UserModel> {
-  FutureOr<UserModel> build();
+abstract class _$ProfileController extends $AsyncNotifier<UserModel?> {
+  FutureOr<UserModel?> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<UserModel>, UserModel>;
+    final ref = this.ref as $Ref<AsyncValue<UserModel?>, UserModel?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<UserModel>, UserModel>,
-              AsyncValue<UserModel>,
+              AnyNotifier<AsyncValue<UserModel?>, UserModel?>,
+              AsyncValue<UserModel?>,
               Object?,
               Object?
             >;

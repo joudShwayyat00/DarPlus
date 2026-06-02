@@ -125,7 +125,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                     SizedBox(height: 2.5.h),
                     // ── Categories ──────────────────────────────────────
-                    SectionHeader(title: tr.browse_by_category, seeAll: false),
+                    SectionHeader(
+                      title: tr.browse_by_category,
+                      onSeeAll: () {
+                        AppNavigator.of(context).push(const AssetsScreen());
+                      },
+                    ),
                     SizedBox(height: 1.5.h),
                     SizedBox(
                       height: 13.5.h,
@@ -148,8 +153,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     setState(
                                       () => _selectedCategoryIndex = index,
                                     );
+                                    debugPrint(
+                                      'Category tapped: id=${item.id}, name=${item.name}',
+                                    );
                                     AppNavigator.of(context).push(
-                                      AssetsScreen(initialCategoryIndex: index),
+                                      AssetsScreen(initialCategoryId: item.id),
                                     );
                                   },
                                 );

@@ -1,3 +1,4 @@
+import 'package:dar_plus_app/screens/assets/assets_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/screens/auth/welcome_screen.dart';
@@ -42,7 +43,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ref
                   .watch(profileControllerProvider)
                   .when(
-                    data: (user) => _buildProfileHeader(context, user),
+                    data: (user) => user == null
+                        ? const SizedBox.shrink()
+                        : _buildProfileHeader(context, user),
                     loading: () => _buildProfileHeaderLoading(context),
                     error: (err, stack) =>
                         _buildProfileHeaderError(context, err),
@@ -87,6 +90,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             );
                           },
                         ),
+                        if (ref
+                                .watch(profileControllerProvider)
+                                .value
+                                ?.isOwner ==
+                            true)
+                          _MenuItem(
+                            icon: Icons.apartment_rounded,
+                            title: tr.my_assets,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AssetsScreen(isOwnerView: true),
+                                ),
+                              );
+                            },
+                          ),
                         _MenuItem(
                           icon: Icons.calendar_month_rounded,
                           title: tr.my_reservations,
@@ -365,25 +386,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 0.6.h),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 2.5.w,
-                    vertical: 0.4.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.goldBrandColor.withAlpha(20),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    tr.premium_member,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 9.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.goldBrandColor,
-                    ),
-                  ),
-                ),
+                // Container(
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: 2.5.w,
+                //     vertical: 0.4.h,
+                //   ),
+                //   decoration: BoxDecoration(
+                //     color: AppColors.goldBrandColor.withAlpha(20),
+                //     borderRadius: BorderRadius.circular(999),
+                //   ),
+                //   child: Text(
+                //     tr.premium_member,
+                //     style: appTextStyle(
+                //       context,
+                //       fontSize: 9.sp,
+                //       fontWeight: FontWeight.w700,
+                //       color: AppColors.goldBrandColor,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),

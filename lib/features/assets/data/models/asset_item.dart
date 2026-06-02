@@ -29,7 +29,7 @@ class AssetItem {
   @JsonKey(name: 'rent_type')
   final String? rentType;
   @JsonKey(name: 'rent_price')
-  final String? rentPrice;
+  final num? rentPrice;
   final List<AssetAttribute>? attributes;
   final List<AssetAmenity>? amenities;
 

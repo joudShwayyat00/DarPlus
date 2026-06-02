@@ -90,14 +90,16 @@ class LoginController extends _$LoginController {
 @riverpod
 class ProfileController extends _$ProfileController {
   @override
-  FutureOr<UserModel> build() async {
+  FutureOr<UserModel?> build() async {
+    if (!SharedPerfManager().isLoggedIn) return null;
     final repository = ref.read(authRepositoryProvider);
     return await repository.getProfile();
   }
 
   Future<void> refreshProfile() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard<UserModel>(() async {
+    state = await AsyncValue.guard<UserModel?>(() async {
+      if (!SharedPerfManager().isLoggedIn) return null;
       final repository = ref.read(authRepositoryProvider);
       return await repository.getProfile();
     });

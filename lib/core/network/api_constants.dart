@@ -25,6 +25,11 @@ class ApiConstants {
   // Asset search endpoint (POST multipart, field: search)
   static const String search = "api/search";
 
+  // Amenities endpoint (language suffix is provided as path param)
+  static const String amenities = "api/amenities/all";
+  // Add asset endpoint
+  static const String addAsset = "api/the_assets/add";
+
   static const String contentType = "application/json";
   static const String accept = "application/json";
 }

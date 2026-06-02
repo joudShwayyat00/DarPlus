@@ -774,7 +774,7 @@ class _BottomBar extends StatelessWidget {
                     ),
                     SizedBox(width: 2.w),
                     Text(
-                      tr.book_now,
+                      asset.isForSale ? tr.request_appointment : tr.book_now,
                       style: appTextStyle(
                         context,
                         fontSize: 12.sp,

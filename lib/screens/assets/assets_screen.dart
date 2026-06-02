@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
+import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
 import 'package:dar_plus_app/screens/search.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -15,56 +16,44 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 class AssetsScreen extends ConsumerStatefulWidget {
-  final int? initialCategoryIndex;
+  final int? initialCategoryId;
+  final bool isOwnerView;
 
-  const AssetsScreen({super.key, this.initialCategoryIndex});
+  const AssetsScreen({
+    super.key,
+    this.initialCategoryId,
+    this.isOwnerView = false,
+  });
 
   @override
   ConsumerState<AssetsScreen> createState() => _AssetsScreenState();
 }
 
 class _AssetsScreenState extends ConsumerState<AssetsScreen> {
-  int? _selectedCategoryIndex;
+  int? _selectedCategoryId;
   FilterData _activeFilter = FilterData.empty;
 
   @override
   void initState() {
     super.initState();
-    _selectedCategoryIndex = widget.initialCategoryIndex;
-  }
-
-  String _categoryTitle(int? index) {
-    if (index == null) return tr.all_assets;
-    if (index == 0) return tr.hotel_apartments;
-    if (index == 1) return tr.family_apartments;
-    if (index == 2) return tr.chalets;
-    return tr.farms;
-  }
-
-  /// Returns assets filtered by the selected category and listing-type filter.
-  List<AssetItem> _filteredAssets(
-    List<AssetItem> all,
-    int? selectedCategoryId,
-  ) {
-    var result = all;
-
-    // Filter by selected category
-    if (selectedCategoryId != null) {
-      result = result
-          .where((a) => a.category.id == selectedCategoryId)
-          .toList();
+    if (widget.initialCategoryId != null) {
+      _selectedCategoryId = widget.initialCategoryId;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(assetsControllerProvider.notifier)
+            .fetchByCategory(widget.initialCategoryId);
+      });
     }
+  }
 
-    // Filter by listing type from the filter bottom sheet
+  /// Returns assets filtered by listing type only (category filter is server-side).
+  List<AssetItem> _filteredAssets(List<AssetItem> all) {
     final listingType = _activeFilter.listingType;
-    if (listingType != null && listingType != 'both') {
-      result = result.where((a) {
-        if (listingType == 'buy') return a.isForSale;
-        return !a.isForSale;
-      }).toList();
-    }
-
-    return result;
+    if (listingType == null || listingType == 'both') return all;
+    return all.where((a) {
+      if (listingType == 'buy') return a.isForSale;
+      return !a.isForSale;
+    }).toList();
   }
 
   @override
@@ -108,16 +97,29 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
           Expanded(
             child: Builder(
               builder: (context) {
+                if (widget.isOwnerView) {
+                  return Text(
+                    tr.my_assets,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black.withAlpha(240),
+                    ),
+                  );
+                }
+
                 final categories = ref
                     .watch(homeCategoryControllerProvider)
                     .maybeWhen(data: (c) => c, orElse: () => null);
 
-                final title = _selectedCategoryIndex == null
+                final title = _selectedCategoryId == null
                     ? tr.all_assets
-                    : (categories != null &&
-                              _selectedCategoryIndex! < categories.length
-                          ? categories[_selectedCategoryIndex!].name
-                          : _categoryTitle(_selectedCategoryIndex));
+                    : (categories
+                              ?.where((c) => c.id == _selectedCategoryId)
+                              .firstOrNull
+                              ?.name ??
+                          tr.all_assets);
 
                 return Text(
                   title,
@@ -131,26 +133,41 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
               },
             ),
           ),
-          _IconButton(
-            icon: Icons.search_rounded,
-            color: AppColors.goldBrandColor,
-            onTap: () => AppNavigator.of(
-              context,
-            ).push(const SearchScreen(showBackButton: true)),
-          ),
-          SizedBox(width: 2.w),
-          _FilterIconButton(
-            activeCount: _activeFilter.activeCount,
-            onTap: () async {
-              final result = await showFilterBottomSheet(
+          if (widget.isOwnerView)
+            _IconButton(
+              icon: Icons.add_rounded,
+              color: AppColors.goldBrandColor,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddAssetScreen(),
+                  ),
+                );
+              },
+            )
+          else ...[
+            _IconButton(
+              icon: Icons.search_rounded,
+              color: AppColors.goldBrandColor,
+              onTap: () => AppNavigator.of(
                 context,
-                initial: _activeFilter,
-              );
-              if (result != null) {
-                setState(() => _activeFilter = result);
-              }
-            },
-          ),
+              ).push(const SearchScreen(showBackButton: true)),
+            ),
+            SizedBox(width: 2.w),
+            _FilterIconButton(
+              activeCount: _activeFilter.activeCount,
+              onTap: () async {
+                final result = await showFilterBottomSheet(
+                  context,
+                  initial: _activeFilter,
+                );
+                if (result != null) {
+                  setState(() => _activeFilter = result);
+                }
+              },
+            ),
+          ],
         ],
       ),
     );
@@ -168,12 +185,21 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 0.8.h),
-            itemCount: categories.length,
+            itemCount: categories.length + 1,
             separatorBuilder: (_, __) => SizedBox(width: 2.w),
             itemBuilder: (context, index) {
-              final isSelected = _selectedCategoryIndex == index;
+              final isAll = index == 0;
+              final categoryId = isAll ? null : categories[index - 1].id;
+              final label = isAll ? tr.all_assets : categories[index - 1].name;
+              final isSelected = _selectedCategoryId == categoryId;
               return GestureDetector(
-                onTap: () => setState(() => _selectedCategoryIndex = index),
+                onTap: () {
+                  if (_selectedCategoryId == categoryId) return;
+                  setState(() => _selectedCategoryId = categoryId);
+                  ref
+                      .read(assetsControllerProvider.notifier)
+                      .fetchByCategory(categoryId);
+                },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeOut,
@@ -198,7 +224,7 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      categories[index].name,
+                      label,
                       style: appTextStyle(
                         context,
                         fontSize: 10.sp,
@@ -240,20 +266,10 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
 
   Widget _buildGrid() {
     final assetsAsync = ref.watch(assetsControllerProvider);
-    final categoriesAsync = ref.watch(homeCategoryControllerProvider);
 
     return assetsAsync.when(
       data: (assets) {
-        // Resolve the category id for the selected tab index
-        final int? selectedCategoryId = categoriesAsync.whenOrNull(
-          data: (cats) =>
-              (_selectedCategoryIndex != null &&
-                  _selectedCategoryIndex! < cats.length)
-              ? cats[_selectedCategoryIndex!].id
-              : null,
-        );
-
-        final properties = _filteredAssets(assets, selectedCategoryId);
+        final properties = _filteredAssets(assets);
 
         if (properties.isEmpty) {
           return Center(

@@ -301,3 +301,89 @@ abstract class _$AssetDetailController extends $AsyncNotifier<AssetItem> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(amenities)
+const amenitiesProvider = AmenitiesProvider._();
+
+final class AmenitiesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<AmenityItem>>,
+          List<AmenityItem>,
+          FutureOr<List<AmenityItem>>
+        >
+    with
+        $FutureModifier<List<AmenityItem>>,
+        $FutureProvider<List<AmenityItem>> {
+  const AmenitiesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'amenitiesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$amenitiesHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<AmenityItem>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<AmenityItem>> create(Ref ref) {
+    return amenities(ref);
+  }
+}
+
+String _$amenitiesHash() => r'c5f3a94e1d2b9f7a0e4c8d6b3a1f5e2d9c7b4a8';
+
+@ProviderFor(AddAssetController)
+const addAssetControllerProvider = AddAssetControllerProvider._();
+
+final class AddAssetControllerProvider
+    extends $AsyncNotifierProvider<AddAssetController, void> {
+  const AddAssetControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'addAssetControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$addAssetControllerHash();
+
+  @$internal
+  @override
+  AddAssetController create() => AddAssetController();
+}
+
+String _$addAssetControllerHash() => r'a2b4c6d8e0f1a3b5c7d9e2f4a6b8c0d2e4f6a8b';
+
+abstract class _$AddAssetController extends $AsyncNotifier<void> {
+  FutureOr<void> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

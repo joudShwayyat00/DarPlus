@@ -130,7 +130,7 @@ final class RecentSearchControllerProvider
 }
 
 String _$recentSearchControllerHash() =>
-    r'b5e6ab115434d5f6c714b114c19dfde6033a331d';
+    r'bbde99c95b2731def275548cee20675b9247fcc8';
 
 abstract class _$RecentSearchController extends $AsyncNotifier<List<String>> {
   FutureOr<List<String>> build();

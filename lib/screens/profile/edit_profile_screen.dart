@@ -47,6 +47,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
     profileAsync.maybeWhen(
       data: (user) {
+        if (user == null) return;
         if (!_isProfileLoaded) {
           nameController.text = user.name;
           phoneController.text = user.phoneNumber;

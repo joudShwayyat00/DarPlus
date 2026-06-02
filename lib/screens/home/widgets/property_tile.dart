@@ -160,7 +160,9 @@ class PropertyTile extends StatelessWidget {
                   SizedBox(height: 1.6.h),
 
                   _LuxuryPrimaryButton(
-                    title: tr.book_now,
+                    title: item.listingType == ListingType.sale
+                        ? tr.request_appointment
+                        : tr.book_now,
                     onPressed:
                         onBookNow ??
                         () {

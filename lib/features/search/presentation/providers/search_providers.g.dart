@@ -177,7 +177,7 @@ final class PopularSearchControllerProvider
 }
 
 String _$popularSearchControllerHash() =>
-    r'e892149cde596c69fa89e9fc176920fe38c1f610';
+    r'b6f8dbb8ff298fe984e5bb3fe31685468d3d11d6';
 
 abstract class _$PopularSearchController extends $AsyncNotifier<List<String>> {
   FutureOr<List<String>> build();

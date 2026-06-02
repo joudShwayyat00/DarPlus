@@ -188,7 +188,9 @@ class PropertyDetailsScreen extends StatelessWidget {
                   AppNavigator.of(context).push(BookingScreen(item: item));
                 },
                 child: Text(
-                  tr.book_now,
+                  item.listingType == ListingType.sale
+                      ? tr.request_appointment
+                      : tr.book_now,
                   style: appTextStyle(
                     context,
                     fontSize: 12.sp,

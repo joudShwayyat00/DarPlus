@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../controller/shared_prefs.dart';
 import '../../../../core/network/dio_factory.dart';
 import '../../data/data_sources/recent_search_service_client.dart';
 import '../../data/repositories/recent_search_repository_impl.dart';
@@ -25,6 +26,7 @@ RecentSearchRepository recentSearchRepository(Ref ref) {
 class RecentSearchController extends _$RecentSearchController {
   @override
   FutureOr<List<String>> build() async {
+    if (!SharedPerfManager().isLoggedIn) return [];
     final repository = ref.read(recentSearchRepositoryProvider);
     return await repository.getRecentSearches();
   }
@@ -32,6 +34,7 @@ class RecentSearchController extends _$RecentSearchController {
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      if (!SharedPerfManager().isLoggedIn) return <String>[];
       final repository = ref.read(recentSearchRepositoryProvider);
       return await repository.getRecentSearches();
     });
