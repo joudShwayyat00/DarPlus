@@ -15,12 +15,20 @@ class AssetsRepositoryImpl implements AssetsRepository {
   AssetsRepositoryImpl(this._serviceClient);
 
   @override
-  Future<List<AssetItem>> getAssets(String lang, {int? categoryId}) async {
+  Future<AssetsPage> getAssets(
+    String lang, {
+    int? categoryId,
+    int page = 1,
+  }) async {
     final response = await _serviceClient.getAssets(
       lang,
       categoryId: categoryId,
+      page: page,
     );
-    return response.result;
+    return AssetsPage(
+      items: response.items,
+      hasMore: response.meta.hasNextPage,
+    );
   }
 
   @override

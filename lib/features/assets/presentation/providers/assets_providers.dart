@@ -27,31 +27,77 @@ AssetsRepository assetsRepository(Ref ref) {
 @riverpod
 class AssetsController extends _$AssetsController {
   int? _currentCategoryId;
+  int _currentPage = 1;
+  bool _hasMore = false;
+  bool _isLoadingMore = false;
+
+  bool get hasMore => _hasMore;
+  bool get isLoadingMore => _isLoadingMore;
 
   @override
   FutureOr<List<AssetItem>> build() async {
+    _currentPage = 1;
     final lang = ref.read(localeProvider).languageCode;
-    final repository = ref.read(assetsRepositoryProvider);
-    return await repository.getAssets(lang, categoryId: _currentCategoryId);
+    final result = await ref
+        .read(assetsRepositoryProvider)
+        .getAssets(lang, categoryId: _currentCategoryId, page: 1);
+    _hasMore = result.hasMore;
+    return result.items;
   }
 
   Future<void> fetchByCategory(int? categoryId) async {
     _currentCategoryId = categoryId;
+    _currentPage = 1;
+    _hasMore = false;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final lang = ref.read(localeProvider).languageCode;
-      final repository = ref.read(assetsRepositoryProvider);
-      return await repository.getAssets(lang, categoryId: categoryId);
+      final result = await ref
+          .read(assetsRepositoryProvider)
+          .getAssets(lang, categoryId: categoryId, page: 1);
+      _hasMore = result.hasMore;
+      return result.items;
     });
   }
 
   Future<void> refresh() async {
+    _currentPage = 1;
+    _hasMore = false;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final lang = ref.read(localeProvider).languageCode;
-      final repository = ref.read(assetsRepositoryProvider);
-      return await repository.getAssets(lang, categoryId: _currentCategoryId);
+      final result = await ref
+          .read(assetsRepositoryProvider)
+          .getAssets(lang, categoryId: _currentCategoryId, page: 1);
+      _hasMore = result.hasMore;
+      return result.items;
     });
+  }
+
+  Future<void> loadMore() async {
+    if (!_hasMore || _isLoadingMore) return;
+    final current = state.when(
+      data: (d) => d,
+      loading: () => null,
+      error: (_, __) => null,
+    );
+    if (current == null) return;
+    _isLoadingMore = true;
+    try {
+      final lang = ref.read(localeProvider).languageCode;
+      final result = await ref
+          .read(assetsRepositoryProvider)
+          .getAssets(
+            lang,
+            categoryId: _currentCategoryId,
+            page: _currentPage + 1,
+          );
+      _currentPage += 1;
+      _hasMore = result.hasMore;
+      state = AsyncData([...current, ...result.items]);
+    } finally {
+      _isLoadingMore = false;
+    }
   }
 }
 
@@ -151,7 +197,7 @@ class AddAssetController extends _$AddAssetController {
         amenityIds: amenityIds,
       );
     });
-    state = result;
+    if (ref.mounted) state = result;
     return result is AsyncData;
   }
 }

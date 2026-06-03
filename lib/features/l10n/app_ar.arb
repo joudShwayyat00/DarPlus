@@ -179,6 +179,9 @@
   "nightly_price": "سعر الليلة",
   "currency_jod": "د.ا",
   "per_night": " / الليلة",
+  "per_day": " / اليوم",
+  "per_month": " / الشهر",
+  "per_year": " / السنة",
   "subtotal": "المجموع الفرعي",
   "service_fee": "رسوم الخدمة",
   "total_label": "الإجمالي",
@@ -315,5 +318,6 @@
   "attributes": "المواصفات",
   "currency_jod": "دينار",
   "owner": "المالك",
-  "no_results_found": "لا توجد نتائج"
+  "no_results_found": "لا توجد نتائج",
+  "no_more_results": "لا توجد نتائج إضافية"
 }

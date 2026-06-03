@@ -179,6 +179,9 @@
   "nightly_price": "Nightly price",
   "currency_jod": "JOD",
   "per_night": " / night",
+  "per_day": " / day",
+  "per_month": " / month",
+  "per_year": " / year",
   "subtotal": "Subtotal",
   "service_fee": "Service fee",
   "total_label": "Total",
@@ -315,5 +318,6 @@
   "attributes": "Attributes",
   "currency_jod": "JOD",
   "owner": "Owner",
-  "no_results_found": "No results found"
+  "no_results_found": "No results found",
+  "no_more_results": "No more results"
 }

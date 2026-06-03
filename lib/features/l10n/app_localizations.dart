@@ -1172,6 +1172,24 @@ abstract class AppLocalizations {
   /// **' / night'**
   String get per_night;
 
+  /// No description provided for @per_day.
+  ///
+  /// In en, this message translates to:
+  /// **' / day'**
+  String get per_day;
+
+  /// No description provided for @per_month.
+  ///
+  /// In en, this message translates to:
+  /// **' / month'**
+  String get per_month;
+
+  /// No description provided for @per_year.
+  ///
+  /// In en, this message translates to:
+  /// **' / year'**
+  String get per_year;
+
   /// No description provided for @subtotal.
   ///
   /// In en, this message translates to:
@@ -1987,6 +2005,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No results found'**
   String get no_results_found;
+
+  /// No description provided for @no_more_results.
+  ///
+  /// In en, this message translates to:
+  /// **'No more results'**
+  String get no_more_results;
 }
 
 class _AppLocalizationsDelegate

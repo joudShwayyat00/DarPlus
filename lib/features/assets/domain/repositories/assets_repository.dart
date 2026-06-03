@@ -1,8 +1,14 @@
 import '../../data/models/amenity_item.dart';
 import '../../data/models/asset_item.dart';
 
+class AssetsPage {
+  final List<AssetItem> items;
+  final bool hasMore;
+  AssetsPage({required this.items, required this.hasMore});
+}
+
 abstract class AssetsRepository {
-  Future<List<AssetItem>> getAssets(String lang, {int? categoryId});
+  Future<AssetsPage> getAssets(String lang, {int? categoryId, int page = 1});
   Future<List<AssetItem>> getTopRatedAssets();
   Future<AssetItem> getAssetDetail({required int id, required String lang});
   Future<List<AmenityItem>> getAmenities(String lang);

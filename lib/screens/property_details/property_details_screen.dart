@@ -217,7 +217,22 @@ class PropertyDetailsScreen extends StatelessWidget {
                     SizedBox(height: 0.2.h),
                     Text(
                       (() {
-                        final m = RegExp(r'\\d+').firstMatch(item.price);
+                        if (item.listingType == ListingType.sale) {
+                          final m = RegExp(r'\d+').firstMatch(item.price);
+                          return m != null
+                              ? '${m.group(0)} ${tr.currency_jod}'
+                              : item.price;
+                        }
+                        if (item.rentPrice != null) {
+                          final priceStr = item.rentPrice!.toStringAsFixed(2);
+                          final suffix = item.rentType == 'daily'
+                              ? tr.per_day
+                              : item.rentType == 'yearly'
+                              ? tr.per_year
+                              : tr.per_month;
+                          return '$priceStr ${tr.currency_jod}$suffix';
+                        }
+                        final m = RegExp(r'\d+').firstMatch(item.price);
                         return m != null
                             ? '${m.group(0)} ${tr.currency_jod}${tr.per_night}'
                             : item.price;

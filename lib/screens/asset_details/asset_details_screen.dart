@@ -114,6 +114,10 @@ class _AssetDetailsBody extends StatelessWidget {
                     ),
                   SizedBox(height: 1.2.h),
                   _InfoCard(asset: asset),
+                  if (!asset.isForSale && asset.rentType != null) ...[
+                    SizedBox(height: 2.h),
+                    _RentInfoCard(asset: asset),
+                  ],
                   SizedBox(height: 2.h),
                   _OwnerCard(owner: asset.owner),
                   if (_hasDescription) ...[
@@ -364,6 +368,148 @@ class _InfoCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Rent Info Card ──────────────────────────────────────────────────────────
+
+class _RentInfoCard extends StatelessWidget {
+  final AssetItem asset;
+
+  const _RentInfoCard({required this.asset});
+
+  @override
+  Widget build(BuildContext context) {
+    final rentType = asset.rentType ?? 'monthly';
+    final count = rentType == 'yearly' ? asset.yearsCount : asset.monthsCount;
+    final countLabel = rentType == 'yearly' ? 'Years' : 'Months';
+
+    String rentTypeLabel;
+    IconData rentTypeIcon;
+    switch (rentType) {
+      case 'daily':
+        rentTypeLabel = 'Daily';
+        rentTypeIcon = Icons.today_rounded;
+      case 'yearly':
+        rentTypeLabel = 'Yearly';
+        rentTypeIcon = Icons.calendar_today_rounded;
+      default:
+        rentTypeLabel = 'Monthly';
+        rentTypeIcon = Icons.calendar_month_rounded;
+    }
+
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.goldBrandColor.withAlpha(60)),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+            color: Colors.black.withAlpha(8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Rent Details',
+            style: appTextStyle(
+              context,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.black.withAlpha(230),
+            ),
+          ),
+          SizedBox(height: 1.5.h),
+          Row(
+            children: [
+              // Rent type chip
+              _RentDetailTile(
+                icon: rentTypeIcon,
+                label: 'Rent Type',
+                value: rentTypeLabel,
+              ),
+              if (count != null && count > 0) ...[
+                SizedBox(width: 3.w),
+                _RentDetailTile(
+                  icon: Icons.timelapse_rounded,
+                  label: countLabel,
+                  value: count.toString(),
+                ),
+              ],
+              if (asset.rentPrice != null) ...[
+                SizedBox(width: 3.w),
+                _RentDetailTile(
+                  icon: Icons.payments_outlined,
+                  label: 'Rent Price',
+                  value:
+                      '${asset.rentPrice!.toStringAsFixed(2)} ${tr.currency_jod}',
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RentDetailTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _RentDetailTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 1.4.h, horizontal: 2.w),
+        decoration: BoxDecoration(
+          color: AppColors.goldBrandColor.withAlpha(15),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.goldBrandColor.withAlpha(50)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 20, color: AppColors.goldBrandColor),
+            SizedBox(height: 0.6.h),
+            Text(
+              label,
+              style: appTextStyle(
+                context,
+                fontSize: 9.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black.withAlpha(130),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 0.3.h),
+            Text(
+              value,
+              style: appTextStyle(
+                context,
+                fontSize: 10.5.sp,
+                fontWeight: FontWeight.w900,
+                color: Colors.black.withAlpha(230),
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -734,7 +880,20 @@ class _BottomBar extends StatelessWidget {
                   ),
                   SizedBox(height: 0.2.h),
                   Text(
-                    '${asset.price} ${tr.currency_jod}',
+                    () {
+                      if (asset.isForSale) {
+                        return '${asset.price} ${tr.currency_jod}';
+                      }
+                      final price =
+                          asset.rentPrice ?? double.tryParse(asset.price) ?? 0;
+                      final priceStr = price.toStringAsFixed(2);
+                      final suffix = asset.rentType == 'daily'
+                          ? tr.per_day
+                          : asset.rentType == 'yearly'
+                          ? tr.per_year
+                          : tr.per_month;
+                      return '$priceStr ${tr.currency_jod}$suffix';
+                    }(),
                     style: appTextStyle(
                       context,
                       fontSize: 13.sp,

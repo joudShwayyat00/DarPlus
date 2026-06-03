@@ -550,6 +550,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get per_night => ' / الليلة';
 
   @override
+  String get per_day => ' / اليوم';
+
+  @override
+  String get per_month => ' / الشهر';
+
+  @override
+  String get per_year => ' / السنة';
+
+  @override
   String get subtotal => 'المجموع الفرعي';
 
   @override
@@ -990,4 +999,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get no_results_found => 'لا توجد نتائج';
+
+  @override
+  String get no_more_results => 'لا توجد نتائج إضافية';
 }

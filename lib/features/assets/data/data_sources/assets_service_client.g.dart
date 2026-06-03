@@ -22,13 +22,20 @@ class _AssetsServiceClient implements AssetsServiceClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<AssetsResponse> getAssets(String lang, {int? categoryId}) async {
+  Future<PagedAssetsResponse> getAssets(
+    String lang, {
+    int? categoryId,
+    int? page,
+  }) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'category_id': categoryId};
+    final queryParameters = <String, dynamic>{
+      r'category_id': categoryId,
+      r'page': page,
+    };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<AssetsResponse>(
+    final _options = _setStreamType<PagedAssetsResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -39,9 +46,9 @@ class _AssetsServiceClient implements AssetsServiceClient {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late AssetsResponse _value;
+    late PagedAssetsResponse _value;
     try {
-      _value = AssetsResponse.fromJson(_result.data!);
+      _value = PagedAssetsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;

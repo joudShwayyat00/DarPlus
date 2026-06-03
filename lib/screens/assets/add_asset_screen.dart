@@ -138,6 +138,17 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       return;
     }
 
+    final lat = double.tryParse(_latCtrl.text.trim());
+    final lng = double.tryParse(_lngCtrl.text.trim());
+    if (lat == null || lat < -90 || lat > 90) {
+      _showSnack('Please enter a valid latitude (−90 to 90).');
+      return;
+    }
+    if (lng == null || lng < -180 || lng > 180) {
+      _showSnack('Please enter a valid longitude (−180 to 180).');
+      return;
+    }
+
     EasyLoading.show();
     final success = await ref
         .read(addAssetControllerProvider.notifier)
@@ -172,8 +183,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
           rentPrice: _type == 'rent' && _rentPriceCtrl.text.isNotEmpty
               ? double.tryParse(_rentPriceCtrl.text.trim())
               : null,
-          latitude: double.tryParse(_latCtrl.text.trim()) ?? 0,
-          longitude: double.tryParse(_lngCtrl.text.trim()) ?? 0,
+          latitude: lat,
+          longitude: lng,
           amenityIds: _selectedAmenityIds.toList(),
         );
     EasyLoading.dismiss();
@@ -182,6 +193,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       EasyLoading.showSuccess('Asset added successfully!');
       await Future.delayed(const Duration(seconds: 1));
       if (mounted) Navigator.of(context).pop();
+      // Optionally, you can also refresh the assets list after adding a new asset
+      ref.read(assetsControllerProvider.notifier).refresh();
     } else if (mounted) {
       final err = ref.read(addAssetControllerProvider).error;
       _showSnack(err?.toString() ?? 'Something went wrong.');

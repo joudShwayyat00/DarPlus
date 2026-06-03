@@ -555,6 +555,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get per_night => ' / night';
 
   @override
+  String get per_day => ' / day';
+
+  @override
+  String get per_month => ' / month';
+
+  @override
+  String get per_year => ' / year';
+
+  @override
   String get subtotal => 'Subtotal';
 
   @override
@@ -999,4 +1008,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get no_results_found => 'No results found';
+
+  @override
+  String get no_more_results => 'No more results';
 }

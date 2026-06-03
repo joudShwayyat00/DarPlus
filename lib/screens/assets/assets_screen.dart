@@ -32,10 +32,12 @@ class AssetsScreen extends ConsumerStatefulWidget {
 class _AssetsScreenState extends ConsumerState<AssetsScreen> {
   int? _selectedCategoryId;
   FilterData _activeFilter = FilterData.empty;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     if (widget.initialCategoryId != null) {
       _selectedCategoryId = widget.initialCategoryId;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -43,6 +45,19 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
             .read(assetsControllerProvider.notifier)
             .fetchByCategory(widget.initialCategoryId);
       });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300) {
+      ref.read(assetsControllerProvider.notifier).loadMore();
     }
   }
 
@@ -296,28 +311,67 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
           );
         }
 
+        final notifier = ref.read(assetsControllerProvider.notifier);
+
         return RefreshIndicator(
           color: AppColors.goldBrandColor,
           onRefresh: () async =>
               ref.read(assetsControllerProvider.notifier).refresh(),
-          child: GridView.builder(
-            padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 3.h),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.70,
-              mainAxisSpacing: 2.h,
-              crossAxisSpacing: 3.w,
-            ),
-            itemCount: properties.length,
-            itemBuilder: (context, index) {
-              final asset = properties[index];
-              return _AssetGridCard(
-                asset: asset,
-                onTap: () => AppNavigator.of(context).push(
-                  AssetDetailsScreen(assetId: asset.id, initialAsset: asset),
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 0),
+                sliver: SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.70,
+                    mainAxisSpacing: 2.h,
+                    crossAxisSpacing: 3.w,
+                  ),
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final asset = properties[index];
+                    return _AssetGridCard(
+                      asset: asset,
+                      onTap: () => AppNavigator.of(context).push(
+                        AssetDetailsScreen(
+                          assetId: asset.id,
+                          initialAsset: asset,
+                        ),
+                      ),
+                    );
+                  }, childCount: properties.length),
                 ),
-              );
-            },
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 2.h),
+                  child: notifier.isLoadingMore
+                      ? Center(
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: AppColors.goldBrandColor,
+                            ),
+                          ),
+                        )
+                      : notifier.hasMore
+                      ? const SizedBox.shrink()
+                      : Center(
+                          child: Text(
+                            tr.no_more_results,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 10.sp,
+                              color: Colors.black.withAlpha(100),
+                            ),
+                          ),
+                        ),
+                ),
+              ),
+            ],
           ),
         );
       },

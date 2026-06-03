@@ -19,6 +19,7 @@ AssetItem _$AssetItemFromJson(Map<String, dynamic> json) => AssetItem(
   phone: json['phone'] as String?,
   email: json['email'] as String?,
   monthsCount: (json['months_count'] as num?)?.toInt(),
+  yearsCount: (json['years_count'] as num?)?.toInt(),
   rentType: json['rent_type'] as String?,
   rentPrice: json['rent_price'] as num?,
   attributes: (json['attributes'] as List<dynamic>?)
@@ -42,6 +43,7 @@ Map<String, dynamic> _$AssetItemToJson(AssetItem instance) => <String, dynamic>{
   'phone': instance.phone,
   'email': instance.email,
   'months_count': instance.monthsCount,
+  'years_count': instance.yearsCount,
   'rent_type': instance.rentType,
   'rent_price': instance.rentPrice,
   'attributes': instance.attributes,

@@ -26,6 +26,8 @@ class AssetItem {
   final String? email;
   @JsonKey(name: 'months_count')
   final int? monthsCount;
+  @JsonKey(name: 'years_count')
+  final int? yearsCount;
   @JsonKey(name: 'rent_type')
   final String? rentType;
   @JsonKey(name: 'rent_price')
@@ -46,6 +48,7 @@ class AssetItem {
     this.phone,
     this.email,
     this.monthsCount,
+    this.yearsCount,
     this.rentType,
     this.rentPrice,
     this.attributes,
@@ -80,5 +83,7 @@ class AssetItem {
     listingType: isForSale ? ListingType.sale : ListingType.rent,
     phone: phone ?? owner.phoneNumber,
     email: email ?? owner.email,
+    rentType: rentType,
+    rentPrice: rentPrice,
   );
 }
