@@ -1011,4 +1011,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get no_more_results => 'No more results';
+
+  @override
+  String get check_out_date => 'Check-out Date';
+
+  @override
+  String get price_per_period => 'Price';
+
+  @override
+  String get daily => 'Daily';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get yearly => 'Yearly';
 }

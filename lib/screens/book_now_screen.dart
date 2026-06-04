@@ -1,25 +1,28 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/booking/data/models/booking_response.dart';
+import 'package:dar_plus_app/features/booking/presentation/providers/booking_providers.dart';
 import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
 
-class BookingScreen extends StatefulWidget {
+class BookingScreen extends ConsumerStatefulWidget {
   final PropertyItem item;
 
   const BookingScreen({super.key, required this.item});
 
   @override
-  State<BookingScreen> createState() => _BookingScreenState();
+  ConsumerState<BookingScreen> createState() => _BookingScreenState();
 }
 
-class _BookingScreenState extends State<BookingScreen> {
+class _BookingScreenState extends ConsumerState<BookingScreen> {
   DateTime? _checkIn;
-  int _nights = 1;
+  DateTime? _checkOut;
   int _guests = 2;
 
   PaymentMethod _payment = PaymentMethod.cash;
@@ -27,13 +30,22 @@ class _BookingScreenState extends State<BookingScreen> {
 
   final TextEditingController _notes = TextEditingController();
 
+  /// Nights derived from check-in/out selection.
+  int get _nights {
+    if (_checkIn == null || _checkOut == null) return 1;
+    return _checkOut!.difference(_checkIn!).inDays.clamp(1, 365);
+  }
+
   @override
   void dispose() {
     _notes.dispose();
     super.dispose();
   }
 
-  int _pricePerNightJod() {
+  int _pricePerPeriodJod() {
+    if (widget.item.rentPrice != null) {
+      return widget.item.rentPrice!.round();
+    }
     final raw = widget.item.price;
     final digits = RegExp(
       r'\d+',
@@ -42,14 +54,9 @@ class _BookingScreenState extends State<BookingScreen> {
     return int.tryParse(digits.first) ?? 0;
   }
 
-  DateTime? get _checkOut {
-    if (_checkIn == null) return null;
-    return DateTime(
-      _checkIn!.year,
-      _checkIn!.month,
-      _checkIn!.day,
-    ).add(Duration(days: _nights));
-  }
+  /// API date format: yyyy-MM-dd
+  static String _apiDate(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
   int _serviceFee(int subtotal) {
     final fee = (subtotal * 0.06).round();
@@ -59,14 +66,24 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
+    final bookingState = ref.watch(bookingControllerProvider);
 
     final maxGuests = item.guests <= 0 ? 20 : item.guests;
     if (_guests > maxGuests) _guests = maxGuests;
 
-    final pricePerNight = _pricePerNightJod();
-    final subtotal = (_checkIn == null) ? 0 : _nights * pricePerNight;
-    final fee = (_checkIn == null) ? 0 : _serviceFee(subtotal);
-    final total = subtotal + fee;
+    final pricePerPeriod = _pricePerPeriodJod();
+    final rentType = item.rentType;
+    final isForSale = item.listingType == ListingType.sale;
+
+    // Local price estimate (shown before API responds)
+    int subtotal = 0;
+    int fee = 0;
+    int total = 0;
+    if (_checkIn != null && _checkOut != null) {
+      subtotal = _nights * pricePerPeriod;
+      fee = _serviceFee(subtotal);
+      total = subtotal + fee;
+    }
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -114,77 +131,12 @@ class _BookingScreenState extends State<BookingScreen> {
               checkIn: _checkIn,
               checkOut: _checkOut,
               nights: _nights,
-              onPickCheckIn: () async {
-                final now = DateTime.now();
-
-                final picked = await showDatePicker(
-                  context: context,
-                  initialDate: _checkIn ?? now,
-                  firstDate: DateTime(now.year, now.month, now.day),
-                  lastDate: DateTime(now.year + 1),
-                  builder: (context, child) {
-                    final baseTheme = Theme.of(context);
-
-                    return Theme(
-                      data: baseTheme.copyWith(
-                        colorScheme: ColorScheme.light(
-                          primary: AppColors.goldBrandColor,
-                          onPrimary: Colors.white,
-                          surface: Colors.white,
-                          onSurface: Colors.black,
-                        ),
-
-                        datePickerTheme: DatePickerThemeData(
-                          headerHeadlineStyle: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                          headerHelpStyle: TextStyle(
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black.withAlpha(180),
-                          ),
-                          weekdayStyle: TextStyle(fontWeight: FontWeight.w700),
-                          dayStyle: TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        textTheme: baseTheme.textTheme.copyWith(
-                          bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 11.5.sp,
-                          ),
-                          bodySmall: baseTheme.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 9.5.sp,
-                          ),
-                          titleLarge: baseTheme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 14.sp,
-                          ),
-                          labelLarge: baseTheme.textTheme.labelLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        textButtonTheme: TextButtonThemeData(
-                          style: TextButton.styleFrom(
-                            textStyle: TextStyle(
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
-                );
-
-                if (picked != null) {
-                  setState(() => _checkIn = picked);
-                }
-              },
-              onClear: () => setState(() => _checkIn = null),
-              onNightsChanged: (v) => setState(() => _nights = v),
+              onPickCheckIn: () => _pickDate(context, isCheckIn: true),
+              onPickCheckOut: () => _pickDate(context, isCheckIn: false),
+              onClear: () => setState(() {
+                _checkIn = null;
+                _checkOut = null;
+              }),
             ),
 
             SizedBox(height: 2.0.h),
@@ -217,8 +169,9 @@ class _BookingScreenState extends State<BookingScreen> {
             _SectionTitle(text: tr.price_summary),
             SizedBox(height: 1.2.h),
             _PriceCard(
-              enabled: _checkIn != null,
-              pricePerNight: pricePerNight,
+              enabled: _checkIn != null && _checkOut != null,
+              pricePerPeriod: pricePerPeriod,
+              rentType: isForSale ? null : rentType,
               nights: _nights,
               subtotal: subtotal,
               fee: fee,
@@ -248,29 +201,70 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           child: Row(
             children: [
-              AppButton(
-                height: 6.0.h,
-                width: 60.w,
-                backgroundColor: AppColors.goldBrandColor,
-                onPressed: () {
-                  if (_checkIn == null) {
-                    _toast(context, tr.please_select_checkin_date);
-                    return;
-                  }
-                  if (!_agree) {
-                    _toast(context, tr.please_accept_booking_policy);
-                    return;
-                  }
-                  _showSuccessDialog(context);
-                },
-                child: Text(
-                  tr.confirm_booking,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
+              AbsorbPointer(
+                absorbing: bookingState.isLoading,
+                child: AppButton(
+                  height: 6.0.h,
+                  width: 60.w,
+                  backgroundColor: bookingState.isLoading
+                      ? AppColors.goldBrandColor.withAlpha(160)
+                      : AppColors.goldBrandColor,
+                  onPressed: () async {
+                    if (_checkIn == null || _checkOut == null) {
+                      _toast(context, tr.please_select_checkin_date);
+                      return;
+                    }
+                    if (!_agree) {
+                      _toast(context, tr.please_accept_booking_policy);
+                      return;
+                    }
+                    final assetId = widget.item.assetId;
+                    if (assetId == null) {
+                      // Offline/demo item — show success without API call
+                      _showSuccessDialog(context, null);
+                      return;
+                    }
+                    await ref
+                        .read(bookingControllerProvider.notifier)
+                        .submit(
+                          assetId: assetId,
+                          checkIn: _apiDate(_checkIn!),
+                          checkOut: _apiDate(_checkOut!),
+                          nights: _nights,
+                          guests: _guests,
+                          paymentMethod: _payment == PaymentMethod.cash
+                              ? 'cod'
+                              : 'card',
+                          notes: _notes.text.trim().isEmpty
+                              ? null
+                              : _notes.text.trim(),
+                        );
+                    if (!context.mounted) return;
+                    final latest = ref.read(bookingControllerProvider);
+                    latest.when(
+                      data: (data) => _showSuccessDialog(context, data),
+                      error: (e, _) => _toast(context, e.toString()),
+                      loading: () {},
+                    );
+                  },
+                  child: bookingState.isLoading
+                      ? SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          tr.confirm_booking,
+                          style: appTextStyle(
+                            context,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
               SizedBox(width: 4.w),
@@ -290,7 +284,14 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     SizedBox(height: 0.2.h),
                     Text(
-                      _checkIn == null ? "--" : "$total ${tr.currency_jod}",
+                      (_checkIn == null || _checkOut == null)
+                          ? '--'
+                          : bookingState.whenOrNull(
+                                  data: (d) => d != null
+                                      ? '${d.finalPrice} ${tr.currency_jod}'
+                                      : null,
+                                ) ??
+                                '$total ${tr.currency_jod}',
                       style: appTextStyle(
                         context,
                         fontSize: 13.sp,
@@ -306,6 +307,73 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
       ),
     );
+  }
+
+  /// Shared date picker helper
+  Future<void> _pickDate(
+    BuildContext context, {
+    required bool isCheckIn,
+  }) async {
+    final now = DateTime.now();
+    final initialDate = isCheckIn
+        ? (_checkIn ?? now)
+        : (_checkOut ??
+              (_checkIn?.add(const Duration(days: 1))) ??
+              now.add(const Duration(days: 1)));
+    final firstDate = isCheckIn
+        ? DateTime(now.year, now.month, now.day)
+        : (_checkIn?.add(const Duration(days: 1)) ??
+              DateTime(now.year, now.month, now.day + 1));
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: DateTime(now.year + 2),
+      builder: (context, child) {
+        final base = Theme.of(context);
+        return Theme(
+          data: base.copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.goldBrandColor,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+            datePickerTheme: DatePickerThemeData(
+              headerHeadlineStyle: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+              weekdayStyle: const TextStyle(fontWeight: FontWeight.w700),
+              dayStyle: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                textStyle: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked == null) return;
+    setState(() {
+      if (isCheckIn) {
+        _checkIn = picked;
+        // Reset checkout if it's now before check-in
+        if (_checkOut != null && !_checkOut!.isAfter(picked)) {
+          _checkOut = null;
+        }
+      } else {
+        _checkOut = picked;
+      }
+    });
   }
 
   void _toast(BuildContext context, String msg) {
@@ -324,7 +392,7 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  void _showSuccessDialog(BuildContext context) {
+  void _showSuccessDialog(BuildContext context, BookingData? data) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -371,6 +439,10 @@ class _BookingScreenState extends State<BookingScreen> {
                   height: 1.4,
                 ),
               ),
+              if (data != null) ...[
+                SizedBox(height: 1.5.h),
+                _BookingSummaryCard(data: data),
+              ],
               SizedBox(height: 3.h),
               Row(
                 children: [
@@ -550,147 +622,169 @@ class _StayCard extends StatelessWidget {
   final DateTime? checkOut;
   final int nights;
   final VoidCallback onPickCheckIn;
+  final VoidCallback onPickCheckOut;
   final VoidCallback onClear;
-  final ValueChanged<int> onNightsChanged;
 
   const _StayCard({
     required this.checkIn,
     required this.checkOut,
     required this.nights,
     required this.onPickCheckIn,
+    required this.onPickCheckOut,
     required this.onClear,
-    required this.onNightsChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    final has = checkIn != null;
+    final hasIn = checkIn != null;
+    final hasOut = checkOut != null;
 
     return _CardShell(
       child: Column(
         children: [
-          InkWell(
+          // Check-in row
+          _DateRow(
+            label: tr.check_in_date,
+            date: checkIn,
             onTap: onPickCheckIn,
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              padding: EdgeInsets.all(3.6.w),
+            onClear: hasIn ? onClear : null,
+          ),
+          SizedBox(height: 1.2.h),
+          // Check-out row
+          _DateRow(
+            label: tr.check_out_date,
+            date: checkOut,
+            onTap: hasIn ? onPickCheckOut : null,
+            onClear: null,
+          ),
+          if (hasIn && hasOut) ...[
+            SizedBox(height: 1.h),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 3.6.w, vertical: 0.8.h),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black.withAlpha(18)),
+                color: AppColors.goldBrandColor.withAlpha(22),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(2.6.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.goldBrandColor.withAlpha(22),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Icon(
-                      Icons.date_range,
-                      color: Colors.black.withAlpha(200),
+                  Icon(
+                    Icons.nights_stay_outlined,
+                    size: 18,
+                    color: AppColors.goldBrandColor,
+                  ),
+                  SizedBox(width: 2.w),
+                  Text(
+                    "$nights ${tr.nights}",
+                    style: appTextStyle(
+                      context,
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black.withAlpha(220),
                     ),
                   ),
-                  SizedBox(width: 3.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tr.check_in_date,
-                          style: appTextStyle(
-                            context,
-                            fontSize: 10.6.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black.withAlpha(150),
-                          ),
-                        ),
-                        SizedBox(height: 0.35.h),
-                        Text(
-                          has ? _fmt(checkIn!) : tr.select_date,
-                          style: appTextStyle(
-                            context,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black.withAlpha(230),
-                          ),
-                        ),
-                        if (has && checkOut != null) ...[
-                          SizedBox(height: 0.25.h),
-                          Text(
-                            "${tr.check_out}: ${_fmt(checkOut!)}",
-                            style: appTextStyle(
-                              context,
-                              fontSize: 10.2.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black.withAlpha(140),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  if (has)
-                    IconButton(
-                      onPressed: onClear,
-                      icon: Icon(
-                        Icons.close_rounded,
-                        color: Colors.black.withAlpha(170),
-                      ),
-                    )
-                  else
-                    Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 16,
-                      color: Colors.black.withAlpha(170),
-                    ),
                 ],
               ),
             ),
-          ),
-
-          SizedBox(height: 1.2.h),
-
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  tr.nights,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 11.2.sp,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.black.withAlpha(220),
-                  ),
-                ),
-              ),
-              _Stepper(
-                value: nights,
-                min: 1,
-                max: 30,
-                onChanged: onNightsChanged,
-              ),
-            ],
-          ),
-          SizedBox(height: 0.4.h),
-          Text(
-            tr.one_night_tip,
-            style: appTextStyle(
-              context,
-              fontSize: 10.2.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.black.withAlpha(140),
-            ),
-          ),
+          ],
         ],
       ),
     );
   }
+}
 
-  static String _fmt(DateTime d) {
-    return "${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}";
+class _DateRow extends StatelessWidget {
+  final String label;
+  final DateTime? date;
+  final VoidCallback? onTap;
+  final VoidCallback? onClear;
+
+  const _DateRow({
+    required this.label,
+    required this.date,
+    required this.onTap,
+    required this.onClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasDate = date != null;
+    final isEnabled = onTap != null;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: EdgeInsets.all(3.6.w),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: hasDate
+                ? AppColors.goldBrandColor.withAlpha(100)
+                : Colors.black.withAlpha(18),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(2.6.w),
+              decoration: BoxDecoration(
+                color: AppColors.goldBrandColor.withAlpha(22),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(
+                Icons.date_range,
+                color: Colors.black.withAlpha(isEnabled ? 200 : 100),
+              ),
+            ),
+            SizedBox(width: 3.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 10.6.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black.withAlpha(150),
+                    ),
+                  ),
+                  SizedBox(height: 0.35.h),
+                  Text(
+                    hasDate ? _fmt(date!) : (isEnabled ? tr.select_date : '--'),
+                    style: appTextStyle(
+                      context,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black.withAlpha(hasDate ? 230 : 140),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (hasDate && onClear != null)
+              IconButton(
+                onPressed: onClear,
+                icon: Icon(
+                  Icons.close_rounded,
+                  color: Colors.black.withAlpha(170),
+                ),
+              )
+            else
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 16,
+                color: Colors.black.withAlpha(isEnabled ? 170 : 80),
+              ),
+          ],
+        ),
+      ),
+    );
   }
+
+  static String _fmt(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
 }
 
 class _GuestsCard extends StatelessWidget {
@@ -848,7 +942,8 @@ class _NotesCard extends StatelessWidget {
 
 class _PriceCard extends StatelessWidget {
   final bool enabled;
-  final int pricePerNight;
+  final int pricePerPeriod;
+  final String? rentType;
   final int nights;
   final int subtotal;
   final int fee;
@@ -856,12 +951,35 @@ class _PriceCard extends StatelessWidget {
 
   const _PriceCard({
     required this.enabled,
-    required this.pricePerNight,
+    required this.pricePerPeriod,
+    required this.rentType,
     required this.nights,
     required this.subtotal,
     required this.fee,
     required this.total,
   });
+
+  String _periodLabel(BuildContext context) {
+    switch (rentType) {
+      case 'daily':
+        return tr.per_day;
+      case 'yearly':
+        return tr.per_year;
+      default:
+        return tr.per_month;
+    }
+  }
+
+  String _rentTypeLabel() {
+    switch (rentType) {
+      case 'daily':
+        return tr.daily;
+      case 'yearly':
+        return tr.yearly;
+      default:
+        return tr.monthly;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -870,28 +988,68 @@ class _PriceCard extends StatelessWidget {
       child: _CardShell(
         child: Column(
           children: [
+            if (rentType != null) ...[
+              // Rent type badge
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 3.w,
+                      vertical: 0.6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.goldBrandColor.withAlpha(22),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: AppColors.goldBrandColor.withAlpha(80),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.home_outlined,
+                          size: 14,
+                          color: AppColors.goldBrandColor,
+                        ),
+                        SizedBox(width: 1.5.w),
+                        Text(
+                          _rentTypeLabel(),
+                          style: appTextStyle(
+                            context,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.goldBrandColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 1.h),
+            ],
             _PriceRow(
-              label: tr.nightly_price,
-              value: pricePerNight == 0
-                  ? "--"
-                  : "$pricePerNight ${tr.currency_jod}${tr.per_night}",
+              label: tr.price_per_period,
+              value: pricePerPeriod == 0
+                  ? '--'
+                  : '$pricePerPeriod ${tr.currency_jod}${_periodLabel(context)}',
             ),
             SizedBox(height: 1.h),
-            _PriceRow(label: tr.nights, value: enabled ? "$nights" : "--"),
+            _PriceRow(label: tr.nights, value: enabled ? '$nights' : '--'),
             Divider(color: Colors.black.withAlpha(18), height: 2.4.h),
             _PriceRow(
               label: tr.subtotal,
-              value: enabled ? "$subtotal ${tr.currency_jod}" : "--",
+              value: enabled ? '$subtotal ${tr.currency_jod}' : '--',
             ),
             SizedBox(height: 0.8.h),
             _PriceRow(
               label: tr.service_fee,
-              value: enabled ? "$fee ${tr.currency_jod}" : "--",
+              value: enabled ? '$fee ${tr.currency_jod}' : '--',
             ),
             Divider(color: Colors.black.withAlpha(18), height: 2.4.h),
             _PriceRow(
               label: tr.total_label,
-              value: enabled ? "$total ${tr.currency_jod}" : "--",
+              value: enabled ? '$total ${tr.currency_jod}' : '--',
               bold: true,
             ),
           ],
@@ -1202,6 +1360,53 @@ class _RatingPill extends StatelessWidget {
               fontSize: 10.8.sp,
               fontWeight: FontWeight.w900,
               color: Colors.black.withAlpha(230),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Shows API-returned price breakdown in the success dialog
+class _BookingSummaryCard extends StatelessWidget {
+  final BookingData data;
+  const _BookingSummaryCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.black.withAlpha(18)),
+      ),
+      child: Column(
+        children: [
+          _PriceRow(
+            label: tr.subtotal,
+            value: '${data.totalPrice} ${tr.currency_jod}',
+          ),
+          SizedBox(height: 0.8.h),
+          _PriceRow(
+            label: tr.service_fee,
+            value: '${data.serviceFee} ${tr.currency_jod}',
+          ),
+          Divider(color: Colors.black.withAlpha(18), height: 2.h),
+          _PriceRow(
+            label: tr.total_label,
+            value: '${data.finalPrice} ${tr.currency_jod}',
+            bold: true,
+          ),
+          SizedBox(height: 0.6.h),
+          Text(
+            '#${data.bookingId}',
+            style: appTextStyle(
+              context,
+              fontSize: 9.5.sp,
+              fontWeight: FontWeight.w700,
+              color: Colors.black.withAlpha(100),
             ),
           ),
         ],

@@ -67,6 +67,7 @@ class AssetItem {
 
   /// Converts to [PropertyItem] for compatibility with existing detail screens.
   PropertyItem toPropertyItem() => PropertyItem(
+    assetId: id,
     title: name,
     location: location,
     price: price,

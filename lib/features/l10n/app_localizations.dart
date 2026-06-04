@@ -2011,6 +2011,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No more results'**
   String get no_more_results;
+
+  /// No description provided for @check_out_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-out Date'**
+  String get check_out_date;
+
+  /// No description provided for @price_per_period.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get price_per_period;
+
+  /// No description provided for @daily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get daily;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// No description provided for @yearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get yearly;
 }
 
 class _AppLocalizationsDelegate

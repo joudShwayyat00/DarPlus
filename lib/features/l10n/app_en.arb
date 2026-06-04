@@ -319,5 +319,10 @@
   "currency_jod": "JOD",
   "owner": "Owner",
   "no_results_found": "No results found",
-  "no_more_results": "No more results"
+  "no_more_results": "No more results",
+  "check_out_date": "Check-out Date",
+  "price_per_period": "Price",
+  "daily": "Daily",
+  "monthly": "Monthly",
+  "yearly": "Yearly"
 }

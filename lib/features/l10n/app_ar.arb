@@ -319,5 +319,10 @@
   "currency_jod": "دينار",
   "owner": "المالك",
   "no_results_found": "لا توجد نتائج",
-  "no_more_results": "لا توجد نتائج إضافية"
+  "no_more_results": "لا توجد نتائج إضافية",
+  "check_out_date": "تاريخ المغادرة",
+  "price_per_period": "السعر",
+  "daily": "يومي",
+  "monthly": "شهري",
+  "yearly": "سنوي"
 }

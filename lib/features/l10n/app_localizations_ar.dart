@@ -1002,4 +1002,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get no_more_results => 'لا توجد نتائج إضافية';
+
+  @override
+  String get check_out_date => 'تاريخ المغادرة';
+
+  @override
+  String get price_per_period => 'السعر';
+
+  @override
+  String get daily => 'يومي';
+
+  @override
+  String get monthly => 'شهري';
+
+  @override
+  String get yearly => 'سنوي';
 }

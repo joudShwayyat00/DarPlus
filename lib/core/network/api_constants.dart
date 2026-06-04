@@ -29,6 +29,8 @@ class ApiConstants {
   static const String amenities = "api/amenities/all";
   // Add asset endpoint
   static const String addAsset = "api/the_assets/add";
+  // Book asset endpoint
+  static const String bookAsset = "api/assets/book";
 
   static const String contentType = "application/json";
   static const String accept = "application/json";
