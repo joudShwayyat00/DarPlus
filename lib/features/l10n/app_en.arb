@@ -168,6 +168,8 @@
   "select_date": "Select date",
   "check_out": "Check-out",
   "nights": "Nights",
+  "months": "Months",
+  "years": "Years",
   "one_night_tip": "Tip: One night = 1 ✅ (No need to pick time)",
   "number_of_guests": "Number of guests",
   "cash_on_arrival": "Cash on arrival",

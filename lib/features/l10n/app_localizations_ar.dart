@@ -517,6 +517,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nights => 'الليالي';
 
   @override
+  String get months => 'الأشهر';
+
+  @override
+  String get years => 'السنوات';
+
+  @override
   String get one_night_tip => 'نصيحة: ليلة واحدة = 1 ✅ (لا حاجة لاختيار الوقت)';
 
   @override

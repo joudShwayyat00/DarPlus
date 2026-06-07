@@ -36,6 +36,23 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
     return _checkOut!.difference(_checkIn!).inDays.clamp(1, 365);
   }
 
+  /// Period count based on rent type: days for daily, months for monthly, years for yearly.
+  int _periodsCount(String? rentType) {
+    if (_checkIn == null || _checkOut == null) return 1;
+    switch (rentType) {
+      case 'monthly':
+        final months =
+            (_checkOut!.year - _checkIn!.year) * 12 +
+            (_checkOut!.month - _checkIn!.month);
+        return months.clamp(1, 120);
+      case 'yearly':
+        final years = _checkOut!.year - _checkIn!.year;
+        return years.clamp(1, 10);
+      default: // daily
+        return _checkOut!.difference(_checkIn!).inDays.clamp(1, 365);
+    }
+  }
+
   @override
   void dispose() {
     _notes.dispose();
@@ -58,11 +75,6 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
   static String _apiDate(DateTime d) =>
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
-  int _serviceFee(int subtotal) {
-    final fee = (subtotal * 0.06).round();
-    return fee < 3 ? 3 : fee;
-  }
-
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
@@ -77,12 +89,10 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
 
     // Local price estimate (shown before API responds)
     int subtotal = 0;
-    int fee = 0;
     int total = 0;
     if (_checkIn != null && _checkOut != null) {
-      subtotal = _nights * pricePerPeriod;
-      fee = _serviceFee(subtotal);
-      total = subtotal + fee;
+      subtotal = _periodsCount(rentType) * pricePerPeriod;
+      total = subtotal;
     }
 
     return Scaffold(
@@ -172,9 +182,8 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
               enabled: _checkIn != null && _checkOut != null,
               pricePerPeriod: pricePerPeriod,
               rentType: isForSale ? null : rentType,
-              nights: _nights,
+              periods: _periodsCount(rentType),
               subtotal: subtotal,
-              fee: fee,
               total: total,
             ),
 
@@ -243,7 +252,13 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                     final latest = ref.read(bookingControllerProvider);
                     latest.when(
                       data: (data) => _showSuccessDialog(context, data),
-                      error: (e, _) => _toast(context, e.toString()),
+                      error: (e, _) {
+                        final msg = e.toString().replaceFirst(
+                          'Exception: ',
+                          '',
+                        );
+                        _toast(context, msg);
+                      },
                       loading: () {},
                     );
                   },
@@ -944,25 +959,34 @@ class _PriceCard extends StatelessWidget {
   final bool enabled;
   final int pricePerPeriod;
   final String? rentType;
-  final int nights;
+  final int periods;
   final int subtotal;
-  final int fee;
   final int total;
 
   const _PriceCard({
     required this.enabled,
     required this.pricePerPeriod,
     required this.rentType,
-    required this.nights,
+    required this.periods,
     required this.subtotal,
-    required this.fee,
     required this.total,
   });
+
+  String _periodCountLabel() {
+    switch (rentType) {
+      case 'monthly':
+        return tr.months;
+      case 'yearly':
+        return tr.years;
+      default:
+        return tr.nights;
+    }
+  }
 
   String _periodLabel(BuildContext context) {
     switch (rentType) {
       case 'daily':
-        return tr.per_day;
+        return tr.per_night;
       case 'yearly':
         return tr.per_year;
       default:
@@ -1035,16 +1059,9 @@ class _PriceCard extends StatelessWidget {
                   : '$pricePerPeriod ${tr.currency_jod}${_periodLabel(context)}',
             ),
             SizedBox(height: 1.h),
-            _PriceRow(label: tr.nights, value: enabled ? '$nights' : '--'),
-            Divider(color: Colors.black.withAlpha(18), height: 2.4.h),
             _PriceRow(
-              label: tr.subtotal,
-              value: enabled ? '$subtotal ${tr.currency_jod}' : '--',
-            ),
-            SizedBox(height: 0.8.h),
-            _PriceRow(
-              label: tr.service_fee,
-              value: enabled ? '$fee ${tr.currency_jod}' : '--',
+              label: _periodCountLabel(),
+              value: enabled ? '$periods' : '--',
             ),
             Divider(color: Colors.black.withAlpha(18), height: 2.4.h),
             _PriceRow(
@@ -1384,16 +1401,6 @@ class _BookingSummaryCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _PriceRow(
-            label: tr.subtotal,
-            value: '${data.totalPrice} ${tr.currency_jod}',
-          ),
-          SizedBox(height: 0.8.h),
-          _PriceRow(
-            label: tr.service_fee,
-            value: '${data.serviceFee} ${tr.currency_jod}',
-          ),
-          Divider(color: Colors.black.withAlpha(18), height: 2.h),
           _PriceRow(
             label: tr.total_label,
             value: '${data.finalPrice} ${tr.currency_jod}',

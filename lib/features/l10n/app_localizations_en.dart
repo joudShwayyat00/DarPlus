@@ -522,6 +522,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nights => 'Nights';
 
   @override
+  String get months => 'Months';
+
+  @override
+  String get years => 'Years';
+
+  @override
   String get one_night_tip => 'Tip: One night = 1 ✅ (No need to pick time)';
 
   @override

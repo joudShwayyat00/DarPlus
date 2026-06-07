@@ -1106,6 +1106,18 @@ abstract class AppLocalizations {
   /// **'Nights'**
   String get nights;
 
+  /// No description provided for @months.
+  ///
+  /// In en, this message translates to:
+  /// **'Months'**
+  String get months;
+
+  /// No description provided for @years.
+  ///
+  /// In en, this message translates to:
+  /// **'Years'**
+  String get years;
+
   /// No description provided for @one_night_tip.
   ///
   /// In en, this message translates to:
