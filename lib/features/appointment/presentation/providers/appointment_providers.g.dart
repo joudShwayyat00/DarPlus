@@ -45,6 +45,7 @@ final class AppointmentServiceClientProvider
     return appointmentServiceClient(ref);
   }
 
+  /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AppointmentServiceClient value) {
     return $ProviderOverride(
       origin: this,
@@ -54,7 +55,7 @@ final class AppointmentServiceClientProvider
 }
 
 String _$appointmentServiceClientHash() =>
-    r'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0';
+    r'6b9a0606f2daefee08384591c8fc0070484968e1';
 
 @ProviderFor(appointmentRepository)
 const appointmentRepositoryProvider = AppointmentRepositoryProvider._();
@@ -92,6 +93,7 @@ final class AppointmentRepositoryProvider
     return appointmentRepository(ref);
   }
 
+  /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AppointmentRepository value) {
     return $ProviderOverride(
       origin: this,
@@ -101,7 +103,7 @@ final class AppointmentRepositoryProvider
 }
 
 String _$appointmentRepositoryHash() =>
-    r'b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1';
+    r'b8413b7b79863b3777cfbb28660dc0774fc14d3f';
 
 @ProviderFor(AppointmentController)
 const appointmentControllerProvider = AppointmentControllerProvider._();
@@ -128,7 +130,7 @@ final class AppointmentControllerProvider
 }
 
 String _$appointmentControllerHash() =>
-    r'c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2';
+    r'2d7325326ce2b7ce593b3284b1659765d3cc145f';
 
 abstract class _$AppointmentController
     extends $AsyncNotifier<AppointmentData?> {

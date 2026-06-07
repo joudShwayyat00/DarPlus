@@ -273,14 +273,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           title: tr.logout,
                           iconColor: AppColors.goldBrandColor,
                           titleColor: AppColors.goldBrandColor,
-                          onTap: () {
-                            ref
-                                .read(profileControllerProvider.notifier)
-                                .logout();
-                            AppNavigator.of(
-                              context,
-                            ).pushAndRemoveUntil(const WelcomeScreen());
-                          },
+                          onTap: () => _showLogoutDialog(context),
                         ),
                         _MenuItem(
                           icon: Icons.delete_outline_rounded,
@@ -661,6 +654,68 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             SizedBox(height: 2.h),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: AppColors.whiteColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          tr.logout,
+          style: appTextStyle(
+            context,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w900,
+            color: Colors.black.withAlpha(230),
+          ),
+        ),
+        content: Text(
+          tr.logout_confirm_message,
+          style: appTextStyle(
+            context,
+            fontSize: 11.5.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.black.withAlpha(160),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(
+              tr.cancel,
+              style: appTextStyle(
+                context,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w700,
+                color: Colors.black.withAlpha(150),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              await ref.read(profileControllerProvider.notifier).logout();
+              if (context.mounted) {
+                AppNavigator.of(
+                  context,
+                ).pushAndRemoveUntil(const WelcomeScreen());
+              }
+            },
+            child: Text(
+              tr.logout,
+              style: appTextStyle(
+                context,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.goldBrandColor,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

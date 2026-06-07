@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
@@ -26,6 +27,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   final phoneController = TextEditingController();
   final FocusNode phoneFocusNode = FocusNode();
+  String _nationalPhoneNumber = '';
 
   final emailController = TextEditingController();
   final FocusNode emailFocusNode = FocusNode();
@@ -57,6 +59,22 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       },
       orElse: () {},
     );
+
+    ref.listen<AsyncValue<dynamic>>(editProfileControllerProvider, (_, next) {
+      next.when(
+        data: (data) {
+          if (data != null) {
+            ref.read(profileControllerProvider.notifier).refreshProfile();
+            EasyLoading.showSuccess(data.message ?? tr.save_changes);
+            Navigator.pop(context);
+          }
+        },
+        error: (e, _) {
+          EasyLoading.showError(e.toString().replaceFirst('Exception: ', ''));
+        },
+        loading: () {},
+      );
+    });
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -137,15 +155,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
                       _buildLabel(context, tr.phone_number),
                       SizedBox(height: 1.h),
-                      AppPhoneField(
-                        controller: phoneController,
-                        focusNode: phoneFocusNode,
-                        hint: tr.phone_number,
-                        initialCountryCode: "JO",
-                        textInputAction: TextInputAction.next,
-                        onFieldSubmitted: (_) {
-                          FocusScope.of(context).requestFocus(emailFocusNode);
-                        },
+                      Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: AppPhoneField(
+                          controller: phoneController,
+                          focusNode: phoneFocusNode,
+                          hint: tr.phone_number,
+                          initialCountryCode: "JO",
+                          textInputAction: TextInputAction.next,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(emailFocusNode);
+                          },
+                          onChangedNationalNumber: (national) {
+                            _nationalPhoneNumber = national;
+                          },
+                        ),
                       ),
 
                       SizedBox(height: 2.5.h),
@@ -181,25 +205,52 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
               SizedBox(height: 4.h),
 
-              AppButton(
-                backgroundColor: AppColors.goldBrandColor,
-                onPressed: () {
-                  FocusScope.of(context).unfocus();
-
-                  if (_formKey.currentState!.validate()) {
-                    // TODO: call update profile provider and save user data on server
-                    Navigator.pop(context);
-                  }
+              Consumer(
+                builder: (context, ref, _) {
+                  final isLoading = ref
+                      .watch(editProfileControllerProvider)
+                      .isLoading;
+                  return AppButton(
+                    backgroundColor: isLoading
+                        ? AppColors.goldBrandColor.withAlpha(160)
+                        : AppColors.goldBrandColor,
+                    onPressed: isLoading
+                        ? () {}
+                        : () {
+                            FocusScope.of(context).unfocus();
+                            if (_formKey.currentState!.validate()) {
+                              final phone = _nationalPhoneNumber.isNotEmpty
+                                  ? _nationalPhoneNumber
+                                  : phoneController.text.trim();
+                              ref
+                                  .read(editProfileControllerProvider.notifier)
+                                  .editProfile(
+                                    name: nameController.text.trim(),
+                                    email: emailController.text.trim(),
+                                    phoneNumber: phone,
+                                  );
+                            }
+                          },
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            tr.save_changes,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 12.2.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.whiteColor,
+                            ),
+                          ),
+                  );
                 },
-                child: Text(
-                  tr.save_changes,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 12.2.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.whiteColor,
-                  ),
-                ),
               ),
 
               SizedBox(height: 3.h),

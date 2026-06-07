@@ -33,6 +33,7 @@ class _AppointmentServiceClient implements AppointmentServiceClient {
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.fields.add(MapEntry('asset_id', assetId.toString()));
@@ -45,7 +46,12 @@ class _AppointmentServiceClient implements AppointmentServiceClient {
       _data.fields.add(MapEntry('note', note));
     }
     final _options = _setStreamType<AppointmentResponse>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
           .compose(
             _dio.options,
             'api/appointments/add',
@@ -70,11 +76,9 @@ class _AppointmentServiceClient implements AppointmentServiceClient {
         !(requestOptions.responseType == ResponseType.bytes ||
             requestOptions.responseType == ResponseType.stream)) {
       if (T == String) {
-        requestOptions =
-            requestOptions.copyWith(responseType: ResponseType.plain);
+        requestOptions.responseType = ResponseType.plain;
       } else {
-        requestOptions =
-            requestOptions.copyWith(responseType: ResponseType.json);
+        requestOptions.responseType = ResponseType.json;
       }
     }
     return requestOptions;
@@ -84,10 +88,15 @@ class _AppointmentServiceClient implements AppointmentServiceClient {
     if (baseUrl == null || baseUrl.trim().isEmpty) {
       return dioBaseUrl;
     }
+
     final url = Uri.parse(baseUrl);
+
     if (url.isAbsolute) {
       return url.toString();
     }
+
     return Uri.parse(dioBaseUrl).resolveUri(url).toString();
   }
 }
+
+// dart format on

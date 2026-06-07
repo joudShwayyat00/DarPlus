@@ -52,6 +52,7 @@
   "support": "Support",
   "legal": "Legal",
   "logout": "Logout",
+  "logout_confirm_message": "Are you sure you want to log out of your account?",
   "delete_account": "Delete Account",
   "version": "Version",
   "change_language": "Change Language",

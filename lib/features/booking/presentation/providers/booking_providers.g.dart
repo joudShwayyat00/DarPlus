@@ -55,7 +55,7 @@ final class BookingServiceClientProvider
 }
 
 String _$bookingServiceClientHash() =>
-    r'b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0';
+    r'6f0208620027afa811c0d534ed3125c1f074e0ee';
 
 @ProviderFor(bookingRepository)
 const bookingRepositoryProvider = BookingRepositoryProvider._();
@@ -102,7 +102,7 @@ final class BookingRepositoryProvider
   }
 }
 
-String _$bookingRepositoryHash() => r'c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1';
+String _$bookingRepositoryHash() => r'db99a6c7ec49d5553f9956ccb65238366813119e';
 
 @ProviderFor(BookingController)
 const bookingControllerProvider = BookingControllerProvider._();
@@ -128,7 +128,7 @@ final class BookingControllerProvider
   BookingController create() => BookingController();
 }
 
-String _$bookingControllerHash() => r'd3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2';
+String _$bookingControllerHash() => r'cf703fd2ce21e15384508537fe181f58572c432a';
 
 abstract class _$BookingController extends $AsyncNotifier<BookingData?> {
   FutureOr<BookingData?> build();

@@ -1,6 +1,8 @@
 import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/controller/shared_prefs.dart';
+import 'package:dar_plus_app/firebase_options.dart';
 import 'package:dar_plus_app/screens/auth/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -11,6 +13,7 @@ import 'package:sizer/sizer.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
@@ -39,7 +42,9 @@ class MyApp extends ConsumerWidget {
           builder: EasyLoading.init(
             builder: (context, child) {
               final isArabic = Directionality.of(context) == TextDirection.rtl;
-              final baseTheme = ThemeData(scaffoldBackgroundColor: Colors.white);
+              final baseTheme = ThemeData(
+                scaffoldBackgroundColor: Colors.white,
+              );
               final theme = baseTheme.copyWith(
                 textTheme: isArabic
                     ? baseTheme.textTheme.apply(fontFamily: 'GESSSTwo')

@@ -36,7 +36,8 @@ abstract class AuthServiceClient {
   Future<LogoutResponse> logout();
 
   @POST(ApiConstants.forgotPassword)
-  Future<ForgotPasswordResponse> forgotPassword(@Field("email") String email);
+  @MultiPart()
+  Future<ForgotPasswordResponse> forgotPassword(@Part() String email);
 
   @POST(ApiConstants.editProfile)
   @MultiPart()

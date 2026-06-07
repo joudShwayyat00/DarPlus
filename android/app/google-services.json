@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "849138072189",
+    "project_id": "darplus-c4763",
+    "storage_bucket": "darplus-c4763.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849138072189:android:2879eadff8f73314308f14",
+        "android_client_info": {
+          "package_name": "com.msg.dar.plus.dar_plus_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAevDSpUAMeDu2xpIvvymqj3WJvkAEiR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

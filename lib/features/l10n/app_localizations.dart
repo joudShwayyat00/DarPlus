@@ -410,6 +410,12 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get logout;
 
+  /// No description provided for @logout_confirm_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out of your account?'**
+  String get logout_confirm_message;
+
   /// No description provided for @delete_account.
   ///
   /// In en, this message translates to:

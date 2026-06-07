@@ -50,6 +50,7 @@
   "support": "الدعم",
   "legal": "القانونية",
   "logout": "تسجيل الخروج",
+  "logout_confirm_message": "هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟",
   "delete_account": "حذف الحساب",
   "version": "الإصدار",
   "change_language": "تغيير اللغة",

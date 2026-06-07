@@ -127,7 +127,7 @@ final class AssetsControllerProvider
   AssetsController create() => AssetsController();
 }
 
-String _$assetsControllerHash() => r'dfbf887b4f7962f099e48ce51d36b690e77b40bc';
+String _$assetsControllerHash() => r'db62b03fea63d5b5fb37a8c2fc1a516e3151dda0';
 
 abstract class _$AssetsController extends $AsyncNotifier<List<AssetItem>> {
   FutureOr<List<AssetItem>> build();
@@ -341,13 +341,13 @@ final class AmenitiesProvider
   }
 }
 
-String _$amenitiesHash() => r'c5f3a94e1d2b9f7a0e4c8d6b3a1f5e2d9c7b4a8';
+String _$amenitiesHash() => r'c846ce642c69a6efc6b127b2b91d90b85c6eeef5';
 
 @ProviderFor(AddAssetController)
 const addAssetControllerProvider = AddAssetControllerProvider._();
 
 final class AddAssetControllerProvider
-    extends $AsyncNotifierProvider<AddAssetController, void> {
+    extends $NotifierProvider<AddAssetController, AsyncValue<void>> {
   const AddAssetControllerProvider._()
     : super(
         from: null,
@@ -365,21 +365,30 @@ final class AddAssetControllerProvider
   @$internal
   @override
   AddAssetController create() => AddAssetController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<void> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
+  }
 }
 
-String _$addAssetControllerHash() => r'a2b4c6d8e0f1a3b5c7d9e2f4a6b8c0d2e4f6a8b';
+String _$addAssetControllerHash() =>
+    r'dc83e44796d08daa2f91ae1f5c97e331107ea577';
 
-abstract class _$AddAssetController extends $AsyncNotifier<void> {
-  FutureOr<void> build();
+abstract class _$AddAssetController extends $Notifier<AsyncValue<void>> {
+  AsyncValue<void> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final ref = this.ref as $Ref<AsyncValue<void>, AsyncValue<void>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<void>, void>,
+              AnyNotifier<AsyncValue<void>, AsyncValue<void>>,
               AsyncValue<void>,
               Object?,
               Object?
