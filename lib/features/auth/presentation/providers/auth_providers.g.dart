@@ -405,3 +405,56 @@ abstract class _$UpdatePasswordController
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(UploadImageController)
+const uploadImageControllerProvider = UploadImageControllerProvider._();
+
+final class UploadImageControllerProvider
+    extends
+        $AsyncNotifierProvider<UploadImageController, UploadImageResponse?> {
+  const UploadImageControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'uploadImageControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$uploadImageControllerHash();
+
+  @$internal
+  @override
+  UploadImageController create() => UploadImageController();
+}
+
+String _$uploadImageControllerHash() =>
+    r'385ef42737cc9d326eeb01bf4be08233a90797d9';
+
+abstract class _$UploadImageController
+    extends $AsyncNotifier<UploadImageResponse?> {
+  FutureOr<UploadImageResponse?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<AsyncValue<UploadImageResponse?>, UploadImageResponse?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<UploadImageResponse?>,
+                UploadImageResponse?
+              >,
+              AsyncValue<UploadImageResponse?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

@@ -1036,4 +1036,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yearly => 'Yearly';
+
+  @override
+  String get upload_photo => 'Photo uploaded successfully';
+
+  @override
+  String get change_photo => 'Change Photo';
+
+  @override
+  String get gallery => 'Choose from Gallery';
+
+  @override
+  String get camera => 'Take a Photo';
 }

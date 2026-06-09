@@ -4,6 +4,8 @@ import '../../data/models/logout_response.dart';
 import '../../data/models/forgot_password_response.dart';
 import '../../data/models/edit_profile_response.dart';
 import '../../data/models/update_password_response.dart';
+import '../../data/models/upload_image_response.dart';
+import 'package:dio/dio.dart';
 
 abstract class AuthRepository {
   Future<RegisterResponse> register({
@@ -35,4 +37,6 @@ abstract class AuthRepository {
     required String password,
     required String passwordConfirmation,
   });
+
+  Future<UploadImageResponse> uploadImage(MultipartFile image);
 }

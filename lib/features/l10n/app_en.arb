@@ -327,5 +327,9 @@
   "price_per_period": "Price",
   "daily": "Daily",
   "monthly": "Monthly",
-  "yearly": "Yearly"
+  "yearly": "Yearly",
+  "upload_photo": "Photo uploaded successfully",
+  "change_photo": "Change Photo",
+  "gallery": "Choose from Gallery",
+  "camera": "Take a Photo"
 }

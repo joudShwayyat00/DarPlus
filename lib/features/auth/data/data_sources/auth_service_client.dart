@@ -7,6 +7,7 @@ import '../models/logout_response.dart';
 import '../models/forgot_password_response.dart';
 import '../models/edit_profile_response.dart';
 import '../models/update_password_response.dart';
+import '../models/upload_image_response.dart';
 
 part 'auth_service_client.g.dart';
 
@@ -52,5 +53,11 @@ abstract class AuthServiceClient {
   Future<UpdatePasswordResponse> updatePassword(
     @Part() String password,
     @Part(name: 'password_confirmation') String passwordConfirmation,
+  );
+
+  @POST(ApiConstants.uploadImage)
+  @MultiPart()
+  Future<UploadImageResponse> uploadImage(
+    @Part(name: 'image') MultipartFile image,
   );
 }

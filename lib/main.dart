@@ -1,5 +1,6 @@
 import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/controller/shared_prefs.dart';
+import 'package:dar_plus_app/core/notifications/notification_service.dart';
 import 'package:dar_plus_app/firebase_options.dart';
 import 'package:dar_plus_app/screens/auth/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,6 +15,8 @@ import 'package:sizer/sizer.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await NotificationService.initialize();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 

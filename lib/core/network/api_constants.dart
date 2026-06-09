@@ -7,6 +7,7 @@ class ApiConstants {
   static const String forgotPassword = "/api/forgot_password";
   static const String editProfile = "/api/edit_profile";
   static const String updatePassword = "/api/update_password";
+  static const String uploadImage = '/api/user/upload_image';
 
   // Sliders endpoint (language suffix is provided as path param)
   static const String sliders = "api/sliders";

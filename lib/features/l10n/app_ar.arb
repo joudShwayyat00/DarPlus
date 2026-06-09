@@ -327,5 +327,9 @@
   "price_per_period": "السعر",
   "daily": "يومي",
   "monthly": "شهري",
-  "yearly": "سنوي"
+  "yearly": "سنوي",
+  "upload_photo": "تم رفع الصورة بنجاح",
+  "change_photo": "تغيير الصورة",
+  "gallery": "اختر من المعرض",
+  "camera": "التقط صورة"
 }

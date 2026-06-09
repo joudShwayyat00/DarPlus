@@ -6,7 +6,9 @@ import '../models/logout_response.dart';
 import '../models/forgot_password_response.dart';
 import '../models/edit_profile_response.dart';
 import '../models/update_password_response.dart';
+import '../models/upload_image_response.dart';
 import '../../../../controller/shared_prefs.dart';
+import 'package:dio/dio.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthServiceClient _authServiceClient;
@@ -94,5 +96,10 @@ class AuthRepositoryImpl implements AuthRepository {
     );
 
     return response;
+  }
+
+  @override
+  Future<UploadImageResponse> uploadImage(MultipartFile image) async {
+    return await _authServiceClient.uploadImage(image);
   }
 }

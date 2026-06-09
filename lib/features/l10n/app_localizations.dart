@@ -2059,6 +2059,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yearly'**
   String get yearly;
+
+  /// No description provided for @upload_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo uploaded successfully'**
+  String get upload_photo;
+
+  /// No description provided for @change_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get change_photo;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get gallery;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a Photo'**
+  String get camera;
 }
 
 class _AppLocalizationsDelegate

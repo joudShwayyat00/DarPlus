@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:dio/dio.dart';
 
 import '../../../../controller/shared_prefs.dart';
 import '../../../../core/network/dio_factory.dart';
@@ -8,6 +9,7 @@ import '../../data/models/user_model.dart';
 import '../../data/models/forgot_password_response.dart';
 import '../../data/models/edit_profile_response.dart';
 import '../../data/models/update_password_response.dart';
+import '../../data/models/upload_image_response.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 
@@ -174,6 +176,26 @@ class UpdatePasswordController extends _$UpdatePasswordController {
         passwordConfirmation: passwordConfirmation,
       );
       return response;
+    });
+  }
+}
+
+@riverpod
+class UploadImageController extends _$UploadImageController {
+  @override
+  FutureOr<UploadImageResponse?> build() {
+    return null;
+  }
+
+  Future<void> uploadImage(String filePath) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard<UploadImageResponse?>(() async {
+      final repository = ref.read(authRepositoryProvider);
+      final multipartFile = await MultipartFile.fromFile(
+        filePath,
+        filename: filePath.split('/').last,
+      );
+      return await repository.uploadImage(multipartFile);
     });
   }
 }

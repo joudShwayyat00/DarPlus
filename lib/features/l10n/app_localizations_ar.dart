@@ -1027,4 +1027,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get yearly => 'سنوي';
+
+  @override
+  String get upload_photo => 'تم رفع الصورة بنجاح';
+
+  @override
+  String get change_photo => 'تغيير الصورة';
+
+  @override
+  String get gallery => 'اختر من المعرض';
+
+  @override
+  String get camera => 'التقط صورة';
 }
