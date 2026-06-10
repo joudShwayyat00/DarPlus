@@ -254,7 +254,11 @@ class MyAssetsController extends _$MyAssetsController {
 
   Future<void> loadMore() async {
     if (!_hasMore || _isLoadingMore) return;
-    final current = state.whenData((d) => d).valueOrNull;
+    final current = state.when(
+      data: (d) => d,
+      loading: () => null,
+      error: (_, __) => null,
+    );
     if (current == null) return;
     _isLoadingMore = true;
     try {

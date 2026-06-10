@@ -191,10 +191,10 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
 
     if (success && mounted) {
       EasyLoading.showSuccess('Asset added successfully!');
+      ref.invalidate(assetsControllerProvider);
+      ref.invalidate(myAssetsControllerProvider);
       await Future.delayed(const Duration(seconds: 1));
       if (mounted) Navigator.of(context).pop();
-      // Optionally, you can also refresh the assets list after adding a new asset
-      ref.read(assetsControllerProvider.notifier).refresh();
     } else if (mounted) {
       final err = ref.read(addAssetControllerProvider).error;
       _showSnack(err?.toString() ?? 'Something went wrong.');

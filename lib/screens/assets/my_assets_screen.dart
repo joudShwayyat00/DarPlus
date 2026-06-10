@@ -209,8 +209,8 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(appLogo, height: 12.h, fit: BoxFit.contain),
-                SizedBox(height: 2.h),
+                // Image.asset(appLogo, height: 12.h, fit: BoxFit.contain),
+                // SizedBox(height: 2.h),
                 Text(
                   tr.no_more_results,
                   style: appTextStyle(

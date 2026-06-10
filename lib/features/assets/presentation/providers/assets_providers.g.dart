@@ -422,7 +422,7 @@ final class MyAssetsControllerProvider
 }
 
 String _$myAssetsControllerHash() =>
-    r'3067b27e4354fef9df41f6b734c8f9a641a5c46c';
+    r'00a68e2790382ca818015e9f2d6cf958dfb81aa4';
 
 abstract class _$MyAssetsController extends $AsyncNotifier<List<AssetItem>> {
   FutureOr<List<AssetItem>> build();

@@ -1,5 +1,7 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
+import 'package:dar_plus_app/features/location/data/models/country_item.dart';
+import 'package:dar_plus_app/features/location/presentation/providers/location_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
@@ -74,6 +76,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   String? _listingType;
   final Set<String> _assetTypes = {};
   String? _country;
+  int? _selectedCountryId;
   String? _city;
   String? _area;
   DateTime? _checkIn;
@@ -82,49 +85,6 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   // Calendar display month
   late DateTime _displayMonth;
 
-  // ── Location data ──────────────────────────────────────────────────────
-  static const Map<String, Map<String, List<String>>> _locationData = {
-    'Jordan': {
-      'Amman': [
-        'Abdoun',
-        'Sweifieh',
-        'Jubeiha',
-        'Khalda',
-        'Zahran',
-        'Al-Rabieh',
-        'Dahiyat Al-Rashid',
-      ],
-      'Aqaba': ['Downtown', 'South Beach', 'North Aqaba', 'Tala Bay'],
-      'Dead Sea': ['Northern Shore', 'Southern Shore', 'Resort Area'],
-      'Jerash': ['Jerash City', 'North Jerash'],
-      'Irbid': ['Downtown', 'Al-Yarmouk', 'Ramtha'],
-      'Zarqa': ['Downtown', 'Hashimiyya', 'Al-Rusaifeh'],
-    },
-    'Saudi Arabia': {
-      'Riyadh': ['Al-Olaya', 'Al-Malaz', 'Al-Nakheel', 'Al-Rabwa', 'Al-Muruj'],
-      'Jeddah': ['Al-Balad', 'Al-Hamra', 'Al-Andalus', 'Al-Zahraa'],
-      'Mecca': ['Al-Aziziyah', 'Al-Misfalah', 'Ajyad'],
-      'Dammam': ['Al-Faisaliyah', 'Al-Qusur', 'Al-Shula'],
-    },
-    'UAE': {
-      'Dubai': [
-        'Downtown',
-        'Marina',
-        'Jumeirah',
-        'Deira',
-        'Business Bay',
-        'Palm Jumeirah',
-      ],
-      'Abu Dhabi': [
-        'Al-Reem Island',
-        'Khalidiyah',
-        'Corniche',
-        'Saadiyat Island',
-      ],
-      'Sharjah': ['Al-Majaz', 'Al-Qasba', 'Al-Nahda'],
-    },
-  };
-
   @override
   void initState() {
     super.initState();
@@ -132,6 +92,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
     _listingType = f.listingType;
     _assetTypes.addAll(f.assetTypes);
     _country = f.country;
+    _selectedCountryId = null; // ID not persisted in FilterData
     _city = f.city;
     _area = f.area;
     _checkIn = f.checkIn;
@@ -150,6 +111,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
       _listingType = null;
       _assetTypes.clear();
       _country = null;
+      _selectedCountryId = null;
       _city = null;
       _area = null;
       _checkIn = null;
@@ -397,71 +359,65 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   // ── Location ───────────────────────────────────────────────────────────────
 
   Widget _buildLocationSection() {
-    final countries = _locationData.keys.toList();
-    final cities = _country != null
-        ? _locationData[_country]!.keys.toList()
-        : <String>[];
-    final areas = (_country != null && _city != null)
-        ? _locationData[_country]![_city]!
-        : <String>[];
+    final countriesAsync = ref.watch(countriesProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionLabel(tr.filter_location),
 
-        // Country
-        _LocationSelector(
-          icon: Icons.public_rounded,
-          hint: tr.filter_select_country,
-          value: _country,
-          items: countries,
-          onChanged: (v) => setState(() {
-            _country = v;
-            _city = null;
-            _area = null;
-          }),
+        // ── Country ──────────────────────────────────────────────────
+        countriesAsync.when(
+          data: (countries) => _LocationSelector(
+            icon: Icons.public_rounded,
+            hint: tr.filter_select_country,
+            value: _country,
+            items: countries.map((c) => c.name).toList(),
+            onChanged: (name) {
+              if (name == null) {
+                setState(() {
+                  _country = null;
+                  _selectedCountryId = null;
+                  _city = null;
+                });
+                return;
+              }
+              final selected = countries.firstWhere((c) => c.name == name);
+              setState(() {
+                _country = selected.name;
+                _selectedCountryId = selected.id;
+                _city = null;
+              });
+            },
+          ),
+          loading: () => _buildSelectorSkeleton(),
+          error: (_, __) => const SizedBox.shrink(),
         ),
 
-        // City (appears after country selected)
+        // ── City (appears after country selected) ────────────────────
         AnimatedSize(
           duration: const Duration(milliseconds: 260),
           curve: Curves.easeOut,
-          child: _country == null
+          child: _selectedCountryId == null
               ? const SizedBox.shrink()
               : Padding(
                   padding: EdgeInsets.only(top: 1.4.h),
-                  child: _LocationSelector(
-                    icon: Icons.location_city_rounded,
-                    hint: tr.filter_select_city,
-                    value: _city,
-                    items: cities,
-                    onChanged: (v) => setState(() {
-                      _city = v;
-                      _area = null;
-                    }),
-                  ),
-                ),
-        ),
-
-        // Area (appears after city selected)
-        AnimatedSize(
-          duration: const Duration(milliseconds: 260),
-          curve: Curves.easeOut,
-          child: _city == null
-              ? const SizedBox.shrink()
-              : Padding(
-                  padding: EdgeInsets.only(top: 1.4.h),
-                  child: _LocationSelector(
-                    icon: Icons.place_rounded,
-                    hint: tr.filter_select_area,
-                    value: _area,
-                    items: areas,
-                    onChanged: (v) => setState(() => _area = v),
+                  child: _CitiesDropdown(
+                    countryId: _selectedCountryId!,
+                    selectedCity: _city,
+                    onChanged: (city) => setState(() => _city = city),
                   ),
                 ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSelectorSkeleton() {
+    return ShimmerPlaceholder(
+      width: double.infinity,
+      height: 6.h,
+      borderRadius: BorderRadius.circular(14),
     );
   }
 
@@ -647,6 +603,42 @@ class _FilterChip extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+// ─── Private: _CitiesDropdown ────────────────────────────────────────────────
+
+/// Isolated ConsumerWidget so `citiesProvider(countryId)` is watched
+/// unconditionally within its own build scope — avoids conditional ref.watch.
+class _CitiesDropdown extends ConsumerWidget {
+  final int countryId;
+  final String? selectedCity;
+  final ValueChanged<String?> onChanged;
+
+  const _CitiesDropdown({
+    required this.countryId,
+    required this.selectedCity,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final citiesAsync = ref.watch(citiesProvider(countryId));
+    return citiesAsync.when(
+      data: (cities) => _LocationSelector(
+        icon: Icons.location_city_rounded,
+        hint: tr.filter_select_city,
+        value: selectedCity,
+        items: cities.map((c) => c.name).toList(),
+        onChanged: onChanged,
+      ),
+      loading: () => ShimmerPlaceholder(
+        width: double.infinity,
+        height: 6.h,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }

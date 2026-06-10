@@ -40,6 +40,9 @@ class ApiConstants {
   static const String privacyPolicy = "api/privacy_policy";
   // My assets (owner, requires auth)
   static const String myAssets = "api/my_assets";
+  // Location
+  static const String countries = "api/countries";
+  static const String cities = "api/cities";
 
   static const String contentType = "application/json";
   static const String accept = "application/json";
