@@ -1,5 +1,6 @@
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/screens/assets/assets_screen.dart';
+import 'package:dar_plus_app/screens/assets/top_rated_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
 import 'package:dar_plus_app/main.dart';
@@ -182,7 +183,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     SizedBox(height: 2.5.h),
 
                     // ── Top Rated Properties ────────────────────────────
-                    SectionHeader(title: tr.top_rated, onSeeAll: () {}),
+                    SectionHeader(
+                      title: tr.top_rated,
+                      onSeeAll: () =>
+                          AppNavigator.of(context).push(const TopRatedScreen()),
+                    ),
                     _buildTopRated(),
 
                     SizedBox(height: 2.5.h),
@@ -230,6 +235,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       data: (assets) {
         if (assets.isEmpty) return const SizedBox.shrink();
 
+        // Show only the first 5 on the home screen
+        final preview = assets.take(5).toList();
+
         return Column(
           children: [
             SizedBox(
@@ -237,8 +245,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: GestureDetector(
                 onTap: () => AppNavigator.of(context).push(
                   AssetDetailsScreen(
-                    assetId: assets[_currentRecommendedIndex].id,
-                    initialAsset: assets[_currentRecommendedIndex],
+                    assetId: preview[_currentRecommendedIndex].id,
+                    initialAsset: preview[_currentRecommendedIndex],
                   ),
                 ),
                 child: NotificationListener<ScrollNotification>(
@@ -254,14 +262,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                   child: PageView.builder(
                     controller: _recommendedController,
-                    itemCount: assets.length,
+                    itemCount: preview.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: EdgeInsets.only(
-                          right: index == assets.length - 1 ? 0 : 3.w,
+                          right: index == preview.length - 1 ? 0 : 3.w,
                         ),
                         child: PropertyTile(
-                          item: assets[index].toPropertyItem(),
+                          item: preview[index].toPropertyItem(),
                         ),
                       );
                     },
@@ -273,7 +281,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                assets.length,
+                preview.length,
                 (index) => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   margin: const EdgeInsets.symmetric(horizontal: 4),

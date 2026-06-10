@@ -206,3 +206,48 @@ abstract class _$PrivacyPolicyController
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(AboutUsController)
+const aboutUsControllerProvider = AboutUsControllerProvider._();
+
+final class AboutUsControllerProvider
+    extends $AsyncNotifierProvider<AboutUsController, AboutUsItem> {
+  const AboutUsControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'aboutUsControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$aboutUsControllerHash();
+
+  @$internal
+  @override
+  AboutUsController create() => AboutUsController();
+}
+
+String _$aboutUsControllerHash() => r'ea0b866cf55c05d77058e140428923b2ae177eaa';
+
+abstract class _$AboutUsController extends $AsyncNotifier<AboutUsItem> {
+  FutureOr<AboutUsItem> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<AboutUsItem>, AboutUsItem>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<AboutUsItem>, AboutUsItem>,
+              AsyncValue<AboutUsItem>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

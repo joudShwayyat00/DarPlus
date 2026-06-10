@@ -43,6 +43,8 @@ class ApiConstants {
   // Location
   static const String countries = "api/countries";
   static const String cities = "api/cities";
+  // About us
+  static const String aboutUs = "api/about_us";
 
   static const String contentType = "application/json";
   static const String accept = "application/json";

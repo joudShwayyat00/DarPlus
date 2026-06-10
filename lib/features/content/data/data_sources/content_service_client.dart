@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../../../core/network/api_constants.dart';
+import '../models/about_us_response.dart';
 import '../models/content_page_response.dart';
 
 part 'content_service_client.g.dart';
@@ -15,4 +16,7 @@ abstract class ContentServiceClient {
 
   @GET("${ApiConstants.privacyPolicy}/{lang}")
   Future<ContentPageResponse> getPrivacyPolicy(@Path("lang") String lang);
+
+  @GET("${ApiConstants.aboutUs}/{lang}")
+  Future<AboutUsResponse> getAboutUs(@Path("lang") String lang);
 }

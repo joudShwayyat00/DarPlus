@@ -1,14 +1,20 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/content/data/models/content_page_item.dart';
+import 'package:dar_plus_app/features/content/presentation/providers/content_providers.dart';
+import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/screens/profile/widgets/content_widgets.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
-import 'package:dar_plus_app/main.dart';
 
-class PrivacyPolicyScreen extends StatelessWidget {
+class PrivacyPolicyScreen extends ConsumerWidget {
   const PrivacyPolicyScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(privacyPolicyControllerProvider);
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -34,187 +40,30 @@ class PrivacyPolicyScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 5.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 2.h),
-
-            // Last Updated
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
-              decoration: BoxDecoration(
-                color: AppColors.goldBrandColor.withAlpha(15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                tr.privacy_last_updated,
-                style: appTextStyle(
-                  context,
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.goldBrandColor,
-                ),
-              ),
-            ),
-
-            SizedBox(height: 2.h),
-
-            Text(
-              tr.privacy_intro,
-              style: appTextStyle(
-                context,
-                fontSize: 10.5.sp,
-                fontWeight: FontWeight.w500,
-                color: Colors.black.withAlpha(160),
-                height: 1.6,
-              ),
-            ),
-
-            SizedBox(height: 3.h),
-
-            _buildSection(
-              context,
-              number: "1",
-              title: tr.privacy_section_1_title,
-              content: tr.privacy_section_1_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "2",
-              title: tr.privacy_section_2_title,
-              content: tr.privacy_section_2_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "3",
-              title: tr.privacy_section_3_title,
-              content: tr.privacy_section_3_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "4",
-              title: tr.privacy_section_4_title,
-              content: tr.privacy_section_4_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "5",
-              title: tr.privacy_section_5_title,
-              content: tr.privacy_section_5_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "6",
-              title: tr.privacy_section_6_title,
-              content: tr.privacy_section_6_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "7",
-              title: tr.privacy_section_7_title,
-              content: tr.privacy_section_7_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "8",
-              title: tr.privacy_section_8_title,
-              content: tr.privacy_section_8_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "9",
-              title: tr.contact_us,
-              content: tr.privacy_section_9_content,
-            ),
-
-            SizedBox(height: 3.h),
-          ],
+      body: async.when(
+        data: (items) => _buildContent(context, items),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(AppColors.goldBrandColor),
+          ),
+        ),
+        error: (_, __) => Center(
+          child: ContentErrorRetry(
+            onRetry: () => ref.invalidate(privacyPolicyControllerProvider),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSection(
-    BuildContext context, {
-    required String number,
-    required String title,
-    required String content,
-  }) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withAlpha(10)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(6),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: AppColors.goldBrandColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    number,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 3.w),
-              Expanded(
-                child: Text(
-                  title,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black.withAlpha(220),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 1.5.h),
-          Text(
-            content,
-            style: appTextStyle(
-              context,
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w500,
-              color: Colors.black.withAlpha(150),
-              height: 1.6,
-            ),
-          ),
-        ],
+  Widget _buildContent(BuildContext context, List<ContentPageItem> items) {
+    return ListView.separated(
+      padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 3.h),
+      itemCount: items.length,
+      separatorBuilder: (_, __) => SizedBox(height: 1.5.h),
+      itemBuilder: (context, index) => ContentCard(
+        title: items[index].title,
+        child: HtmlBody(html: items[index].description),
       ),
     );
   }

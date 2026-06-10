@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../controller/local_provider.dart';
 import '../../../../core/network/dio_factory.dart';
 import '../../data/data_sources/content_service_client.dart';
+import '../../data/models/about_us_item.dart';
 import '../../data/models/content_page_item.dart';
 import '../../data/repositories/content_repository_impl.dart';
 import '../../domain/repositories/content_repository.dart';
@@ -36,5 +37,14 @@ class PrivacyPolicyController extends _$PrivacyPolicyController {
   FutureOr<List<ContentPageItem>> build() async {
     final lang = ref.read(localeProvider).languageCode;
     return await ref.read(contentRepositoryProvider).getPrivacyPolicy(lang);
+  }
+}
+
+@riverpod
+class AboutUsController extends _$AboutUsController {
+  @override
+  FutureOr<AboutUsItem> build() async {
+    final lang = ref.read(localeProvider).languageCode;
+    return await ref.read(contentRepositoryProvider).getAboutUs(lang);
   }
 }
