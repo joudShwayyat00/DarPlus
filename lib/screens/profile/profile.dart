@@ -1,4 +1,4 @@
-import 'package:dar_plus_app/screens/assets/assets_screen.dart';
+import 'package:dar_plus_app/screens/assets/my_assets_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/screens/auth/welcome_screen.dart';
@@ -102,8 +102,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AssetsScreen(isOwnerView: true),
+                                  builder: (context) => const MyAssetsScreen(),
                                 ),
                               );
                             },

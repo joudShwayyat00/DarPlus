@@ -34,6 +34,12 @@ class ApiConstants {
   static const String bookAsset = "api/assets/book";
   // Add appointment endpoint
   static const String addAppointment = "api/appointments/add";
+  // Terms & conditions
+  static const String termsAndConditions = "api/terms_and_conditions";
+  // Privacy policy
+  static const String privacyPolicy = "api/privacy_policy";
+  // My assets (owner, requires auth)
+  static const String myAssets = "api/my_assets";
 
   static const String contentType = "application/json";
   static const String accept = "application/json";

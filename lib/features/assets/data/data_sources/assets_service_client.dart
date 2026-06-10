@@ -31,4 +31,11 @@ abstract class AssetsServiceClient {
 
   @GET("${ApiConstants.amenities}/{lang}")
   Future<AmenitiesResponse> getAmenities(@Path("lang") String lang);
+
+  @GET("${ApiConstants.myAssets}/{lang}")
+  Future<PagedAssetsResponse> getMyAssets(
+    @Path("lang") String lang, {
+    @Query("category_id") int? categoryId,
+    @Query("page") int? page,
+  });
 }

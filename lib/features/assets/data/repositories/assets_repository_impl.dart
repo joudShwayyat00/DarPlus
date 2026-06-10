@@ -32,6 +32,23 @@ class AssetsRepositoryImpl implements AssetsRepository {
   }
 
   @override
+  Future<AssetsPage> getMyAssets(
+    String lang, {
+    int? categoryId,
+    int page = 1,
+  }) async {
+    final response = await _serviceClient.getMyAssets(
+      lang,
+      categoryId: categoryId,
+      page: page,
+    );
+    return AssetsPage(
+      items: response.items,
+      hasMore: response.meta.hasNextPage,
+    );
+  }
+
+  @override
   Future<List<AssetItem>> getTopRatedAssets() async {
     final response = await _serviceClient.getTopRatedAssets();
     return response.result;

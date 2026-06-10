@@ -16,12 +16,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  await NotificationService.initialize();
-
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Initialize SharedPreferences before providers that depend on it
+  // Initialize SharedPreferences before anything that depends on it
   await SharedPerfManager().init();
+
+  await NotificationService.initialize();
 
   runApp(ProviderScope(child: const MyApp()));
 }

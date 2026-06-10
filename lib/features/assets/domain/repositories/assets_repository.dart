@@ -9,6 +9,7 @@ class AssetsPage {
 
 abstract class AssetsRepository {
   Future<AssetsPage> getAssets(String lang, {int? categoryId, int page = 1});
+  Future<AssetsPage> getMyAssets(String lang, {int? categoryId, int page = 1});
   Future<List<AssetItem>> getTopRatedAssets();
   Future<AssetItem> getAssetDetail({required int id, required String lang});
   Future<List<AmenityItem>> getAmenities(String lang);

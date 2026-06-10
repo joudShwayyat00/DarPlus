@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Top-level background message handler (required by FCM — must be top-level).
 @pragma('vm:entry-point')
@@ -51,12 +52,23 @@ class NotificationService {
       sound: true,
     );
 
-    // 8. Print the FCM token for testing.
-    final token = await _messaging.getToken();
-    debugPrint('FCM Token: $token');
+    // 8. Save and print the FCM token.
+    // Note: on iOS simulators APNs is unavailable — token fetch is skipped.
+    try {
+      final token = await _messaging.getToken();
+      if (token != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('fcmToken', token);
+      }
+      debugPrint('FCM Token: $token');
+    } catch (e) {
+      debugPrint('FCM getToken skipped: $e');
+    }
 
     // Listen for token refreshes.
-    _messaging.onTokenRefresh.listen((newToken) {
+    _messaging.onTokenRefresh.listen((newToken) async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('fcmToken', newToken);
       debugPrint('FCM Token refreshed: $newToken');
       // TODO: send newToken to your backend.
     });
@@ -138,5 +150,10 @@ class NotificationService {
   }
 
   /// Returns the current FCM device token.
-  static Future<String?> getToken() => _messaging.getToken();
+  static Future<String?> getToken() async {
+    final token = await _messaging.getToken();
+    debugPrint("FCM Token: $token");
+
+    return token;
+  }
 }

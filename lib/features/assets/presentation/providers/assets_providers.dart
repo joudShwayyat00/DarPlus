@@ -201,3 +201,76 @@ class AddAssetController extends _$AddAssetController {
     return result is AsyncData;
   }
 }
+
+@riverpod
+class MyAssetsController extends _$MyAssetsController {
+  int? _currentCategoryId;
+  int _currentPage = 1;
+  bool _hasMore = false;
+  bool _isLoadingMore = false;
+
+  bool get hasMore => _hasMore;
+  bool get isLoadingMore => _isLoadingMore;
+
+  @override
+  FutureOr<List<AssetItem>> build() async {
+    _currentPage = 1;
+    final lang = ref.read(localeProvider).languageCode;
+    final result = await ref
+        .read(assetsRepositoryProvider)
+        .getMyAssets(lang, categoryId: _currentCategoryId, page: 1);
+    _hasMore = result.hasMore;
+    return result.items;
+  }
+
+  Future<void> fetchByCategory(int? categoryId) async {
+    _currentCategoryId = categoryId;
+    _currentPage = 1;
+    _hasMore = false;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final lang = ref.read(localeProvider).languageCode;
+      final result = await ref
+          .read(assetsRepositoryProvider)
+          .getMyAssets(lang, categoryId: categoryId, page: 1);
+      _hasMore = result.hasMore;
+      return result.items;
+    });
+  }
+
+  Future<void> refresh() async {
+    _currentPage = 1;
+    _hasMore = false;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final lang = ref.read(localeProvider).languageCode;
+      final result = await ref
+          .read(assetsRepositoryProvider)
+          .getMyAssets(lang, categoryId: _currentCategoryId, page: 1);
+      _hasMore = result.hasMore;
+      return result.items;
+    });
+  }
+
+  Future<void> loadMore() async {
+    if (!_hasMore || _isLoadingMore) return;
+    final current = state.whenData((d) => d).valueOrNull;
+    if (current == null) return;
+    _isLoadingMore = true;
+    try {
+      final lang = ref.read(localeProvider).languageCode;
+      final result = await ref
+          .read(assetsRepositoryProvider)
+          .getMyAssets(
+            lang,
+            categoryId: _currentCategoryId,
+            page: _currentPage + 1,
+          );
+      _currentPage += 1;
+      _hasMore = result.hasMore;
+      state = AsyncData([...current, ...result.items]);
+    } finally {
+      _isLoadingMore = false;
+    }
+  }
+}

@@ -51,6 +51,17 @@ class SharedPerfManager {
     _token = SharedPerHelper().setString('token', value);
   }
 
+  static late String _fcmToken;
+
+  String get fcmToken {
+    _fcmToken = SharedPerHelper().getString('fcmToken');
+    return _fcmToken;
+  }
+
+  set fcmToken(String value) {
+    _fcmToken = SharedPerHelper().setString('fcmToken', value);
+  }
+
   void clear() {
     _prefs.clear();
   }

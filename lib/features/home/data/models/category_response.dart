@@ -5,15 +5,10 @@ part 'category_response.g.dart';
 
 @JsonSerializable()
 class CategoryResponse {
+  @JsonKey(name: 'data')
   final List<CategoryItem> result;
-  final List<dynamic> errors;
-  final String message;
 
-  CategoryResponse({
-    required this.result,
-    required this.errors,
-    required this.message,
-  });
+  CategoryResponse({required this.result});
 
   factory CategoryResponse.fromJson(Map<String, dynamic> json) =>
       _$CategoryResponseFromJson(json);

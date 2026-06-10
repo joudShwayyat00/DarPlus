@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/configuration/app_images.dart';
 import 'package:flutter/material.dart';
 
 class AppNetImage extends StatelessWidget {
@@ -22,12 +23,16 @@ class AppNetImage extends StatelessWidget {
       placeholder: (context, url) => Container(
         color: Colors.grey.shade200,
         alignment: Alignment.center,
-        child:  CircularProgressIndicator(strokeWidth: 2,color: AppColors.grayBrandColor,),
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: AppColors.grayBrandColor,
+        ),
       ),
       errorWidget: (context, url, error) => Container(
-        color: Colors.grey.shade300,
+        color: Colors.grey.shade100,
         alignment: Alignment.center,
-        child: const Icon(Icons.broken_image),
+        padding: const EdgeInsets.all(12),
+        child: Image.asset(appLogo, fit: BoxFit.contain),
       ),
     );
 
@@ -35,9 +40,6 @@ class AppNetImage extends StatelessWidget {
       return image;
     }
 
-    return ClipRRect(
-      borderRadius: borderRadius!,
-      child: image,
-    );
+    return ClipRRect(borderRadius: borderRadius!, child: image);
   }
 }

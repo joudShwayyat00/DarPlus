@@ -396,3 +396,49 @@ abstract class _$AddAssetController extends $Notifier<AsyncValue<void>> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(MyAssetsController)
+const myAssetsControllerProvider = MyAssetsControllerProvider._();
+
+final class MyAssetsControllerProvider
+    extends $AsyncNotifierProvider<MyAssetsController, List<AssetItem>> {
+  const MyAssetsControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'myAssetsControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$myAssetsControllerHash();
+
+  @$internal
+  @override
+  MyAssetsController create() => MyAssetsController();
+}
+
+String _$myAssetsControllerHash() =>
+    r'3067b27e4354fef9df41f6b734c8f9a641a5c46c';
+
+abstract class _$MyAssetsController extends $AsyncNotifier<List<AssetItem>> {
+  FutureOr<List<AssetItem>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<List<AssetItem>>, List<AssetItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<AssetItem>>, List<AssetItem>>,
+              AsyncValue<List<AssetItem>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

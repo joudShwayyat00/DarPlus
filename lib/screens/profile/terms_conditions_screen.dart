@@ -1,14 +1,20 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/content/data/models/content_page_item.dart';
+import 'package:dar_plus_app/features/content/presentation/providers/content_providers.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
 
-class TermsConditionsScreen extends StatelessWidget {
+class TermsConditionsScreen extends ConsumerWidget {
   const TermsConditionsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(termsControllerProvider);
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -34,182 +40,50 @@ class TermsConditionsScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 5.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 2.h),
-
-            // Last Updated
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
-              decoration: BoxDecoration(
-                color: AppColors.goldBrandColor.withAlpha(15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                tr.terms_effective_date,
-                style: appTextStyle(
-                  context,
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.goldBrandColor,
-                ),
-              ),
+      body: async.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: EdgeInsets.all(5.w),
+            child: Text(
+              e.toString().replaceFirst('Exception: ', ''),
+              style: const TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
             ),
-
-            SizedBox(height: 2.h),
-
-            Text(
-              tr.terms_intro,
-              style: appTextStyle(
-                context,
-                fontSize: 10.5.sp,
-                fontWeight: FontWeight.w500,
-                color: Colors.black.withAlpha(160),
-                height: 1.6,
-              ),
-            ),
-
-            SizedBox(height: 3.h),
-
-            _buildSection(
-              context,
-              number: "1",
-              title: tr.terms_section_1_title,
-              content: tr.terms_section_1_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "2",
-              title: tr.terms_section_2_title,
-              content: tr.terms_section_2_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "3",
-              title: tr.terms_section_3_title,
-              content: tr.terms_section_3_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "4",
-              title: tr.terms_section_4_title,
-              content: tr.terms_section_4_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "5",
-              title: tr.terms_section_5_title,
-              content: tr.terms_section_5_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "6",
-              title: tr.terms_section_6_title,
-              content: tr.terms_section_6_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "7",
-              title: tr.terms_section_7_title,
-              content: tr.terms_section_7_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "8",
-              title: tr.terms_section_8_title,
-              content: tr.terms_section_8_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "9",
-              title: tr.terms_section_9_title,
-              content: tr.terms_section_9_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "10",
-              title: tr.terms_section_10_title,
-              content: tr.terms_section_10_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "11",
-              title: tr.terms_section_11_title,
-              content: tr.terms_section_11_content,
-            ),
-
-            _buildSection(
-              context,
-              number: "12",
-              title: tr.terms_section_12_title,
-              content: tr.terms_section_12_content,
-            ),
-
-            SizedBox(height: 2.h),
-
-            // Agreement Statement
-            Container(
-              padding: EdgeInsets.all(4.w),
-              decoration: BoxDecoration(
-                color: AppColors.goldBrandColor.withAlpha(10),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppColors.goldBrandColor.withAlpha(40),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline_rounded,
-                    color: AppColors.goldBrandColor,
-                    size: 24,
-                  ),
-                  SizedBox(width: 3.w),
-                  Expanded(
-                    child: Text(
-                      tr.terms_agreement_statement,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black.withAlpha(160),
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 3.h),
-          ],
+          ),
         ),
+        data: (items) => items.isEmpty
+            ? Center(
+                child: Text(
+                  tr.terms_and_conditions,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 12.sp,
+                    color: Colors.black.withAlpha(120),
+                  ),
+                ),
+              )
+            : ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+                itemCount: items.length,
+                separatorBuilder: (_, __) => SizedBox(height: 1.5.h),
+                itemBuilder: (context, index) =>
+                    _ContentCard(item: items[index]),
+              ),
       ),
     );
   }
+}
 
-  Widget _buildSection(
-    BuildContext context, {
-    required String number,
-    required String title,
-    required String content,
-  }) {
+class _ContentCard extends StatelessWidget {
+  const _ContentCard({required this.item});
+
+  final ContentPageItem item;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 2.h),
-      padding: EdgeInsets.all(4.w),
+      padding: EdgeInsets.fromLTRB(4.w, 3.h, 4.w, 1.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -225,54 +99,32 @@ class TermsConditionsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: AppColors.goldBrandColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    number,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 3.w),
-              Expanded(
-                child: Text(
-                  title,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black.withAlpha(220),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 1.5.h),
           Text(
-            content,
+            item.title,
             style: appTextStyle(
               context,
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w500,
-              color: Colors.black.withAlpha(150),
-              height: 1.6,
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w800,
+              color: Colors.black.withAlpha(220),
             ),
+          ),
+          Html(
+            data: item.description,
+            style: {
+              'body': Style(
+                fontSize: FontSize(10.5.sp),
+                fontWeight: FontWeight.w500,
+                color: Colors.black.withAlpha(150),
+                lineHeight: const LineHeight(1.6),
+                margin: Margins.zero,
+                padding: HtmlPaddings.zero,
+              ),
+              'p': Style(margin: Margins.only(top: 4, bottom: 4)),
+            },
           ),
         ],
       ),
     );
   }
 }
+
