@@ -1,59 +1,30 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/controller/local_provider.dart';
+import 'package:dar_plus_app/features/packages/data/models/package_item.dart';
+import 'package:dar_plus_app/features/packages/presentation/providers/packages_providers.dart';
+import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/screens/profile/widgets/content_widgets.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
-import 'package:dar_plus_app/main.dart';
 
-class SubscriptionsScreen extends StatefulWidget {
+class SubscriptionsScreen extends ConsumerStatefulWidget {
   const SubscriptionsScreen({super.key});
 
   @override
-  State<SubscriptionsScreen> createState() => _SubscriptionsScreenState();
+  ConsumerState<SubscriptionsScreen> createState() =>
+      _SubscriptionsScreenState();
 }
 
-class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
-  int _selectedPlanIndex = 1; // Premium selected by default
-
-  final List<_SubscriptionPlan> _plans = [
-    _SubscriptionPlan(
-      name: "Basic",
-      price: "Free",
-      period: "",
-      features: ["Browse properties", "Save favorites", "Basic search filters"],
-      isPopular: false,
-    ),
-    _SubscriptionPlan(
-      name: "Premium",
-      price: "\$9.99",
-      period: "/month",
-      features: [
-        "All Basic features",
-        "Priority booking",
-        "Exclusive deals",
-        "24/7 support",
-        "No ads",
-      ],
-      isPopular: true,
-    ),
-    _SubscriptionPlan(
-      name: "Elite",
-      price: "\$24.99",
-      period: "/month",
-      features: [
-        "All Premium features",
-        "Personal concierge",
-        "VIP property access",
-        "Cashback rewards",
-        "Free cancellation",
-        "Luxury perks",
-      ],
-      isPopular: false,
-    ),
-  ];
+class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
+  int _selectedPlanIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final packagesAsync = ref.watch(packagesControllerProvider);
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -79,162 +50,158 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 5.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 2.h),
-
-            // Current Plan Badge
-            Container(
-              padding: EdgeInsets.all(4.w),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.goldBrandColor.withAlpha(200),
-                    AppColors.goldBrandColor,
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.goldBrandColor.withAlpha(50),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(3.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(40),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.workspace_premium_rounded,
-                      color: Colors.white,
-                      size: 26,
-                    ),
-                  ),
-                  SizedBox(width: 4.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${tr.current_plan}: ${tr.premium}',
-                          style: appTextStyle(
-                            context,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(height: 0.3.h),
-                        Text(
-                          '${tr.renews_on} March 15, 2026',
-                          style: appTextStyle(
-                            context,
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white.withAlpha(200),
-                          ),
-                        ),
-                        Text(
-                          tr.choose_your_plan,
-                          style: appTextStyle(
-                            context,
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black.withAlpha(220),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: 3.h),
-
-            Text(
-              tr.choose_your_plan,
-              style: appTextStyle(
-                context,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w900,
-                color: Colors.black.withAlpha(220),
-              ),
-            ),
-
-            SizedBox(height: 2.h),
-
-            // Plans
-            ...List.generate(_plans.length, (index) {
-              return _buildPlanCard(_plans[index], index);
-            }),
-
-            SizedBox(height: 3.h),
-
-            AppButton(
-              backgroundColor: AppColors.goldBrandColor,
-              onPressed: () {
-                // TODO: Process subscription
-              },
-              child: Text(
-                tr.upgrade_plan,
-                style: appTextStyle(
-                  context,
-                  fontSize: 12.2.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.whiteColor,
-                ),
-              ),
-            ),
-
-            SizedBox(height: 2.h),
-
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  // TODO: Cancel subscription
-                },
-                child: Text(
-                  tr.cancel_subscription,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 10.5.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red.withAlpha(180),
-                  ),
-                ),
-              ),
-            ),
-
-            SizedBox(height: 3.h),
-
-            SizedBox(height: 3.h),
-          ],
+      body: packagesAsync.when(
+        data: (packages) => _buildContent(packages),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(AppColors.goldBrandColor),
+          ),
+        ),
+        error: (_, __) => Center(
+          child: ContentErrorRetry(
+            onRetry: () => ref.invalidate(packagesControllerProvider),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildPlanCard(_SubscriptionPlan plan, int index) {
+  Widget _buildContent(List<PackageItem> packages) {
+    if (packages.isEmpty) {
+      return Center(
+        child: Text(
+          tr.no_results_found,
+          style: appTextStyle(
+            context,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.black.withAlpha(120),
+          ),
+        ),
+      );
+    }
+
+    if (_selectedPlanIndex >= packages.length) {
+      _selectedPlanIndex = 0;
+    }
+
+    final lang = ref.read(localeProvider).languageCode;
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 2.h),
+          _buildHeader(),
+          SizedBox(height: 3.h),
+          Text(
+            tr.choose_your_plan,
+            style: appTextStyle(
+              context,
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.black.withAlpha(220),
+            ),
+          ),
+          SizedBox(height: 2.h),
+          ...List.generate(packages.length, (index) {
+            final plan = packages[index];
+            return _buildPlanCard(
+              plan: plan,
+              lang: lang,
+              index: index,
+            );
+          }),
+          SizedBox(height: 3.h),
+          AppButton(
+            backgroundColor: AppColors.goldBrandColor,
+            onPressed: () {
+              // TODO: Process subscription purchase
+            },
+            child: Text(
+              tr.upgrade_plan,
+              style: appTextStyle(
+                context,
+                fontSize: 12.2.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.whiteColor,
+              ),
+            ),
+          ),
+          SizedBox(height: 3.h),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.goldBrandColor.withAlpha(200),
+            AppColors.goldBrandColor,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.goldBrandColor.withAlpha(50),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(3.w),
+            decoration: BoxDecoration(
+              color: Colors.white.withAlpha(40),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.workspace_premium_rounded,
+              color: Colors.white,
+              size: 26,
+            ),
+          ),
+          SizedBox(width: 4.w),
+          Expanded(
+            child: Text(
+              tr.choose_your_plan,
+              style: appTextStyle(
+                context,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlanCard({
+    required PackageItem plan,
+    required String lang,
+    required int index,
+  }) {
     final isSelected = _selectedPlanIndex == index;
+    final name = plan.name.forLang(lang);
+    final features = [
+      '${tr.package_duration}: ${plan.durationDays} ${tr.package_days}',
+      '${tr.package_sale_listings}: ${plan.saleAssetsLimit}',
+      '${tr.package_rent_listings}: ${plan.rentAssetsLimit}',
+    ];
 
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedPlanIndex = index;
-        });
-      },
+      onTap: () => setState(() => _selectedPlanIndex = index),
       child: Container(
         margin: EdgeInsets.only(bottom: 2.h),
         padding: EdgeInsets.all(4.w),
@@ -266,44 +233,14 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            plan.name == 'Basic'
-                                ? tr.basic
-                                : plan.name == 'Premium'
-                                ? tr.premium
-                                : tr.elite,
-                            style: appTextStyle(
-                              context,
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.black.withAlpha(220),
-                            ),
-                          ),
-                          if (plan.isPopular) ...[
-                            SizedBox(width: 2.w),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 2.w,
-                                vertical: 0.3.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.goldBrandColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                tr.popular,
-                                style: appTextStyle(
-                                  context,
-                                  fontSize: 8.sp,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
+                      Text(
+                        name,
+                        style: appTextStyle(
+                          context,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black.withAlpha(220),
+                        ),
                       ),
                       SizedBox(height: 0.5.h),
                       RichText(
@@ -319,7 +256,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                               ),
                             ),
                             TextSpan(
-                              text: plan.period,
+                              text: ' ${tr.currency_jod}',
                               style: appTextStyle(
                                 context,
                                 fontSize: 10.sp,
@@ -349,13 +286,13 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                         : Colors.transparent,
                   ),
                   child: isSelected
-                      ? Icon(Icons.check, size: 16, color: Colors.white)
+                      ? const Icon(Icons.check, size: 16, color: Colors.white)
                       : null,
                 ),
               ],
             ),
             SizedBox(height: 2.h),
-            ...plan.features.map(
+            ...features.map(
               (feature) => Padding(
                 padding: EdgeInsets.only(bottom: 0.8.h),
                 child: Row(
@@ -366,37 +303,15 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                       color: AppColors.goldBrandColor,
                     ),
                     SizedBox(width: 2.w),
-                    Text(
-                      feature == 'Browse properties'
-                          ? tr.features_browse_properties
-                          : feature == 'Save favorites'
-                          ? tr.features_save_favorites
-                          : feature == 'Basic search filters'
-                          ? tr.features_basic_search_filters
-                          : feature == 'All Basic features'
-                          ? tr.all_basic_features
-                          : feature == 'Priority booking'
-                          ? tr.priority_booking
-                          : feature == 'Exclusive deals'
-                          ? tr.exclusive_deals
-                          : feature == 'No ads'
-                          ? tr.no_ads
-                          : feature == 'Personal concierge'
-                          ? tr.personal_concierge
-                          : feature == 'VIP property access'
-                          ? tr.vip_property_access
-                          : feature == 'Cashback rewards'
-                          ? tr.cashback_rewards
-                          : feature == 'Free cancellation'
-                          ? tr.free_cancellation
-                          : feature == 'Luxury perks'
-                          ? tr.luxury_perks
-                          : feature,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 10.5.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black.withAlpha(160),
+                    Expanded(
+                      child: Text(
+                        feature,
+                        style: appTextStyle(
+                          context,
+                          fontSize: 10.5.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black.withAlpha(160),
+                        ),
                       ),
                     ),
                   ],
@@ -408,20 +323,4 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
       ),
     );
   }
-}
-
-class _SubscriptionPlan {
-  final String name;
-  final String price;
-  final String period;
-  final List<String> features;
-  final bool isPopular;
-
-  const _SubscriptionPlan({
-    required this.name,
-    required this.price,
-    required this.period,
-    required this.features,
-    required this.isPopular,
-  });
 }

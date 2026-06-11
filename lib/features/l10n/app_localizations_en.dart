@@ -332,6 +332,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get choose_your_plan => 'Choose Your Plan';
 
   @override
+  String get package_duration => 'Duration';
+
+  @override
+  String get package_days => 'days';
+
+  @override
+  String get package_sale_listings => 'Sale listings';
+
+  @override
+  String get package_rent_listings => 'Rent listings';
+
+  @override
   String get upgrade_plan => 'Upgrade Plan';
 
   @override

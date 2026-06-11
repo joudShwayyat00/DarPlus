@@ -49,6 +49,8 @@ class ApiConstants {
   // Contact data
   static const String contactData = "api/contact_data";
   static const String contactUs = "api/contact_us";
+  // Subscription packages
+  static const String packages = "api/packages";
   // Filter endpoint (language suffix is provided as path param)
   static const String filter = "api/filter";
 

@@ -328,6 +328,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get choose_your_plan => 'اختر خطتك';
 
   @override
+  String get package_duration => 'المدة';
+
+  @override
+  String get package_days => 'يوم';
+
+  @override
+  String get package_sale_listings => 'عقارات للبيع';
+
+  @override
+  String get package_rent_listings => 'عقارات للإيجار';
+
+  @override
   String get upgrade_plan => 'ترقية الخطة';
 
   @override

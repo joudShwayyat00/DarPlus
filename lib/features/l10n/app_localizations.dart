@@ -728,6 +728,30 @@ abstract class AppLocalizations {
   /// **'Choose Your Plan'**
   String get choose_your_plan;
 
+  /// No description provided for @package_duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get package_duration;
+
+  /// No description provided for @package_days.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get package_days;
+
+  /// No description provided for @package_sale_listings.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale listings'**
+  String get package_sale_listings;
+
+  /// No description provided for @package_rent_listings.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent listings'**
+  String get package_rent_listings;
+
   /// No description provided for @upgrade_plan.
   ///
   /// In en, this message translates to:
