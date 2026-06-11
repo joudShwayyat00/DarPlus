@@ -43,8 +43,11 @@ class ApiConstants {
   // Location
   static const String countries = "api/countries";
   static const String cities = "api/cities";
+  static const String regions = "api/regions";
   // About us
   static const String aboutUs = "api/about_us";
+  // Filter endpoint (language suffix is provided as path param)
+  static const String filter = "api/filter";
 
   static const String contentType = "application/json";
   static const String accept = "application/json";

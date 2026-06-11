@@ -38,4 +38,17 @@ abstract class AssetsServiceClient {
     @Query("category_id") int? categoryId,
     @Query("page") int? page,
   });
+
+  @GET("${ApiConstants.filter}/{lang}")
+  Future<PagedAssetsResponse> filterAssets(
+    @Path("lang") String lang, {
+    @Query("city_id") int? cityId,
+    @Query("region_id") int? regionId,
+    @Query("location") String? location,
+    @Query("type") String? type,
+    @Query("owner_id") int? ownerId,
+    @Query("category_id") int? categoryId,
+    @Query("rent_type") String? rentType,
+    @Query("page") int? page,
+  });
 }

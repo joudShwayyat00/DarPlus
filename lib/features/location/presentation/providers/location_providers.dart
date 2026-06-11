@@ -7,6 +7,7 @@ import '../../../../core/network/dio_factory.dart';
 import '../../data/data_sources/location_service_client.dart';
 import '../../data/models/city_item.dart';
 import '../../data/models/country_item.dart';
+import '../../data/models/region_item.dart';
 
 part 'location_providers.g.dart';
 
@@ -31,5 +32,14 @@ Future<List<CityItem>> cities(Ref ref, int countryId) async {
   final lang = ref.read(localeProvider).languageCode;
   final client = ref.read(locationServiceClientProvider);
   final response = await client.getCities(countryId, lang);
+  return response.items;
+}
+
+/// Regions for a specific [cityId] — fetched on demand.
+@riverpod
+Future<List<RegionItem>> regions(Ref ref, int cityId) async {
+  final lang = ref.read(localeProvider).languageCode;
+  final client = ref.read(locationServiceClientProvider);
+  final response = await client.getRegions(cityId, lang);
   return response.items;
 }

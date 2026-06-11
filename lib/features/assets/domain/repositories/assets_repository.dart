@@ -13,6 +13,17 @@ abstract class AssetsRepository {
   Future<List<AssetItem>> getTopRatedAssets();
   Future<AssetItem> getAssetDetail({required int id, required String lang});
   Future<List<AmenityItem>> getAmenities(String lang);
+  Future<AssetsPage> filterAssets(
+    String lang, {
+    int? cityId,
+    int? regionId,
+    String? location,
+    String? type,
+    int? ownerId,
+    int? categoryId,
+    String? rentType,
+    int page = 1,
+  });
   Future<void> addAsset({
     required String nameEn,
     required String nameAr,

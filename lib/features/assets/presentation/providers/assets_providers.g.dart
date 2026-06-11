@@ -442,3 +442,96 @@ abstract class _$MyAssetsController extends $AsyncNotifier<List<AssetItem>> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(FilteredAssetsController)
+const filteredAssetsControllerProvider = FilteredAssetsControllerFamily._();
+
+final class FilteredAssetsControllerProvider
+    extends $AsyncNotifierProvider<FilteredAssetsController, List<AssetItem>> {
+  const FilteredAssetsControllerProvider._({
+    required FilteredAssetsControllerFamily super.from,
+    required FilterData super.argument,
+  }) : super(
+         retry: null,
+         name: r'filteredAssetsControllerProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$filteredAssetsControllerHash();
+
+  @override
+  String toString() {
+    return r'filteredAssetsControllerProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  FilteredAssetsController create() => FilteredAssetsController();
+
+  @override
+  bool operator ==(Object other) {
+    return other is FilteredAssetsControllerProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$filteredAssetsControllerHash() =>
+    r'2eee7e035a1344d6d6203b18b4949bf3b23ba54b';
+
+final class FilteredAssetsControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          FilteredAssetsController,
+          AsyncValue<List<AssetItem>>,
+          List<AssetItem>,
+          FutureOr<List<AssetItem>>,
+          FilterData
+        > {
+  const FilteredAssetsControllerFamily._()
+    : super(
+        retry: null,
+        name: r'filteredAssetsControllerProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  FilteredAssetsControllerProvider call(FilterData filter) =>
+      FilteredAssetsControllerProvider._(argument: filter, from: this);
+
+  @override
+  String toString() => r'filteredAssetsControllerProvider';
+}
+
+abstract class _$FilteredAssetsController
+    extends $AsyncNotifier<List<AssetItem>> {
+  late final _$args = ref.$arg as FilterData;
+  FilterData get filter => _$args;
+
+  FutureOr<List<AssetItem>> build(FilterData filter);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<AsyncValue<List<AssetItem>>, List<AssetItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<AssetItem>>, List<AssetItem>>,
+              AsyncValue<List<AssetItem>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

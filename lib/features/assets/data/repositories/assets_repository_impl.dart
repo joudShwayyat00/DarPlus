@@ -70,6 +70,35 @@ class AssetsRepositoryImpl implements AssetsRepository {
   }
 
   @override
+  Future<AssetsPage> filterAssets(
+    String lang, {
+    int? cityId,
+    int? regionId,
+    String? location,
+    String? type,
+    int? ownerId,
+    int? categoryId,
+    String? rentType,
+    int page = 1,
+  }) async {
+    final response = await _serviceClient.filterAssets(
+      lang,
+      cityId: cityId,
+      regionId: regionId,
+      location: location,
+      type: type,
+      ownerId: ownerId,
+      categoryId: categoryId,
+      rentType: rentType,
+      page: page,
+    );
+    return AssetsPage(
+      items: response.items,
+      hasMore: response.meta.hasNextPage,
+    );
+  }
+
+  @override
   Future<void> addAsset({
     required String nameEn,
     required String nameAr,

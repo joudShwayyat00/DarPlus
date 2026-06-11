@@ -9,6 +9,7 @@ import '../../data/models/amenity_item.dart';
 import '../../data/models/asset_item.dart';
 import '../../data/repositories/assets_repository_impl.dart';
 import '../../domain/repositories/assets_repository.dart';
+import 'package:dar_plus_app/utils/widgets/filter_bottom_sheet.dart';
 
 part 'assets_providers.g.dart';
 
@@ -268,6 +269,89 @@ class MyAssetsController extends _$MyAssetsController {
           .getMyAssets(
             lang,
             categoryId: _currentCategoryId,
+            page: _currentPage + 1,
+          );
+      _currentPage += 1;
+      _hasMore = result.hasMore;
+      state = AsyncData([...current, ...result.items]);
+    } finally {
+      _isLoadingMore = false;
+    }
+  }
+}
+
+@riverpod
+class FilteredAssetsController extends _$FilteredAssetsController {
+  int _currentPage = 1;
+  bool _hasMore = false;
+  bool _isLoadingMore = false;
+  late FilterData _filter;
+
+  bool get hasMore => _hasMore;
+  bool get isLoadingMore => _isLoadingMore;
+
+  @override
+  FutureOr<List<AssetItem>> build(FilterData filter) async {
+    _filter = filter;
+    _currentPage = 1;
+    final lang = ref.read(localeProvider).languageCode;
+    final result = await ref
+        .read(assetsRepositoryProvider)
+        .filterAssets(
+          lang,
+          cityId: filter.cityId,
+          regionId: filter.regionId,
+          location: filter.country ?? filter.city ?? filter.area,
+          type: filter.listingType,
+          categoryId: null,
+          rentType: null,
+          page: 1,
+        );
+    _hasMore = result.hasMore;
+    return result.items;
+  }
+
+  Future<void> refresh(FilterData filter) async {
+    _filter = filter;
+    _currentPage = 1;
+    _hasMore = false;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final lang = ref.read(localeProvider).languageCode;
+      final result = await ref
+          .read(assetsRepositoryProvider)
+          .filterAssets(
+            lang,
+            cityId: filter.cityId,
+            regionId: filter.regionId,
+            location: filter.country ?? filter.city ?? filter.area,
+            type: filter.listingType,
+            page: 1,
+          );
+      _hasMore = result.hasMore;
+      return result.items;
+    });
+  }
+
+  Future<void> loadMore() async {
+    if (!_hasMore || _isLoadingMore) return;
+    final current = state.when(
+      data: (d) => d,
+      loading: () => null,
+      error: (_, __) => null,
+    );
+    if (current == null) return;
+    _isLoadingMore = true;
+    try {
+      final lang = ref.read(localeProvider).languageCode;
+      final result = await ref
+          .read(assetsRepositoryProvider)
+          .filterAssets(
+            lang,
+            cityId: _filter.cityId,
+            regionId: _filter.regionId,
+            location: _filter.country ?? _filter.city ?? _filter.area,
+            type: _filter.listingType,
             page: _currentPage + 1,
           );
       _currentPage += 1;

@@ -1,6 +1,7 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
-import 'package:dar_plus_app/features/location/data/models/country_item.dart';
+import 'package:dar_plus_app/features/location/data/models/city_item.dart';
+import 'package:dar_plus_app/features/location/data/models/region_item.dart';
 import 'package:dar_plus_app/features/location/presentation/providers/location_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -17,7 +18,9 @@ class FilterData {
   final Set<String> assetTypes;
   final String? country;
   final String? city;
+  final int? cityId;
   final String? area;
+  final int? regionId;
   final DateTime? checkIn;
   final DateTime? checkOut;
 
@@ -26,7 +29,9 @@ class FilterData {
     this.assetTypes = const {},
     this.country,
     this.city,
+    this.cityId,
     this.area,
+    this.regionId,
     this.checkIn,
     this.checkOut,
   });
@@ -78,7 +83,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   String? _country;
   int? _selectedCountryId;
   String? _city;
+  int? _selectedCityId;
   String? _area;
+  int? _selectedRegionId;
   DateTime? _checkIn;
   DateTime? _checkOut;
 
@@ -94,7 +101,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
     _country = f.country;
     _selectedCountryId = null; // ID not persisted in FilterData
     _city = f.city;
+    _selectedCityId = f.cityId;
     _area = f.area;
+    _selectedRegionId = f.regionId;
     _checkIn = f.checkIn;
     _checkOut = f.checkOut;
     final now = DateTime.now();
@@ -113,7 +122,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
       _country = null;
       _selectedCountryId = null;
       _city = null;
+      _selectedCityId = null;
       _area = null;
+      _selectedRegionId = null;
       _checkIn = null;
       _checkOut = null;
     });
@@ -126,7 +137,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
         assetTypes: Set<String>.from(_assetTypes),
         country: _country,
         city: _city,
+        cityId: _selectedCityId,
         area: _area,
+        regionId: _selectedRegionId,
         checkIn: _checkIn,
         checkOut: _checkOut,
       ),
@@ -379,6 +392,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                   _country = null;
                   _selectedCountryId = null;
                   _city = null;
+                  _selectedCityId = null;
+                  _area = null;
+                  _selectedRegionId = null;
                 });
                 return;
               }
@@ -387,6 +403,9 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                 _country = selected.name;
                 _selectedCountryId = selected.id;
                 _city = null;
+                _selectedCityId = null;
+                _area = null;
+                _selectedRegionId = null;
               });
             },
           ),
@@ -405,7 +424,31 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                   child: _CitiesDropdown(
                     countryId: _selectedCountryId!,
                     selectedCity: _city,
-                    onChanged: (city) => setState(() => _city = city),
+                    onChanged: (city) => setState(() {
+                      _city = city?.name;
+                      _selectedCityId = city?.id;
+                      _area = null;
+                      _selectedRegionId = null;
+                    }),
+                  ),
+                ),
+        ),
+
+        // ── Region (appears after city selected) ─────────────────────
+        AnimatedSize(
+          duration: const Duration(milliseconds: 260),
+          curve: Curves.easeOut,
+          child: _selectedCityId == null
+              ? const SizedBox.shrink()
+              : Padding(
+                  padding: EdgeInsets.only(top: 1.4.h),
+                  child: _RegionsDropdown(
+                    cityId: _selectedCityId!,
+                    selectedRegion: _area,
+                    onChanged: (region) => setState(() {
+                      _area = region?.name;
+                      _selectedRegionId = region?.id;
+                    }),
                   ),
                 ),
         ),
@@ -614,7 +657,7 @@ class _FilterChip extends StatelessWidget {
 class _CitiesDropdown extends ConsumerWidget {
   final int countryId;
   final String? selectedCity;
-  final ValueChanged<String?> onChanged;
+  final ValueChanged<CityItem?> onChanged;
 
   const _CitiesDropdown({
     required this.countryId,
@@ -631,7 +674,55 @@ class _CitiesDropdown extends ConsumerWidget {
         hint: tr.filter_select_city,
         value: selectedCity,
         items: cities.map((c) => c.name).toList(),
-        onChanged: onChanged,
+        onChanged: (name) {
+          if (name == null) {
+            onChanged(null);
+            return;
+          }
+          onChanged(cities.firstWhere((c) => c.name == name));
+        },
+      ),
+      loading: () => ShimmerPlaceholder(
+        width: double.infinity,
+        height: 6.h,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+}
+
+// ─── Private: _RegionsDropdown ───────────────────────────────────────────────
+
+/// Isolated ConsumerWidget so `regionsProvider(cityId)` is watched
+/// unconditionally within its own build scope — avoids conditional ref.watch.
+class _RegionsDropdown extends ConsumerWidget {
+  final int cityId;
+  final String? selectedRegion;
+  final ValueChanged<RegionItem?> onChanged;
+
+  const _RegionsDropdown({
+    required this.cityId,
+    required this.selectedRegion,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final regionsAsync = ref.watch(regionsProvider(cityId));
+    return regionsAsync.when(
+      data: (regions) => _LocationSelector(
+        icon: Icons.map_rounded,
+        hint: tr.filter_select_area,
+        value: selectedRegion,
+        items: regions.map((r) => r.name).toList(),
+        onChanged: (name) {
+          if (name == null) {
+            onChanged(null);
+            return;
+          }
+          onChanged(regions.firstWhere((r) => r.name == name));
+        },
       ),
       loading: () => ShimmerPlaceholder(
         width: double.infinity,

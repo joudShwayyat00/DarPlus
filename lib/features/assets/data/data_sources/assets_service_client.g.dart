@@ -172,6 +172,53 @@ class _AssetsServiceClient implements AssetsServiceClient {
     return _value;
   }
 
+  @override
+  Future<PagedAssetsResponse> filterAssets(
+    String lang, {
+    int? cityId,
+    int? regionId,
+    String? location,
+    String? type,
+    int? ownerId,
+    int? categoryId,
+    String? rentType,
+    int? page,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'city_id': cityId,
+      r'region_id': regionId,
+      r'location': location,
+      r'type': type,
+      r'owner_id': ownerId,
+      r'category_id': categoryId,
+      r'rent_type': rentType,
+      r'page': page,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<PagedAssetsResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/filter/${lang}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PagedAssetsResponse _value;
+    try {
+      _value = PagedAssetsResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||
