@@ -1,6 +1,8 @@
 import '../../domain/repositories/content_repository.dart';
 import '../data_sources/content_service_client.dart';
 import '../models/about_us_item.dart';
+import '../models/contact_data_item.dart';
+import '../models/contact_us_submit_response.dart';
 import '../models/content_page_item.dart';
 
 class ContentRepositoryImpl implements ContentRepository {
@@ -24,5 +26,21 @@ class ContentRepositoryImpl implements ContentRepository {
   Future<AboutUsItem> getAboutUs(String lang) async {
     final response = await _client.getAboutUs(lang);
     return response.data;
+  }
+
+  @override
+  Future<ContactDataItem> getContactData() async {
+    final response = await _client.getContactData();
+    return response.data;
+  }
+
+  @override
+  Future<ContactUsSubmitResponse> submitContactUs({
+    required String name,
+    required String email,
+    required String phone,
+    required String message,
+  }) async {
+    return _client.submitContactUs(name, email, phone, message);
   }
 }

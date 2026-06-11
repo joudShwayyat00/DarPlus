@@ -292,45 +292,37 @@ class FilteredAssetsController extends _$FilteredAssetsController {
 
   @override
   FutureOr<List<AssetItem>> build(FilterData filter) async {
+    if (!filter.hasActiveFilters) return [];
     _filter = filter;
     _currentPage = 1;
+    return _fetchPage(filter, 1);
+  }
+
+  Future<List<AssetItem>> _fetchPage(FilterData filter, int page) async {
     final lang = ref.read(localeProvider).languageCode;
-    final result = await ref
-        .read(assetsRepositoryProvider)
-        .filterAssets(
+    final result = await ref.read(assetsRepositoryProvider).filterAssets(
           lang,
           cityId: filter.cityId,
           regionId: filter.regionId,
-          location: filter.country ?? filter.city ?? filter.area,
-          type: filter.listingType,
-          categoryId: null,
-          rentType: null,
-          page: 1,
+          location: filter.apiLocation,
+          type: filter.apiType,
+          categoryId: filter.apiCategoryId,
+          page: page,
         );
     _hasMore = result.hasMore;
     return result.items;
   }
 
   Future<void> refresh(FilterData filter) async {
+    if (!filter.hasActiveFilters) {
+      state = const AsyncData([]);
+      return;
+    }
     _filter = filter;
     _currentPage = 1;
     _hasMore = false;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final lang = ref.read(localeProvider).languageCode;
-      final result = await ref
-          .read(assetsRepositoryProvider)
-          .filterAssets(
-            lang,
-            cityId: filter.cityId,
-            regionId: filter.regionId,
-            location: filter.country ?? filter.city ?? filter.area,
-            type: filter.listingType,
-            page: 1,
-          );
-      _hasMore = result.hasMore;
-      return result.items;
-    });
+    state = await AsyncValue.guard(() => _fetchPage(filter, 1));
   }
 
   Future<void> loadMore() async {
@@ -343,20 +335,10 @@ class FilteredAssetsController extends _$FilteredAssetsController {
     if (current == null) return;
     _isLoadingMore = true;
     try {
-      final lang = ref.read(localeProvider).languageCode;
-      final result = await ref
-          .read(assetsRepositoryProvider)
-          .filterAssets(
-            lang,
-            cityId: _filter.cityId,
-            regionId: _filter.regionId,
-            location: _filter.country ?? _filter.city ?? _filter.area,
-            type: _filter.listingType,
-            page: _currentPage + 1,
-          );
-      _currentPage += 1;
-      _hasMore = result.hasMore;
-      state = AsyncData([...current, ...result.items]);
+      final nextPage = _currentPage + 1;
+      final more = await _fetchPage(_filter, nextPage);
+      _currentPage = nextPage;
+      state = AsyncData([...current, ...more]);
     } finally {
       _isLoadingMore = false;
     }

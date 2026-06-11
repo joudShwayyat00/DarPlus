@@ -247,7 +247,7 @@ final class RegionsProvider
   }
 }
 
-String _$regionsHash() => r'a1b2c3d4e5f6789012345678abcdef9012345678';
+String _$regionsHash() => r'91eaffda3eca26d8a8769575e6b32e880075ad54';
 
 /// Regions for a specific [cityId] — fetched on demand.
 

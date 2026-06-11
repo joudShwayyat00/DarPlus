@@ -9,6 +9,7 @@ import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/features/search/presentation/providers/search_providers.dart';
 import 'package:dar_plus_app/features/search/presentation/providers/recent_search_providers.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
@@ -57,10 +58,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   children: [
                     SizedBox(height: 2.5.h),
 
-                    // Recent Searches Section (hidden on error/empty)
-                    _buildRecentSection(),
+                    if (!_activeFilter.hasActiveFilters &&
+                        _searchController.text.trim().isEmpty)
+                      _buildRecentSection(),
 
-                    // Search results (when typing) or discovery content (idle)
+                    // Search results (when typing) or filter/discovery content
                     _buildSearchContent(),
 
                     SizedBox(height: 3.h),
@@ -164,15 +166,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       )
                     : _FilterButton(
                         activeCount: _activeFilter.activeCount,
-                        onTap: () async {
-                          final result = await showFilterBottomSheet(
-                            context,
-                            initial: _activeFilter,
-                          );
-                          if (result != null) {
-                            setState(() => _activeFilter = result);
-                          }
-                        },
+                        onTap: _openFilterSheet,
                       ),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(
@@ -190,11 +184,26 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  /// Switches between search results and discovery sections.
+  Future<void> _openFilterSheet() async {
+    final result = await showFilterBottomSheet(
+      context,
+      initial: _activeFilter,
+    );
+    if (result == null) return;
+    setState(() => _activeFilter = result);
+    if (result.hasActiveFilters) {
+      ref.invalidate(filteredAssetsControllerProvider(result));
+    }
+  }
+
+  /// Switches between text search, filter results, and discovery sections.
   Widget _buildSearchContent() {
     final query = _searchController.text.trim();
     if (query.isNotEmpty) {
       return _buildSearchResults(query);
+    }
+    if (_activeFilter.hasActiveFilters) {
+      return _buildFilterResults();
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,6 +216,84 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         SizedBox(height: 1.2.h),
         _buildFeaturedProperties(),
       ],
+    );
+  }
+
+  Widget _buildFilterResults() {
+    final resultsAsync = ref.watch(
+      filteredAssetsControllerProvider(_activeFilter),
+    );
+
+    return resultsAsync.when(
+      loading: () => Column(
+        children: List.generate(
+          4,
+          (i) => Padding(
+            padding: EdgeInsets.only(bottom: 1.5.h),
+            child: ShimmerPlaceholder(
+              width: double.infinity,
+              height: 10.h,
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+        ),
+      ),
+      error: (err, __) => Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 4.h),
+          child: Text(
+            err.toString(),
+            style: appTextStyle(
+              context,
+              fontSize: 11.sp,
+              color: Colors.red.shade400,
+            ),
+          ),
+        ),
+      ),
+      data: (assets) {
+        if (assets.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 6.h),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.filter_alt_off_rounded,
+                    size: 48,
+                    color: Colors.black.withAlpha(60),
+                  ),
+                  SizedBox(height: 1.h),
+                  Text(
+                    tr.no_results_found,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black.withAlpha(120),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitle(tr.filter_title),
+            SizedBox(height: 1.2.h),
+            ...assets.map(
+              (asset) => _AssetResultTile(
+                asset: asset,
+                onTap: () => AppNavigator.of(context).push(
+                  AssetDetailsScreen(assetId: asset.id, initialAsset: asset),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

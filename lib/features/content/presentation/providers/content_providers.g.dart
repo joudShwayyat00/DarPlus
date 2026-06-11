@@ -251,3 +251,108 @@ abstract class _$AboutUsController extends $AsyncNotifier<AboutUsItem> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(ContactDataController)
+const contactDataControllerProvider = ContactDataControllerProvider._();
+
+final class ContactDataControllerProvider
+    extends $AsyncNotifierProvider<ContactDataController, ContactDataItem> {
+  const ContactDataControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'contactDataControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$contactDataControllerHash();
+
+  @$internal
+  @override
+  ContactDataController create() => ContactDataController();
+}
+
+String _$contactDataControllerHash() =>
+    r'98ba4e8e3f6e3e0798ada56abdc111e55d2a1638';
+
+abstract class _$ContactDataController extends $AsyncNotifier<ContactDataItem> {
+  FutureOr<ContactDataItem> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<ContactDataItem>, ContactDataItem>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<ContactDataItem>, ContactDataItem>,
+              AsyncValue<ContactDataItem>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(ContactUsSubmitController)
+const contactUsSubmitControllerProvider = ContactUsSubmitControllerProvider._();
+
+final class ContactUsSubmitControllerProvider
+    extends
+        $AsyncNotifierProvider<
+          ContactUsSubmitController,
+          ContactUsSubmitResponse?
+        > {
+  const ContactUsSubmitControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'contactUsSubmitControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$contactUsSubmitControllerHash();
+
+  @$internal
+  @override
+  ContactUsSubmitController create() => ContactUsSubmitController();
+}
+
+String _$contactUsSubmitControllerHash() =>
+    r'762861f83d3c87d420d4979228892a861250763e';
+
+abstract class _$ContactUsSubmitController
+    extends $AsyncNotifier<ContactUsSubmitResponse?> {
+  FutureOr<ContactUsSubmitResponse?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<
+              AsyncValue<ContactUsSubmitResponse?>,
+              ContactUsSubmitResponse?
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<ContactUsSubmitResponse?>,
+                ContactUsSubmitResponse?
+              >,
+              AsyncValue<ContactUsSubmitResponse?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

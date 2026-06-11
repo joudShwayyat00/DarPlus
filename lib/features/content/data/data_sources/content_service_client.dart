@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../../../core/network/api_constants.dart';
 import '../models/about_us_response.dart';
+import '../models/contact_data_response.dart';
+import '../models/contact_us_submit_response.dart';
 import '../models/content_page_response.dart';
 
 part 'content_service_client.g.dart';
@@ -19,4 +21,16 @@ abstract class ContentServiceClient {
 
   @GET("${ApiConstants.aboutUs}/{lang}")
   Future<AboutUsResponse> getAboutUs(@Path("lang") String lang);
+
+  @GET(ApiConstants.contactData)
+  Future<ContactDataResponse> getContactData();
+
+  @POST(ApiConstants.contactUs)
+  @MultiPart()
+  Future<ContactUsSubmitResponse> submitContactUs(
+    @Part() String name,
+    @Part() String email,
+    @Part() String phone,
+    @Part() String message,
+  );
 }

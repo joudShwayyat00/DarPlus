@@ -38,14 +38,44 @@ class FilterData {
 
   static const FilterData empty = FilterData();
 
+  /// Whether any filter field is set (used to decide API vs default search UI).
+  bool get hasActiveFilters =>
+      listingType != null ||
+      assetTypes.isNotEmpty ||
+      country != null ||
+      city != null ||
+      cityId != null ||
+      area != null ||
+      regionId != null ||
+      checkIn != null;
+
   /// Returns how many distinct filter categories are active.
   int get activeCount {
     int n = 0;
     if (listingType != null) n++;
     if (assetTypes.isNotEmpty) n++;
-    if (country != null) n++;
+    if (country != null || city != null || area != null) n++;
     if (checkIn != null) n++;
     return n;
+  }
+
+  /// Maps UI listing type to API `type` query param (`sale` | `rent`).
+  String? get apiType => switch (listingType) {
+        'buy' => 'sale',
+        'rent' => 'rent',
+        _ => null,
+      };
+
+  /// First selected category id for the API (single `category_id` param).
+  int? get apiCategoryId {
+    if (assetTypes.isEmpty) return null;
+    return int.tryParse(assetTypes.first);
+  }
+
+  /// Location text fallback when city/region ids are not set.
+  String? get apiLocation {
+    if (cityId != null) return null;
+    return country ?? city ?? area;
   }
 }
 
@@ -116,18 +146,7 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
       _listingType == 'rent' || _listingType == 'both';
 
   void _reset() {
-    setState(() {
-      _listingType = null;
-      _assetTypes.clear();
-      _country = null;
-      _selectedCountryId = null;
-      _city = null;
-      _selectedCityId = null;
-      _area = null;
-      _selectedRegionId = null;
-      _checkIn = null;
-      _checkOut = null;
-    });
+    Navigator.of(context).pop(FilterData.empty);
   }
 
   void _apply() {
