@@ -1,9 +1,10 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
+import 'package:dar_plus_app/screens/assets/top_rated_screen.dart';
+import 'package:dar_plus_app/screens/home/widgets/property_tile.dart';
+import 'package:dar_plus_app/screens/home/widgets/section_header.dart';
 import 'package:dar_plus_app/utils/widgets/filter_bottom_sheet.dart';
-import 'package:dar_plus_app/models/property_item.dart';
-import 'package:dar_plus_app/screens/property_details/property_details_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -28,6 +29,10 @@ class SearchScreen extends ConsumerStatefulWidget {
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  final PageController _topRatedController = PageController(
+    viewportFraction: 0.92,
+  );
+  int _currentTopRatedIndex = 0;
   FilterData _activeFilter = FilterData.empty;
 
   // recent searches are fetched from the API; no local fallbacks kept here
@@ -36,6 +41,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   void dispose() {
     _searchController.dispose();
     _searchFocusNode.dispose();
+    _topRatedController.dispose();
     super.dispose();
   }
 
@@ -212,9 +218,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         SizedBox(height: 1.2.h),
         _buildPopularSearches(),
         SizedBox(height: 2.8.h),
-        _buildSectionTitle(tr.featured_properties),
-        SizedBox(height: 1.2.h),
-        _buildFeaturedProperties(),
+        SectionHeader(
+          title: tr.top_rated,
+          onSeeAll: () =>
+              AppNavigator.of(context).push(const TopRatedScreen()),
+        ),
+        _buildTopRated(),
       ],
     );
   }
@@ -480,27 +489,85 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  Widget _buildFeaturedProperties() {
-    return SizedBox(
-      height: 24.h,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: recommendedProperties.length > 3
-            ? 3
-            : recommendedProperties.length,
-        separatorBuilder: (_, __) => SizedBox(width: 3.w),
-        itemBuilder: (context, index) {
-          final property = recommendedProperties[index];
-          return _FeaturedPropertyCard(
-            property: property,
-            onTap: () {
-              AppNavigator.of(
-                context,
-              ).push(PropertyDetailsScreen(item: property));
-            },
-          );
-        },
+  Widget _buildTopRated() {
+    final topRatedAsync = ref.watch(topRatedAssetsControllerProvider);
+
+    return topRatedAsync.when(
+      data: (assets) {
+        if (assets.isEmpty) return const SizedBox.shrink();
+
+        final preview = assets.take(5).toList();
+
+        return Column(
+          children: [
+            SizedBox(
+              height: 43.h,
+              child: GestureDetector(
+                onTap: () => AppNavigator.of(context).push(
+                  AssetDetailsScreen(
+                    assetId: preview[_currentTopRatedIndex].id,
+                    initialAsset: preview[_currentTopRatedIndex],
+                  ),
+                ),
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification is ScrollUpdateNotification) {
+                      final page = _topRatedController.page ?? 0;
+                      final newIndex = page.round();
+                      if (newIndex != _currentTopRatedIndex) {
+                        setState(() => _currentTopRatedIndex = newIndex);
+                      }
+                    }
+                    return false;
+                  },
+                  child: PageView.builder(
+                    controller: _topRatedController,
+                    itemCount: preview.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          right: index == preview.length - 1 ? 0 : 3.w,
+                        ),
+                        child: PropertyTile(
+                          item: preview[index].toPropertyItem(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 1.2.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                preview.length,
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentTopRatedIndex == index ? 18 : 7,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    color: _currentTopRatedIndex == index
+                        ? AppColors.goldBrandColor
+                        : AppColors.grayBrandColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      loading: () => SizedBox(
+        height: 43.h,
+        child: ShimmerPlaceholder(
+          width: double.infinity,
+          height: double.infinity,
+          borderRadius: BorderRadius.circular(22),
+        ),
       ),
+      error: (_, __) => const SizedBox.shrink(),
     );
   }
 }
@@ -764,171 +831,6 @@ class _SearchChip extends StatelessWidget {
                   fontSize: 10.5.sp,
                   fontWeight: FontWeight.w700,
                   color: Colors.black.withAlpha(200),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _FeaturedPropertyCard extends StatelessWidget {
-  final PropertyItem property;
-  final VoidCallback onTap;
-
-  const _FeaturedPropertyCard({required this.property, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 42.w,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.black.withAlpha(10)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(10),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image
-              SizedBox(
-                height: 14.h,
-                width: double.infinity,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CachedNetworkImage(
-                      imageUrl: property.images.first,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey.shade200,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColors.goldBrandColor,
-                          ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey.shade200,
-                        child: Icon(
-                          Icons.image_not_supported_rounded,
-                          color: Colors.grey.shade400,
-                        ),
-                      ),
-                    ),
-                    // Rating badge
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 2.w,
-                          vertical: 0.4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(230),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.star_rounded,
-                              size: 14,
-                              color: AppColors.goldBrandColor,
-                            ),
-                            SizedBox(width: 0.8.w),
-                            Text(
-                              property.rating.toStringAsFixed(1),
-                              style: appTextStyle(
-                                context,
-                                fontSize: 9.sp,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black.withAlpha(220),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Info
-              Padding(
-                padding: EdgeInsets.all(2.5.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      property.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 10.5.sp,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black.withAlpha(230),
-                      ),
-                    ),
-                    SizedBox(height: 0.3.h),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.place_rounded,
-                          size: 12,
-                          color: Colors.black.withAlpha(130),
-                        ),
-                        SizedBox(width: 1.w),
-                        Expanded(
-                          child: Text(
-                            property.location,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: appTextStyle(
-                              context,
-                              fontSize: 9.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black.withAlpha(150),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 0.3.h),
-                    Text(
-                      (() {
-                        final m = RegExp(r'\\d+').firstMatch(property.price);
-                        return m != null
-                            ? '${m.group(0)} ${tr.currency_jod}${tr.per_night}'
-                            : property.price;
-                      })(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 9.5.sp,
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.goldBrandColor,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ],

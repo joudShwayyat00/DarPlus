@@ -55,7 +55,7 @@ final class PackagesServiceClientProvider
 }
 
 String _$packagesServiceClientHash() =>
-    r'a1b2c3d4e5f6789012345678abcdef9012345678';
+    r'928e553cfc92af98a0612e200aeebb5495221229';
 
 @ProviderFor(packagesRepository)
 const packagesRepositoryProvider = PackagesRepositoryProvider._();
@@ -103,7 +103,7 @@ final class PackagesRepositoryProvider
 }
 
 String _$packagesRepositoryHash() =>
-    r'b2c3d4e5f6789012345678abcdef901234567890';
+    r'93b134f577ea3553102689c22b1d67fc688350e2';
 
 @ProviderFor(PackagesController)
 const packagesControllerProvider = PackagesControllerProvider._();
@@ -130,7 +130,7 @@ final class PackagesControllerProvider
 }
 
 String _$packagesControllerHash() =>
-    r'c3d4e5f6789012345678abcdef901234567890ab';
+    r'bd2691452c3ac9d0c3fec37570616404fc3b4076';
 
 abstract class _$PackagesController extends $AsyncNotifier<List<PackageItem>> {
   FutureOr<List<PackageItem>> build();
@@ -138,7 +138,8 @@ abstract class _$PackagesController extends $AsyncNotifier<List<PackageItem>> {
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<List<PackageItem>>, List<PackageItem>>;
+    final ref =
+        this.ref as $Ref<AsyncValue<List<PackageItem>>, List<PackageItem>>;
     final element =
         ref.element
             as $ClassProviderElement<

@@ -20,6 +20,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/data/models/user_model.dart';
+import '../../features/notifications/presentation/providers/notifications_providers.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -31,6 +32,16 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    final notificationBadge = ref
+        .watch(notificationsControllerProvider)
+        .maybeWhen(
+          data: (notifications) {
+            if (notifications.isEmpty) return null;
+            return _buildNotificationBadge(context, notifications.length);
+          },
+          orElse: () => null,
+        );
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: SafeArea(
@@ -136,15 +147,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         _MenuItem(
                           icon: Icons.notifications_outlined,
                           title: tr.notifications,
-                          trailing: _buildNotificationBadge(context, 3),
-                          onTap: () {
-                            Navigator.push(
+                          // trailing: notificationBadge,
+                          onTap: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
                                     const NotificationsScreen(),
                               ),
                             );
+                            ref.invalidate(notificationsControllerProvider);
                           },
                         ),
                       ],

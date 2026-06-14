@@ -1,57 +1,19 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/notifications/data/models/notification_item.dart';
+import 'package:dar_plus_app/features/notifications/presentation/providers/notifications_providers.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
-import 'package:dar_plus_app/main.dart';
 
-class NotificationsScreen extends StatefulWidget {
+class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
 
   @override
-  State<NotificationsScreen> createState() => _NotificationsScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notificationsAsync = ref.watch(notificationsControllerProvider);
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
-  final List<_NotificationItem> _notifications = [
-    _NotificationItem(
-      title: tr.notification_booking_confirmed_title,
-      message: tr.notification_booking_confirmed_message,
-      time: "2 hours ago",
-      type: NotificationType.booking,
-      isRead: false,
-    ),
-    _NotificationItem(
-      title: tr.special_offer_title,
-      message: tr.special_offer_message,
-      time: "5 hours ago",
-      type: NotificationType.promo,
-      isRead: false,
-    ),
-    _NotificationItem(
-      title: tr.payment_received_title,
-      message: tr.payment_received_message,
-      time: "1 day ago",
-      type: NotificationType.payment,
-      isRead: true,
-    ),
-    _NotificationItem(
-      title: tr.review_request_title,
-      message: tr.review_request_message,
-      time: "2 days ago",
-      type: NotificationType.review,
-      isRead: true,
-    ),
-    _NotificationItem(
-      title: tr.new_property_alert_title,
-      message: tr.new_property_alert_message,
-      time: "3 days ago",
-      type: NotificationType.alert,
-      isRead: true,
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -76,181 +38,103 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: () {
-              setState(() {
-                for (var notification in _notifications) {
-                  notification.isRead = true;
-                }
-              });
-            },
-            child: Text(
-              tr.mark_all_read,
-              style: appTextStyle(
-                context,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.goldBrandColor,
+      ),
+      body: notificationsAsync.when(
+        data: (notifications) => _buildDataState(context, ref, notifications),
+        loading: () => _buildLoadingState(),
+        error: (error, _) => _buildErrorState(context, ref),
+      ),
+    );
+  }
+
+  Future<void> _onRefresh(WidgetRef ref) async {
+    await ref.read(notificationsControllerProvider.notifier).refresh();
+  }
+
+  Widget _buildDataState(
+    BuildContext context,
+    WidgetRef ref,
+    List<NotificationItem> notifications,
+  ) {
+    if (notifications.isEmpty) {
+      return RefreshIndicator(
+        color: AppColors.goldBrandColor,
+        onRefresh: () => _onRefresh(ref),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: _buildEmptyState(context),
               ),
-            ),
-          ),
-        ],
+            );
+          },
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      color: AppColors.goldBrandColor,
+      onRefresh: () => _onRefresh(ref),
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+        itemCount: notifications.length,
+        itemBuilder: (context, index) {
+          return _buildNotificationCard(context, notifications[index]);
+        },
       ),
-      body: _notifications.isEmpty
-          ? _buildEmptyState()
-          : ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
-              itemCount: _notifications.length,
-              itemBuilder: (context, index) {
-                return _buildNotificationCard(_notifications[index]);
-              },
-            ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildLoadingState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.notifications_off_outlined,
-            size: 60,
-            color: Colors.black.withAlpha(60),
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            tr.no_notifications_yet,
-            style: appTextStyle(
-              context,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.black.withAlpha(120),
-            ),
-          ),
-          SizedBox(height: 0.5.h),
-          Text(
-            tr.will_notify_when_something_arrives,
-            style: appTextStyle(
-              context,
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w500,
-              color: Colors.black.withAlpha(80),
-            ),
-          ),
-        ],
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation(AppColors.goldBrandColor),
       ),
     );
   }
 
-  Widget _buildNotificationCard(_NotificationItem notification) {
-    return Dismissible(
-      key: Key(notification.title + notification.time),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        margin: EdgeInsets.only(bottom: 1.5.h),
-        decoration: BoxDecoration(
-          color: Colors.red.withAlpha(200),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: 5.w),
-        child: Icon(Icons.delete_outline, color: Colors.white),
-      ),
-      onDismissed: (direction) {
-        setState(() {
-          _notifications.remove(notification);
-        });
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 1.5.h),
-        padding: EdgeInsets.all(4.w),
-        decoration: BoxDecoration(
-          color: notification.isRead
-              ? Colors.white
-              : AppColors.goldBrandColor.withAlpha(8),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: notification.isRead
-                ? Colors.black.withAlpha(10)
-                : AppColors.goldBrandColor.withAlpha(40),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(6),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(2.5.w),
+              padding: EdgeInsets.all(6.w),
               decoration: BoxDecoration(
-                color: _getTypeColor(notification.type).withAlpha(20),
-                borderRadius: BorderRadius.circular(12),
+                color: AppColors.goldBrandColor.withAlpha(15),
+                shape: BoxShape.circle,
               ),
               child: Icon(
-                _getTypeIcon(notification.type),
-                size: 20,
-                color: _getTypeColor(notification.type),
+                Icons.notifications_off_outlined,
+                size: 52,
+                color: AppColors.goldBrandColor.withAlpha(180),
               ),
             ),
-            SizedBox(width: 3.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          notification.title,
-                          style: appTextStyle(
-                            context,
-                            fontSize: 11.5.sp,
-                            fontWeight: notification.isRead
-                                ? FontWeight.w700
-                                : FontWeight.w800,
-                            color: Colors.black.withAlpha(220),
-                          ),
-                        ),
-                      ),
-                      if (!notification.isRead)
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: AppColors.goldBrandColor,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                    ],
-                  ),
-                  SizedBox(height: 0.5.h),
-                  Text(
-                    notification.message,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black.withAlpha(140),
-                    ),
-                  ),
-                  SizedBox(height: 1.h),
-                  Text(
-                    notification.time,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 9.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black.withAlpha(80),
-                    ),
-                  ),
-                ],
+            SizedBox(height: 2.5.h),
+            Text(
+              tr.no_notifications_yet,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w800,
+                color: Colors.black.withAlpha(200),
+              ),
+            ),
+            SizedBox(height: 1.h),
+            Text(
+              tr.will_notify_when_something_arrives,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 10.5.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.black.withAlpha(100),
               ),
             ),
           ],
@@ -259,51 +143,156 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  IconData _getTypeIcon(NotificationType type) {
-    switch (type) {
-      case NotificationType.booking:
-        return Icons.calendar_today_rounded;
-      case NotificationType.promo:
-        return Icons.local_offer_rounded;
-      case NotificationType.payment:
-        return Icons.payment_rounded;
-      case NotificationType.review:
-        return Icons.star_rounded;
-      case NotificationType.alert:
-        return Icons.home_rounded;
-    }
+  Widget _buildErrorState(BuildContext context, WidgetRef ref) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(5.w),
+              decoration: BoxDecoration(
+                color: Colors.red.withAlpha(15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.wifi_off_rounded,
+                size: 48,
+                color: Colors.red.withAlpha(180),
+              ),
+            ),
+            SizedBox(height: 2.h),
+            Text(
+              tr.error_occurred,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w800,
+                color: Colors.black.withAlpha(200),
+              ),
+            ),
+            SizedBox(height: 2.h),
+            GestureDetector(
+              onTap: () => _onRefresh(ref),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 1.4.h),
+                decoration: BoxDecoration(
+                  color: AppColors.goldBrandColor,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.goldBrandColor.withAlpha(60),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  tr.try_again,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  Color _getTypeColor(NotificationType type) {
-    switch (type) {
-      case NotificationType.booking:
-        return Colors.blue;
-      case NotificationType.promo:
-        return AppColors.goldBrandColor;
-      case NotificationType.payment:
-        return Colors.green;
-      case NotificationType.review:
-        return Colors.amber;
-      case NotificationType.alert:
-        return Colors.purple;
-    }
+  Widget _buildNotificationCard(BuildContext context, NotificationItem item) {
+    final iconData = _resolveIcon(item.icon);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 1.5.h),
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.black.withAlpha(10)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(6),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(2.5.w),
+            decoration: BoxDecoration(
+              color: AppColors.goldBrandColor.withAlpha(20),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              iconData,
+              size: 20,
+              color: AppColors.goldBrandColor,
+            ),
+          ),
+          SizedBox(width: 3.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.body,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black.withAlpha(220),
+                  ),
+                ),
+                SizedBox(height: 1.h),
+                Text(
+                  item.createdAt,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black.withAlpha(80),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
-}
 
-enum NotificationType { booking, promo, payment, review, alert }
+  IconData _resolveIcon(String icon) {
+    final normalized = icon.toLowerCase();
 
-class _NotificationItem {
-  final String title;
-  final String message;
-  final String time;
-  final NotificationType type;
-  bool isRead;
+    if (normalized.contains('calendar')) {
+      return Icons.calendar_today_rounded;
+    }
+    if (normalized.contains('payment') || normalized.contains('cash')) {
+      return Icons.payment_rounded;
+    }
+    if (normalized.contains('star') || normalized.contains('review')) {
+      return Icons.star_rounded;
+    }
+    if (normalized.contains('home') || normalized.contains('house')) {
+      return Icons.home_rounded;
+    }
+    if (normalized.contains('offer') || normalized.contains('tag')) {
+      return Icons.local_offer_rounded;
+    }
+    if (normalized.contains('airballoon') || normalized.contains('balloon')) {
+      return Icons.celebration_rounded;
+    }
 
-  _NotificationItem({
-    required this.title,
-    required this.message,
-    required this.time,
-    required this.type,
-    required this.isRead,
-  });
+    return Icons.notifications_outlined;
+  }
 }

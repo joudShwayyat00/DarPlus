@@ -18,6 +18,6 @@ class SearchRepositoryImpl implements SearchRepository {
   @override
   Future<List<AssetItem>> searchAssets(String query) async {
     final response = await _searchClient.searchAssets(query);
-    return response.result;
+    return response.items;
   }
 }
