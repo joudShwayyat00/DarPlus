@@ -5,6 +5,7 @@ import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/assets/data/models/amenity_item.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
+import 'package:dar_plus_app/screens/assets/select_location_screen.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -12,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 
@@ -47,7 +48,6 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   String _type = 'rent'; // 'rent' | 'sale'
   String _rentType = 'monthly'; // 'monthly' | 'yearly'
   File? _imageFile;
-  bool _loadingLocation = false;
   final Set<int> _selectedAmenityIds = {};
   String _completePhone = '';
 
@@ -81,43 +81,26 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     if (picked != null) setState(() => _imageFile = File(picked.path));
   }
 
-  // ── GPS Location ─────────────────────────────────────────────────────────
+  // ── Map location picker ───────────────────────────────────────────────────
 
-  Future<void> _getCurrentLocation() async {
-    setState(() => _loadingLocation = true);
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        _showSnack('Location services are disabled.');
-        return;
-      }
+  Future<void> _openLocationPicker() async {
+    final initialLat = double.tryParse(_latCtrl.text.trim());
+    final initialLng = double.tryParse(_lngCtrl.text.trim());
 
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          _showSnack('Location permission denied.');
-          return;
-        }
-      }
-      if (permission == LocationPermission.deniedForever) {
-        _showSnack('Location permission permanently denied.');
-        return;
-      }
-
-      final pos = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
+    final result = await Navigator.of(context).push<LatLng>(
+      MaterialPageRoute(
+        builder: (_) => SelectLocationScreen(
+          initialLatitude: initialLat,
+          initialLongitude: initialLng,
         ),
-      );
+      ),
+    );
+
+    if (result != null && mounted) {
       setState(() {
-        _latCtrl.text = pos.latitude.toStringAsFixed(6);
-        _lngCtrl.text = pos.longitude.toStringAsFixed(6);
+        _latCtrl.text = result.latitude.toStringAsFixed(6);
+        _lngCtrl.text = result.longitude.toStringAsFixed(6);
       });
-    } catch (e) {
-      _showSnack('Could not get location: $e');
-    } finally {
-      setState(() => _loadingLocation = false);
     }
   }
 
@@ -731,7 +714,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
         ),
         SizedBox(height: 1.2.h),
         GestureDetector(
-          onTap: _loadingLocation ? null : _getCurrentLocation,
+          onTap: _openLocationPicker,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: EdgeInsets.symmetric(vertical: 1.4.h),
@@ -745,26 +728,14 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (_loadingLocation)
-                  SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppColors.goldBrandColor,
-                    ),
-                  )
-                else
-                  const Icon(
-                    Icons.gps_fixed_rounded,
-                    color: AppColors.goldBrandColor,
-                    size: 18,
-                  ),
+                const Icon(
+                  Icons.map_outlined,
+                  color: AppColors.goldBrandColor,
+                  size: 18,
+                ),
                 SizedBox(width: 2.w),
                 Text(
-                  _loadingLocation
-                      ? 'Getting location…'
-                      : 'Use Current Location',
+                  'Select Location',
                   style: appTextStyle(
                     context,
                     fontSize: 10.5.sp,

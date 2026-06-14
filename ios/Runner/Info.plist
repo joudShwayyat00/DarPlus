@@ -47,6 +47,10 @@
 	<true/>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs your location to help you select a property location on the map.</string>
+	<key>GMSApiKey</key>
+	<string>AIzaSyDGAU4FMal0MuZk5NLBonTTeQr_Jtokp4A</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
