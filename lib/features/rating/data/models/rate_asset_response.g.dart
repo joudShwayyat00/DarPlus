@@ -18,10 +18,10 @@ Map<String, dynamic> _$RateAssetResponseToJson(RateAssetResponse instance) =>
 RateAssetData _$RateAssetDataFromJson(Map<String, dynamic> json) =>
     RateAssetData(
       id: (json['id'] as num).toInt(),
-      userId: (json['user_id'] as num).toInt(),
-      ownerId: (json['owner_id'] as num?)?.toInt(),
-      assetId: (json['asset_id'] as num).toInt(),
-      rating: RateAssetData._ratingFromJson(json['rating']),
+      userId: RateAssetData._intFromJson(json['user_id']),
+      ownerId: RateAssetData._nullableIntFromJson(json['owner_id']),
+      assetId: RateAssetData._intFromJson(json['asset_id']),
+      rating: RateAssetData._intFromJson(json['rating']),
       comment: json['comment'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,

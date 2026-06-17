@@ -7,6 +7,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:dar_plus_app/utils/widgets/rate_asset_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
@@ -335,33 +336,37 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
   Widget _buildBookingCard(MyBookingItem booking) {
     final asset = booking.asset;
     final currencySymbol = booking.currencySymbol;
+    final canRate = booking.status.toLowerCase() == 'approved';
 
-    return GestureDetector(
-      onTap: () {
-        AppNavigator.of(context).push(
-          AssetDetailsScreen(
-            assetId: asset.id,
-            initialAsset: asset,
+    return Container(
+      margin: EdgeInsets.only(bottom: 2.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: Colors.black.withAlpha(8)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(10),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           ),
-        );
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 2.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: Colors.black.withAlpha(8)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(10),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () {
+              AppNavigator.of(context).push(
+                AssetDetailsScreen(
+                  assetId: asset.id,
+                  initialAsset: asset,
+                ),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             ClipRRect(
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(22)),
@@ -532,8 +537,60 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
                 ],
               ),
             ),
+              ],
+            ),
+          ),
+          if (canRate) ...[
+            Padding(
+              padding: EdgeInsets.fromLTRB(4.w, 0, 4.w, 4.w),
+              child: GestureDetector(
+                onTap: () => showRateAssetDialog(
+                  context,
+                  assetId: asset.id,
+                  assetName: asset.name,
+                  imageUrl: asset.image,
+                  bookingsFilter: _selectedStatus,
+                ),
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 1.3.h),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.goldBrandColor.withAlpha(25),
+                        AppColors.goldBrandColor.withAlpha(10),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: AppColors.goldBrandColor.withAlpha(80),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.star_rounded,
+                        size: 18,
+                        color: AppColors.goldBrandColor,
+                      ),
+                      SizedBox(width: 2.w),
+                      Text(
+                        tr.rate_your_stay,
+                        style: appTextStyle(
+                          context,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.goldBrandColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }

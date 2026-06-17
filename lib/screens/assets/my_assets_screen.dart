@@ -10,7 +10,6 @@ import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
-import 'package:dar_plus_app/utils/widgets/tappable_asset_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
@@ -419,11 +418,35 @@ class _MyAssetGridCard extends StatelessWidget {
                     Positioned(
                       top: 8,
                       right: 8,
-                      child: TappableAssetRating(
-                        assetId: asset.id,
-                        rating: asset.rating,
-                        assetName: asset.name,
-                        compact: true,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 1.8.w,
+                          vertical: 0.35.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(230),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.star_rounded,
+                              size: 12,
+                              color: AppColors.goldBrandColor,
+                            ),
+                            SizedBox(width: 0.6.w),
+                            Text(
+                              asset.rating.toStringAsFixed(1),
+                              style: appTextStyle(
+                                context,
+                                fontSize: 8.sp,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black.withAlpha(220),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

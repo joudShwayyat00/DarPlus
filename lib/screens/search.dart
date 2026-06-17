@@ -14,7 +14,6 @@ import 'package:dar_plus_app/features/assets/presentation/providers/assets_provi
 import 'package:dar_plus_app/features/search/presentation/providers/search_providers.dart';
 import 'package:dar_plus_app/features/search/presentation/providers/recent_search_providers.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
-import 'package:dar_plus_app/utils/widgets/tappable_asset_rating.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
 
@@ -650,10 +649,20 @@ class _AssetResultTile extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      TappableAssetRating(
-                        assetId: asset.id,
-                        rating: asset.rating,
-                        assetName: asset.name,
+                      Icon(
+                        Icons.star_rounded,
+                        size: 14,
+                        color: AppColors.goldBrandColor,
+                      ),
+                      SizedBox(width: 1.w),
+                      Text(
+                        asset.rating.toStringAsFixed(1),
+                        style: appTextStyle(
+                          context,
+                          fontSize: 9.5.sp,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black.withAlpha(210),
+                        ),
                       ),
                     ],
                   ),

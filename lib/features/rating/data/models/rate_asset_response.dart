@@ -16,13 +16,13 @@ class RateAssetResponse {
 @JsonSerializable()
 class RateAssetData {
   final int id;
-  @JsonKey(name: 'user_id')
+  @JsonKey(name: 'user_id', fromJson: _intFromJson)
   final int userId;
-  @JsonKey(name: 'owner_id')
+  @JsonKey(name: 'owner_id', fromJson: _nullableIntFromJson)
   final int? ownerId;
-  @JsonKey(name: 'asset_id')
+  @JsonKey(name: 'asset_id', fromJson: _intFromJson)
   final int assetId;
-  @JsonKey(fromJson: _ratingFromJson)
+  @JsonKey(fromJson: _intFromJson)
   final int rating;
   final String? comment;
   @JsonKey(name: 'created_at')
@@ -44,9 +44,16 @@ class RateAssetData {
   factory RateAssetData.fromJson(Map<String, dynamic> json) =>
       _$RateAssetDataFromJson(json);
 
-  static int _ratingFromJson(dynamic value) {
-    if (value is num) return value.round();
+  static int _intFromJson(dynamic value) {
+    if (value is num) return value.toInt();
     if (value is String) return int.tryParse(value) ?? 0;
     return 0;
+  }
+
+  static int? _nullableIntFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 }

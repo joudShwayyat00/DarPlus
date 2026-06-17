@@ -384,5 +384,12 @@
   "rating_saved": "Rating saved successfully",
   "please_select_rating": "Please select a rating",
   "login_to_rate": "Please log in to rate this property",
-  "tap_to_rate": "Tap to rate"
+  "tap_to_rate": "Tap to rate",
+  "rate_your_stay": "Rate your stay",
+  "how_was_your_experience": "How was your experience?",
+  "rating_label_poor": "Poor",
+  "rating_label_fair": "Fair",
+  "rating_label_good": "Good",
+  "rating_label_great": "Great",
+  "rating_label_excellent": "Excellent"
 }

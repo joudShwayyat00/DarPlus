@@ -5,7 +5,6 @@ import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
-import 'package:dar_plus_app/utils/widgets/tappable_asset_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -604,14 +603,7 @@ class _HeroSummary extends StatelessWidget {
                       textColor: Colors.black.withAlpha(220),
                     ),
                     SizedBox(width: 2.w),
-                    if (item.assetId != null)
-                      TappableAssetRating(
-                        assetId: item.assetId!,
-                        rating: item.rating,
-                        assetName: item.title,
-                      )
-                    else
-                      _RatingPill(rating: item.rating),
+                    _RatingPill(rating: item.rating),
                   ],
                 ),
               ],

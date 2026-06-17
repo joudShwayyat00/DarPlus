@@ -384,5 +384,12 @@
   "rating_saved": "تم حفظ التقييم بنجاح",
   "please_select_rating": "يرجى اختيار تقييم",
   "login_to_rate": "يرجى تسجيل الدخول لتقييم هذا العقار",
-  "tap_to_rate": "اضغط للتقييم"
+  "tap_to_rate": "اضغط للتقييم",
+  "rate_your_stay": "قيّم إقامتك",
+  "how_was_your_experience": "كيف كانت تجربتك؟",
+  "rating_label_poor": "سيء",
+  "rating_label_fair": "مقبول",
+  "rating_label_good": "جيد",
+  "rating_label_great": "رائع",
+  "rating_label_excellent": "ممتاز"
 }

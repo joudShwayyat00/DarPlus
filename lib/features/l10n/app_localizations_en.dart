@@ -1206,4 +1206,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tap_to_rate => 'Tap to rate';
+
+  @override
+  String get rate_your_stay => 'Rate your stay';
+
+  @override
+  String get how_was_your_experience => 'How was your experience?';
+
+  @override
+  String get rating_label_poor => 'Poor';
+
+  @override
+  String get rating_label_fair => 'Fair';
+
+  @override
+  String get rating_label_good => 'Good';
+
+  @override
+  String get rating_label_great => 'Great';
+
+  @override
+  String get rating_label_excellent => 'Excellent';
 }

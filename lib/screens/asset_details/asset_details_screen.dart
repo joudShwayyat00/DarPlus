@@ -13,7 +13,6 @@ import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
-import 'package:dar_plus_app/utils/widgets/tappable_asset_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -339,11 +338,35 @@ class _InfoCard extends StatelessWidget {
                   ),
                 ),
               ),
-              // Rating pill — tap to rate
-              TappableAssetRating(
-                assetId: asset.id,
-                rating: asset.rating,
-                assetName: asset.name,
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 2.8.w,
+                  vertical: 0.5.h,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.goldBrandColor.withAlpha(28),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.star_rounded,
+                      size: 15,
+                      color: AppColors.goldBrandColor,
+                    ),
+                    SizedBox(width: 1.w),
+                    Text(
+                      asset.rating.toStringAsFixed(1),
+                      style: appTextStyle(
+                        context,
+                        fontSize: 10.5.sp,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black.withAlpha(225),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

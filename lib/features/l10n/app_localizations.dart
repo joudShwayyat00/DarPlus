@@ -2395,6 +2395,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap to rate'**
   String get tap_to_rate;
+
+  /// No description provided for @rate_your_stay.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate your stay'**
+  String get rate_your_stay;
+
+  /// No description provided for @how_was_your_experience.
+  ///
+  /// In en, this message translates to:
+  /// **'How was your experience?'**
+  String get how_was_your_experience;
+
+  /// No description provided for @rating_label_poor.
+  ///
+  /// In en, this message translates to:
+  /// **'Poor'**
+  String get rating_label_poor;
+
+  /// No description provided for @rating_label_fair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get rating_label_fair;
+
+  /// No description provided for @rating_label_good.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get rating_label_good;
+
+  /// No description provided for @rating_label_great.
+  ///
+  /// In en, this message translates to:
+  /// **'Great'**
+  String get rating_label_great;
+
+  /// No description provided for @rating_label_excellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get rating_label_excellent;
 }
 
 class _AppLocalizationsDelegate

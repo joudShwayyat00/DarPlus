@@ -1197,4 +1197,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tap_to_rate => 'اضغط للتقييم';
+
+  @override
+  String get rate_your_stay => 'قيّم إقامتك';
+
+  @override
+  String get how_was_your_experience => 'كيف كانت تجربتك؟';
+
+  @override
+  String get rating_label_poor => 'سيء';
+
+  @override
+  String get rating_label_fair => 'مقبول';
+
+  @override
+  String get rating_label_good => 'جيد';
+
+  @override
+  String get rating_label_great => 'رائع';
+
+  @override
+  String get rating_label_excellent => 'ممتاز';
 }
