@@ -6,6 +6,7 @@ import 'package:dar_plus_app/screens/property_details/widget/property_images_sli
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:dar_plus_app/utils/widgets/tappable_asset_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
@@ -314,7 +315,14 @@ class _InfoCard extends StatelessWidget {
                   ),
                 ),
               ),
-              _RatingPill(rating: item.rating),
+              if (item.assetId != null)
+                TappableAssetRating(
+                  assetId: item.assetId!,
+                  rating: item.rating,
+                  assetName: item.title,
+                )
+              else
+                _RatingPill(rating: item.rating),
             ],
           ),
         ],

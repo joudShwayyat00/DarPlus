@@ -1170,4 +1170,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get could_not_load_amenities => 'تعذر تحميل المرافق';
+
+  @override
+  String get rate_asset => 'تقييم العقار';
+
+  @override
+  String get your_rating => 'تقييمك';
+
+  @override
+  String get comment_optional => 'تعليق (اختياري)';
+
+  @override
+  String get comment_hint => 'شاركنا تجربتك...';
+
+  @override
+  String get submit_rating => 'إرسال التقييم';
+
+  @override
+  String get rating_saved => 'تم حفظ التقييم بنجاح';
+
+  @override
+  String get please_select_rating => 'يرجى اختيار تقييم';
+
+  @override
+  String get login_to_rate => 'يرجى تسجيل الدخول لتقييم هذا العقار';
+
+  @override
+  String get tap_to_rate => 'اضغط للتقييم';
 }

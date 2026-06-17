@@ -1179,4 +1179,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get could_not_load_amenities => 'Could not load amenities';
+
+  @override
+  String get rate_asset => 'Rate Property';
+
+  @override
+  String get your_rating => 'Your rating';
+
+  @override
+  String get comment_optional => 'Comment (optional)';
+
+  @override
+  String get comment_hint => 'Share your experience...';
+
+  @override
+  String get submit_rating => 'Submit Rating';
+
+  @override
+  String get rating_saved => 'Rating saved successfully';
+
+  @override
+  String get please_select_rating => 'Please select a rating';
+
+  @override
+  String get login_to_rate => 'Please log in to rate this property';
+
+  @override
+  String get tap_to_rate => 'Tap to rate';
 }

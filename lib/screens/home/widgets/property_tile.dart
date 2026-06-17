@@ -6,6 +6,7 @@ import 'package:dar_plus_app/screens/book_now_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:dar_plus_app/utils/widgets/tappable_asset_rating.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -141,22 +142,30 @@ class PropertyTile extends StatelessWidget {
                   SizedBox(height: 1.1.h),
                   _PriceChip(price: item.price),
                   SizedBox(height: 0.7.h),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      RatingStars(rating: item.rating, size: 12),
-                      SizedBox(width: 1.w),
-                      Text(
-                        item.rating.toStringAsFixed(1),
-                        style: appTextStyle(
-                          context,
-                          fontSize: 9.6.sp,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.black.withAlpha(150),
+                  if (item.assetId != null)
+                    TappableAssetRating(
+                      assetId: item.assetId!,
+                      rating: item.rating,
+                      assetName: item.title,
+                      showStars: true,
+                    )
+                  else
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        RatingStars(rating: item.rating, size: 12),
+                        SizedBox(width: 1.w),
+                        Text(
+                          item.rating.toStringAsFixed(1),
+                          style: appTextStyle(
+                            context,
+                            fontSize: 9.6.sp,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.black.withAlpha(150),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                   SizedBox(height: 1.6.h),
 
                   _LuxuryPrimaryButton(

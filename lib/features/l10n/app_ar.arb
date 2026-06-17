@@ -375,5 +375,14 @@
   "tap_add_property_image": "اضغط لإضافة صورة العقار",
   "image_format_hint": "JPG, PNG — جودة عالية",
   "change": "تغيير",
-  "could_not_load_amenities": "تعذر تحميل المرافق"
+  "could_not_load_amenities": "تعذر تحميل المرافق",
+  "rate_asset": "تقييم العقار",
+  "your_rating": "تقييمك",
+  "comment_optional": "تعليق (اختياري)",
+  "comment_hint": "شاركنا تجربتك...",
+  "submit_rating": "إرسال التقييم",
+  "rating_saved": "تم حفظ التقييم بنجاح",
+  "please_select_rating": "يرجى اختيار تقييم",
+  "login_to_rate": "يرجى تسجيل الدخول لتقييم هذا العقار",
+  "tap_to_rate": "اضغط للتقييم"
 }

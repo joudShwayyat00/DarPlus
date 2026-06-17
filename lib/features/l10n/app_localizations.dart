@@ -2341,6 +2341,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load amenities'**
   String get could_not_load_amenities;
+
+  /// No description provided for @rate_asset.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Property'**
+  String get rate_asset;
+
+  /// No description provided for @your_rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating'**
+  String get your_rating;
+
+  /// No description provided for @comment_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment (optional)'**
+  String get comment_optional;
+
+  /// No description provided for @comment_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your experience...'**
+  String get comment_hint;
+
+  /// No description provided for @submit_rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Rating'**
+  String get submit_rating;
+
+  /// No description provided for @rating_saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating saved successfully'**
+  String get rating_saved;
+
+  /// No description provided for @please_select_rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a rating'**
+  String get please_select_rating;
+
+  /// No description provided for @login_to_rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to rate this property'**
+  String get login_to_rate;
+
+  /// No description provided for @tap_to_rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to rate'**
+  String get tap_to_rate;
 }
 
 class _AppLocalizationsDelegate
