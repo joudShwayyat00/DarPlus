@@ -334,7 +334,7 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
 
   Widget _buildBookingCard(MyBookingItem booking) {
     final asset = booking.asset;
-    final currencySymbol = booking.currency.symbol;
+    final currencySymbol = booking.currencySymbol;
 
     return GestureDetector(
       onTap: () {
