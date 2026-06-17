@@ -5,6 +5,7 @@ import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/assets/data/models/amenity_item.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/select_location_screen.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
@@ -110,27 +111,42 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
 
   // ── Submit ────────────────────────────────────────────────────────────────
 
+  String _rentPriceHint() {
+    switch (_rentType) {
+      case 'daily':
+        return tr.rent_price_per_day;
+      case 'yearly':
+        return tr.rent_price_per_year;
+      case 'monthly':
+      default:
+        return tr.rent_price_per_month;
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_imageFile == null) {
-      _showSnack('Please select an image.');
+      _showSnack(tr.please_select_image);
       return;
     }
     if (_selectedCategoryId == null) {
-      _showSnack('Please select a category.');
+      _showSnack(tr.please_select_category);
       return;
     }
 
     final lat = double.tryParse(_latCtrl.text.trim());
     final lng = double.tryParse(_lngCtrl.text.trim());
     if (lat == null || lat < -90 || lat > 90) {
-      _showSnack('Please enter a valid latitude (−90 to 90).');
+      _showSnack(tr.valid_latitude);
       return;
     }
     if (lng == null || lng < -180 || lng > 180) {
-      _showSnack('Please enter a valid longitude (−180 to 180).');
+      _showSnack(tr.valid_longitude);
       return;
     }
+
+    final salePrice = double.tryParse(_priceCtrl.text.trim()) ?? 0;
+    final rentPrice = double.tryParse(_rentPriceCtrl.text.trim());
 
     EasyLoading.show();
     final success = await ref
@@ -141,7 +157,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
           descriptionEn: _descEnCtrl.text.trim(),
           descriptionAr: _descArCtrl.text.trim(),
           categoryId: _selectedCategoryId!,
-          price: double.tryParse(_priceCtrl.text.trim()) ?? 0,
+          price: _type == 'sale' ? salePrice : (rentPrice ?? 0),
           imagePath: _imageFile!.path,
           video: _videoCtrl.text.trim().isEmpty ? null : _videoCtrl.text.trim(),
           location: _locationCtrl.text.trim(),
@@ -163,9 +179,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                   _yearsCtrl.text.isNotEmpty
               ? int.tryParse(_yearsCtrl.text.trim())
               : null,
-          rentPrice: _type == 'rent' && _rentPriceCtrl.text.isNotEmpty
-              ? double.tryParse(_rentPriceCtrl.text.trim())
-              : null,
+          rentPrice: _type == 'rent' ? rentPrice : null,
           latitude: lat,
           longitude: lng,
           amenityIds: _selectedAmenityIds.toList(),
@@ -173,14 +187,14 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     EasyLoading.dismiss();
 
     if (success && mounted) {
-      EasyLoading.showSuccess('Asset added successfully!');
+      EasyLoading.showSuccess(tr.asset_added_successfully);
       ref.invalidate(assetsControllerProvider);
       ref.invalidate(myAssetsControllerProvider);
       await Future.delayed(const Duration(seconds: 1));
       if (mounted) Navigator.of(context).pop();
     } else if (mounted) {
       final err = ref.read(addAssetControllerProvider).error;
-      _showSnack(err?.toString() ?? 'Something went wrong.');
+      _showSnack(err?.toString() ?? tr.something_went_wrong);
     }
   }
 
@@ -203,25 +217,25 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     vertical: 1.5.h,
                   ),
                   children: [
-                    _sectionTitle('Basic Information'),
+                    _sectionTitle(tr.basic_information),
                     SizedBox(height: 1.h),
                     _buildTextField(
                       controller: _nameEnCtrl,
-                      hint: 'Name (English)',
+                      hint: tr.name_english,
                       icon: Icons.title_rounded,
                       validator: _requiredValidator,
                     ),
                     SizedBox(height: 1.5.h),
                     _buildTextField(
                       controller: _nameArCtrl,
-                      hint: 'الاسم (عربي)',
+                      hint: tr.name_arabic,
                       icon: Icons.title_rounded,
                       validator: _requiredValidator,
                     ),
                     SizedBox(height: 1.5.h),
                     _buildTextField(
                       controller: _descEnCtrl,
-                      hint: 'Description (English)',
+                      hint: tr.description_english,
                       icon: Icons.description_rounded,
                       maxLines: 3,
                       validator: _requiredValidator,
@@ -229,42 +243,42 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     SizedBox(height: 1.5.h),
                     _buildTextField(
                       controller: _descArCtrl,
-                      hint: 'الوصف (عربي)',
+                      hint: tr.description_arabic,
                       icon: Icons.description_rounded,
                       maxLines: 3,
                       validator: _requiredValidator,
                     ),
 
                     SizedBox(height: 2.5.h),
-                    _sectionTitle('Category & Type'),
+                    _sectionTitle(tr.category_and_type),
                     SizedBox(height: 1.h),
                     _buildCategoryDropdown(),
                     SizedBox(height: 1.5.h),
                     _buildTypeToggle(),
 
                     SizedBox(height: 2.5.h),
-                    _sectionTitle('Pricing'),
+                    _sectionTitle(tr.pricing_section),
                     SizedBox(height: 1.h),
-                    _buildTextField(
-                      controller: _priceCtrl,
-                      hint: 'Price',
-                      icon: Icons.monetization_on_outlined,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      validator: _requiredValidator,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                      ],
-                    ),
-                    if (_type == 'rent') ...[
-                      SizedBox(height: 1.5.h),
+                    if (_type == 'sale')
+                      _buildTextField(
+                        controller: _priceCtrl,
+                        hint: tr.price_label,
+                        icon: Icons.monetization_on_outlined,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        validator: _requiredValidator,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        ],
+                      )
+                    else ...[
                       _buildRentTypeToggle(),
                       if (_rentType == 'monthly') ...[
                         SizedBox(height: 1.5.h),
                         _buildTextField(
                           controller: _monthsCtrl,
-                          hint: 'Months Count',
+                          hint: tr.months_count,
                           icon: Icons.calendar_month_rounded,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
@@ -276,7 +290,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                         SizedBox(height: 1.5.h),
                         _buildTextField(
                           controller: _yearsCtrl,
-                          hint: 'Years Count',
+                          hint: tr.years_count,
                           icon: Icons.calendar_today_rounded,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
@@ -287,11 +301,12 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                       SizedBox(height: 1.5.h),
                       _buildTextField(
                         controller: _rentPriceCtrl,
-                        hint: 'Rent Price',
+                        hint: _rentPriceHint(),
                         icon: Icons.price_change_outlined,
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
+                        validator: _requiredValidator,
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                         ],
@@ -299,11 +314,11 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     ],
 
                     SizedBox(height: 2.5.h),
-                    _sectionTitle('Location'),
+                    _sectionTitle(tr.location_section),
                     SizedBox(height: 1.h),
                     _buildTextField(
                       controller: _locationCtrl,
-                      hint: 'Location (address / area)',
+                      hint: tr.location_address_hint,
                       icon: Icons.place_rounded,
                       validator: _requiredValidator,
                     ),
@@ -311,21 +326,21 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     _buildLocationCoords(),
 
                     SizedBox(height: 2.5.h),
-                    _sectionTitle('Contact'),
+                    _sectionTitle(tr.contact_section),
                     SizedBox(height: 1.h),
                     _buildTextField(
                       controller: _emailCtrl,
-                      hint: 'Email',
+                      hint: tr.email,
                       icon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) {
                         if (v == null || v.trim().isEmpty) {
-                          return 'Required';
+                          return tr.field_required;
                         }
                         if (!RegExp(
                           r'^[^@]+@[^@]+\.[^@]+',
                         ).hasMatch(v.trim())) {
-                          return 'Enter a valid email';
+                          return tr.enter_valid_email;
                         }
                         return null;
                       },
@@ -337,18 +352,18 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     ),
 
                     SizedBox(height: 2.5.h),
-                    _sectionTitle('Media'),
+                    _sectionTitle(tr.media_section),
                     SizedBox(height: 1.h),
                     _buildImagePicker(),
                     SizedBox(height: 1.5.h),
                     _buildTextField(
                       controller: _videoCtrl,
-                      hint: 'Video URL (optional)',
+                      hint: tr.video_url_optional,
                       icon: Icons.videocam_outlined,
                     ),
 
                     SizedBox(height: 2.5.h),
-                    _sectionTitle('Amenities'),
+                    _sectionTitle(tr.amenities),
                     SizedBox(height: 1.h),
                     _buildAmenities(),
 
@@ -357,7 +372,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                       onPressed: _submit,
                       backgroundColor: AppColors.goldBrandColor,
                       child: Text(
-                        'Publish Asset',
+                        tr.publish_asset,
                         style: appTextStyle(
                           context,
                           fontSize: 12.sp,
@@ -411,7 +426,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
           ),
           SizedBox(width: 3.w),
           Text(
-            'Add New Asset',
+            tr.add_new_asset,
             style: appTextStyle(
               context,
               fontSize: 16.sp,
@@ -514,7 +529,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       data: (categories) => DropdownButtonFormField<int>(
         initialValue: _selectedCategoryId,
         decoration: InputDecoration(
-          hintText: 'Select Category',
+          hintText: tr.select_category,
           hintStyle: appTextStyle(
             context,
             fontSize: 10.8.sp,
@@ -546,7 +561,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             .toList(),
         onChanged: (v) => setState(() => _selectedCategoryId = v),
         validator: (_) =>
-            _selectedCategoryId == null ? 'Please select a category' : null,
+            _selectedCategoryId == null ? tr.please_select_category : null,
       ),
       loading: () => _skeletonField(),
       error: (_, __) => const SizedBox.shrink(),
@@ -568,9 +583,9 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   Widget _buildTypeToggle() {
     return Row(
       children: [
-        _typeChip('For Rent', 'rent', Icons.key_outlined),
+        _typeChip(tr.for_rent, 'rent', Icons.key_outlined),
         SizedBox(width: 3.w),
-        _typeChip('For Sale', 'sale', Icons.sell_outlined),
+        _typeChip(tr.for_sale, 'sale', Icons.sell_outlined),
       ],
     );
   }
@@ -628,11 +643,11 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   Widget _buildRentTypeToggle() {
     return Row(
       children: [
-        _rentChip('Daily', 'daily'),
+        _rentChip(tr.daily, 'daily'),
         SizedBox(width: 2.w),
-        _rentChip('Monthly', 'monthly'),
+        _rentChip(tr.monthly, 'monthly'),
         SizedBox(width: 2.w),
-        _rentChip('Yearly', 'yearly'),
+        _rentChip(tr.yearly, 'yearly'),
       ],
     );
   }
@@ -684,7 +699,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             Expanded(
               child: _buildTextField(
                 controller: _latCtrl,
-                hint: 'Latitude',
+                hint: tr.latitude,
                 icon: Icons.my_location_rounded,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -699,7 +714,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             Expanded(
               child: _buildTextField(
                 controller: _lngCtrl,
-                hint: 'Longitude',
+                hint: tr.longitude,
                 icon: Icons.location_on_outlined,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -735,7 +750,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                 ),
                 SizedBox(width: 2.w),
                 Text(
-                  'Select Location',
+                  tr.select_location,
                   style: appTextStyle(
                     context,
                     fontSize: 10.5.sp,
@@ -808,7 +823,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'Change',
+                          tr.change,
                           style: appTextStyle(
                             context,
                             fontSize: 9.sp,
@@ -830,7 +845,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     ),
                     SizedBox(height: 1.h),
                     Text(
-                      'Tap to add property image',
+                      tr.tap_add_property_image,
                       style: appTextStyle(
                         context,
                         fontSize: 10.5.sp,
@@ -839,7 +854,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     ),
                     SizedBox(height: 0.4.h),
                     Text(
-                      'JPG, PNG — high quality',
+                      tr.image_format_hint,
                       style: appTextStyle(
                         context,
                         fontSize: 9.sp,
@@ -879,7 +894,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
         ),
       ),
       error: (_, __) => Text(
-        'Could not load amenities',
+        tr.could_not_load_amenities,
         style: appTextStyle(
           context,
           fontSize: 10.sp,
@@ -961,5 +976,5 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   // ── Validator ─────────────────────────────────────────────────────────────
 
   String? _requiredValidator(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'This field is required' : null;
+      (v == null || v.trim().isEmpty) ? tr.field_required : null;
 }

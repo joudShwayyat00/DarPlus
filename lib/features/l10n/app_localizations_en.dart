@@ -66,7 +66,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get email_required => 'Email is required';
 
   @override
-  String get enter_valid_email => 'Please enter a valid email';
+  String get enter_valid_email => 'Enter a valid email';
 
   @override
   String get submit => 'Submit';
@@ -374,6 +374,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get no_past_reservations => 'No past reservations';
 
   @override
+  String get no_bookings_found => 'No bookings found';
+
+  @override
+  String no_bookings_for_status(Object status) {
+    return 'You don\'t have any $status bookings yet';
+  }
+
+  @override
   String get search => 'Search';
 
   @override
@@ -664,6 +672,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pending => 'Pending';
+
+  @override
+  String get approved => 'Approved';
+
+  @override
+  String get rejected => 'Rejected';
 
   @override
   String get completed => 'Completed';
@@ -1060,4 +1074,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get camera => 'Take a Photo';
+
+  @override
+  String get add_new_asset => 'Add New Asset';
+
+  @override
+  String get basic_information => 'Basic Information';
+
+  @override
+  String get name_english => 'Name (English)';
+
+  @override
+  String get name_arabic => 'Name (Arabic)';
+
+  @override
+  String get description_english => 'Description (English)';
+
+  @override
+  String get description_arabic => 'Description (Arabic)';
+
+  @override
+  String get category_and_type => 'Category & Type';
+
+  @override
+  String get pricing_section => 'Pricing';
+
+  @override
+  String get rent_price => 'Rent Price';
+
+  @override
+  String get rent_price_per_day => 'Rent price per day';
+
+  @override
+  String get rent_price_per_month => 'Rent price per month';
+
+  @override
+  String get rent_price_per_year => 'Rent price per year';
+
+  @override
+  String get months_count => 'Months Count';
+
+  @override
+  String get years_count => 'Years Count';
+
+  @override
+  String get location_section => 'Location';
+
+  @override
+  String get location_address_hint => 'Location (address / area)';
+
+  @override
+  String get latitude => 'Latitude';
+
+  @override
+  String get longitude => 'Longitude';
+
+  @override
+  String get select_location => 'Select Location';
+
+  @override
+  String get contact_section => 'Contact';
+
+  @override
+  String get media_section => 'Media';
+
+  @override
+  String get video_url_optional => 'Video URL (optional)';
+
+  @override
+  String get publish_asset => 'Publish Asset';
+
+  @override
+  String get select_category => 'Select Category';
+
+  @override
+  String get please_select_category => 'Please select a category';
+
+  @override
+  String get please_select_image => 'Please select an image';
+
+  @override
+  String get field_required => 'This field is required';
+
+  @override
+  String get valid_latitude => 'Please enter a valid latitude (−90 to 90)';
+
+  @override
+  String get valid_longitude => 'Please enter a valid longitude (−180 to 180)';
+
+  @override
+  String get asset_added_successfully => 'Asset added successfully!';
+
+  @override
+  String get something_went_wrong => 'Something went wrong';
+
+  @override
+  String get tap_add_property_image => 'Tap to add property image';
+
+  @override
+  String get image_format_hint => 'JPG, PNG — high quality';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get could_not_load_amenities => 'Could not load amenities';
 }

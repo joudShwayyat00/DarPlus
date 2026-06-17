@@ -1,77 +1,72 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
-import 'package:dar_plus_app/models/property_item.dart';
-import 'package:dar_plus_app/screens/property_details/property_details_screen.dart';
+import 'package:dar_plus_app/features/booking/data/models/my_booking_item.dart';
+import 'package:dar_plus_app/features/booking/domain/booking_status_filter.dart';
+import 'package:dar_plus_app/features/booking/presentation/providers/booking_providers.dart';
+import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
-import 'package:dar_plus_app/main.dart';
 
-class MyReservationsScreen extends StatefulWidget {
+class MyReservationsScreen extends ConsumerStatefulWidget {
   const MyReservationsScreen({super.key});
 
   @override
-  State<MyReservationsScreen> createState() => _MyReservationsScreenState();
+  ConsumerState<MyReservationsScreen> createState() =>
+      _MyReservationsScreenState();
 }
 
-class _MyReservationsScreenState extends State<MyReservationsScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
+  BookingStatusFilter _selectedStatus = BookingStatusFilter.pending;
 
-  final List<_ReservationItem> _upcomingReservations = [
-    _ReservationItem(
-      propertyName: "Luxury Villa Marina",
-      location: "Dubai Marina, UAE",
-      checkIn: "Feb 15, 2026",
-      checkOut: "Feb 20, 2026",
-      status: ReservationStatus.confirmed,
-      imageUrl: "https://images.unsplash.com/photo-1613490493576-7fde63acd811",
-      price: "\$1,250",
-    ),
-    _ReservationItem(
-      propertyName: "Penthouse Suite",
-      location: "Downtown, Dubai",
-      checkIn: "Mar 05, 2026",
-      checkOut: "Mar 10, 2026",
-      status: ReservationStatus.pending,
-      imageUrl: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9",
-      price: "\$2,100",
-    ),
-  ];
-
-  final List<_ReservationItem> _pastReservations = [
-    _ReservationItem(
-      propertyName: "Beach Resort Apartment",
-      location: "JBR, Dubai",
-      checkIn: "Jan 10, 2026",
-      checkOut: "Jan 15, 2026",
-      status: ReservationStatus.completed,
-      imageUrl: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
-      price: "\$980",
-    ),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+  Future<void> _onRefresh() async {
+    await ref
+        .read(myBookingsControllerProvider(_selectedStatus).notifier)
+        .refresh();
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+  String _statusLabel(BookingStatusFilter status) {
+    switch (status) {
+      case BookingStatusFilter.pending:
+        return tr.pending;
+      case BookingStatusFilter.approved:
+        return tr.approved;
+      case BookingStatusFilter.rejected:
+        return tr.rejected;
+      case BookingStatusFilter.cancelled:
+        return tr.cancelled;
+    }
+  }
+
+  String _formatDate(String isoDate) {
+    try {
+      final date = DateTime.parse(isoDate);
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      ];
+      return '${months[date.month - 1]} ${date.day}, ${date.year}';
+    } catch (_) {
+      return isoDate;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final bookingsAsync =
+        ref.watch(myBookingsControllerProvider(_selectedStatus));
+
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: const Color(0xFFF8F7F4),
       appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
+        backgroundColor: const Color(0xFFF8F7F4),
         elevation: 0,
         scrolledUnderElevation: 0,
-
+        leadingWidth: 0,
+        automaticallyImplyLeading: false,
         title: Text(
           tr.my_bookings,
           style: appTextStyle(
@@ -81,290 +76,568 @@ class _MyReservationsScreenState extends State<MyReservationsScreen>
             color: Colors.black.withAlpha(220),
           ),
         ),
-
-        //remove the back button space
-        leadingWidth: 0,
-        // remove default back arrow
-        automaticallyImplyLeading: false,
-
         centerTitle: false,
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: AppColors.goldBrandColor,
-          unselectedLabelColor: Colors.black.withAlpha(120),
-          indicatorColor: AppColors.goldBrandColor,
-          indicatorWeight: 3,
-          labelStyle: appTextStyle(
-            context,
-            fontSize: 11.sp,
-            fontWeight: FontWeight.w700,
-          ),
-          unselectedLabelStyle: appTextStyle(
-            context,
-            fontSize: 11.sp,
-            fontWeight: FontWeight.w600,
-          ),
-          tabs: [
-            Tab(text: tr.upcoming),
-            Tab(text: tr.past),
-          ],
-        ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildReservationsList(_upcomingReservations, isUpcoming: true),
-          _buildReservationsList(_pastReservations, isUpcoming: false),
+          _buildStatusFilters(),
+          Expanded(
+            child: bookingsAsync.when(
+              data: (bookings) => _buildDataState(bookings),
+              loading: () => _buildLoadingState(),
+              error: (_, __) => _buildErrorState(),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildReservationsList(
-    List<_ReservationItem> reservations, {
-    required bool isUpcoming,
-  }) {
-    if (reservations.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.calendar_today_outlined,
-              size: 60,
-              color: Colors.black.withAlpha(60),
-            ),
-            SizedBox(height: 2.h),
-            Text(
-              isUpcoming
-                  ? tr.no_upcoming_reservations
-                  : tr.no_past_reservations,
-              style: appTextStyle(
-                context,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.black.withAlpha(120),
+  Widget _buildStatusFilters() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.fromLTRB(5.w, 0, 5.w, 1.5.h),
+      child: Row(
+        children: BookingStatusFilter.values.map((status) {
+          final isSelected = _selectedStatus == status;
+          return Padding(
+            padding: EdgeInsets.only(right: 2.5.w),
+            child: GestureDetector(
+              onTap: () => setState(() => _selectedStatus = status),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutCubic,
+                padding: EdgeInsets.symmetric(horizontal: 4.5.w, vertical: 1.1.h),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.goldBrandColor
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: isSelected
+                        ? AppColors.goldBrandColor
+                        : Colors.black.withAlpha(18),
+                  ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppColors.goldBrandColor.withAlpha(70),
+                            blurRadius: 14,
+                            offset: const Offset(0, 5),
+                          ),
+                        ]
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(6),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _statusIcon(status),
+                      size: 15,
+                      color: isSelected
+                          ? Colors.white
+                          : AppColors.goldBrandColor,
+                    ),
+                    SizedBox(width: 2.w),
+                    Text(
+                      _statusLabel(status),
+                      style: appTextStyle(
+                        context,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w700,
+                        color: isSelected
+                            ? Colors.white
+                            : Colors.black.withAlpha(180),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  IconData _statusIcon(BookingStatusFilter status) {
+    switch (status) {
+      case BookingStatusFilter.pending:
+        return Icons.hourglass_top_rounded;
+      case BookingStatusFilter.approved:
+        return Icons.verified_rounded;
+      case BookingStatusFilter.rejected:
+        return Icons.block_rounded;
+      case BookingStatusFilter.cancelled:
+        return Icons.cancel_outlined;
+    }
+  }
+
+  Widget _buildDataState(List<MyBookingItem> bookings) {
+    if (bookings.isEmpty) {
+      return RefreshIndicator(
+        color: AppColors.goldBrandColor,
+        onRefresh: _onRefresh,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: _buildEmptyState(),
+              ),
+            );
+          },
         ),
       );
     }
 
-    return ListView.builder(
-      padding: EdgeInsets.all(5.w),
-      itemCount: reservations.length,
-      itemBuilder: (context, index) {
-        final reservation = reservations[index];
-        return InkWell(
-          onTap: () {
-            // Create a PropertyItem from reservation data
-            final propertyItem = PropertyItem(
-              title: reservation.propertyName,
-              location: reservation.location,
-              price: reservation.price,
-              rating: 4.5,
-              images: [reservation.imageUrl],
-              description:
-                  "Reservation from ${reservation.checkIn} to ${reservation.checkOut}",
-              guests: 4,
-              bedrooms: 2,
-              bathrooms: 2,
-              size: 120,
-              hasPool: true,
-              hasBbq: false,
-              hasWifi: true,
-            );
-            AppNavigator.of(
-              context,
-            ).push(PropertyDetailsScreen(item: propertyItem));
-          },
-          child: _buildReservationCard(reservation),
-        );
-      },
+    return RefreshIndicator(
+      color: AppColors.goldBrandColor,
+      onRefresh: _onRefresh,
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(5.w, 0.5.h, 5.w, 2.h),
+        itemCount: bookings.length,
+        itemBuilder: (context, index) {
+          return _buildBookingCard(bookings[index]);
+        },
+      ),
     );
   }
 
-  Widget _buildReservationCard(_ReservationItem reservation) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 2.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.black.withAlpha(10)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(8),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-        ],
+  Widget _buildLoadingState() {
+    return Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation(AppColors.goldBrandColor),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
-            child: Stack(
-              children: [
-                Image.network(
-                  reservation.imageUrl,
-                  height: 15.h,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    height: 15.h,
-                    color: Colors.grey.shade200,
-                    child: Icon(
-                      Icons.image_outlined,
-                      size: 40,
-                      color: Colors.grey.shade400,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 1.5.h,
-                  right: 3.w,
-                  child: _buildStatusBadge(reservation.status),
-                ),
-              ],
-            ),
-          ),
+    );
+  }
 
-          // Details
-          Padding(
-            padding: EdgeInsets.all(4.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  reservation.propertyName == "Luxury Villa Marina"
-                      ? tr.sample_luxury_villa_marina
-                      : reservation.propertyName == "Penthouse Suite"
-                      ? tr.sample_penthouse_suite
-                      : reservation.propertyName == "Beach Resort Apartment"
-                      ? tr.sample_beach_resort_apartment
-                      : reservation.propertyName,
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                color: AppColors.goldBrandColor.withAlpha(15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.event_busy_rounded,
+                size: 52,
+                color: AppColors.goldBrandColor.withAlpha(180),
+              ),
+            ),
+            SizedBox(height: 2.5.h),
+            Text(
+              tr.no_bookings_found,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w800,
+                color: Colors.black.withAlpha(200),
+              ),
+            ),
+            SizedBox(height: 1.h),
+            Text(
+              tr.no_bookings_for_status(_statusLabel(_selectedStatus)),
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 10.5.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.black.withAlpha(100),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(5.w),
+              decoration: BoxDecoration(
+                color: Colors.red.withAlpha(15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.wifi_off_rounded,
+                size: 48,
+                color: Colors.red.withAlpha(180),
+              ),
+            ),
+            SizedBox(height: 2.h),
+            Text(
+              tr.error_occurred,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w800,
+                color: Colors.black.withAlpha(200),
+              ),
+            ),
+            SizedBox(height: 2.h),
+            GestureDetector(
+              onTap: _onRefresh,
+              child: Container(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 1.4.h),
+                decoration: BoxDecoration(
+                  color: AppColors.goldBrandColor,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.goldBrandColor.withAlpha(60),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  tr.try_again,
                   style: appTextStyle(
                     context,
-                    fontSize: 12.5.sp,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black.withAlpha(220),
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 0.5.h),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: 14,
-                      color: Colors.black.withAlpha(120),
-                    ),
-                    SizedBox(width: 1.w),
-                    Text(
-                      reservation.location,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black.withAlpha(120),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1.5.h),
-                Row(
-                  children: [
-                    _buildDateInfo(
-                      tr.check_in,
-                      reservation.checkIn,
-                      Icons.login_rounded,
-                    ),
-                    SizedBox(width: 5.w),
-                    _buildDateInfo(
-                      tr.check_out_label,
-                      reservation.checkOut,
-                      Icons.logout_rounded,
-                    ),
-                    const Spacer(),
-                    Text(
-                      reservation.price,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.goldBrandColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildDateInfo(String label, String date, IconData icon) {
+  Widget _buildBookingCard(MyBookingItem booking) {
+    final asset = booking.asset;
+    final currencySymbol = booking.currency.symbol;
+
+    return GestureDetector(
+      onTap: () {
+        AppNavigator.of(context).push(
+          AssetDetailsScreen(
+            assetId: asset.id,
+            initialAsset: asset,
+          ),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 2.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: Colors.black.withAlpha(8)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(10),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(22)),
+              child: Stack(
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: asset.image,
+                    height: 16.h,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => Container(
+                      height: 16.h,
+                      color: Colors.grey.shade200,
+                    ),
+                    errorWidget: (_, __, ___) => Container(
+                      height: 16.h,
+                      color: Colors.grey.shade200,
+                      child: Icon(
+                        Icons.image_outlined,
+                        size: 40,
+                        color: Colors.grey.shade400,
+                      ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withAlpha(120),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 1.5.h,
+                    right: 3.w,
+                    child: _buildStatusBadge(booking.status),
+                  ),
+                  Positioned(
+                    left: 4.w,
+                    right: 4.w,
+                    bottom: 1.5.h,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          asset.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: appTextStyle(
+                            context,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 0.4.h),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.location_on_rounded,
+                              size: 13,
+                              color: Colors.white70,
+                            ),
+                            SizedBox(width: 1.w),
+                            Expanded(
+                              child: Text(
+                                asset.location,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: appTextStyle(
+                                  context,
+                                  fontSize: 9.5.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white.withAlpha(220),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(4.w),
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 3.5.w,
+                      vertical: 1.2.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8F7F4),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _buildDateColumn(
+                            tr.check_in,
+                            _formatDate(booking.checkInDate),
+                            Icons.login_rounded,
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 4.h,
+                          color: Colors.black.withAlpha(15),
+                        ),
+                        Expanded(
+                          child: _buildDateColumn(
+                            tr.check_out_label,
+                            _formatDate(booking.checkOutDate),
+                            Icons.logout_rounded,
+                            alignEnd: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 1.5.h),
+                  Row(
+                    children: [
+                      _buildInfoChip(
+                        Icons.nights_stay_rounded,
+                        '${booking.nights} ${tr.nights}',
+                      ),
+                      SizedBox(width: 2.w),
+                      _buildInfoChip(
+                        Icons.people_alt_rounded,
+                        '${booking.guests} ${tr.guests}',
+                      ),
+                      const Spacer(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            tr.total_label,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 8.5.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black.withAlpha(100),
+                            ),
+                          ),
+                          Text(
+                            '$currencySymbol ${booking.finalPrice}',
+                            style: appTextStyle(
+                              context,
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.goldBrandColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateColumn(
+    String label,
+    String date,
+    IconData icon, {
+    bool alignEnd = false,
+  }) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment:
+          alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: appTextStyle(
             context,
-            fontSize: 9.sp,
+            fontSize: 8.5.sp,
             fontWeight: FontWeight.w600,
             color: Colors.black.withAlpha(100),
           ),
         ),
-        SizedBox(height: 0.3.h),
+        SizedBox(height: 0.4.h),
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 12, color: AppColors.goldBrandColor),
-            SizedBox(width: 1.w),
-            Text(
-              date,
-              style: appTextStyle(
-                context,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w700,
-                color: Colors.black.withAlpha(180),
+            if (!alignEnd) ...[
+              Icon(icon, size: 13, color: AppColors.goldBrandColor),
+              SizedBox(width: 1.w),
+            ],
+            Flexible(
+              child: Text(
+                date,
+                style: appTextStyle(
+                  context,
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black.withAlpha(200),
+                ),
               ),
             ),
+            if (alignEnd) ...[
+              SizedBox(width: 1.w),
+              Icon(icon, size: 13, color: AppColors.goldBrandColor),
+            ],
           ],
         ),
       ],
     );
   }
 
-  Widget _buildStatusBadge(ReservationStatus status) {
+  Widget _buildInfoChip(IconData icon, String text) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 0.6.h),
+      decoration: BoxDecoration(
+        color: AppColors.goldBrandColor.withAlpha(18),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: AppColors.goldBrandColor),
+          SizedBox(width: 1.w),
+          Text(
+            text,
+            style: appTextStyle(
+              context,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.goldBrandColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String status) {
     Color bgColor;
     Color textColor;
     String text;
 
-    switch (status) {
-      case ReservationStatus.confirmed:
-        bgColor = Colors.green.withAlpha(220);
+    switch (status.toLowerCase()) {
+      case 'approved':
+        bgColor = Colors.green.withAlpha(230);
         textColor = Colors.white;
-        text = tr.confirmed;
+        text = tr.approved;
         break;
-      case ReservationStatus.pending:
-        bgColor = Colors.orange.withAlpha(220);
+      case 'rejected':
+        bgColor = Colors.red.withAlpha(230);
         textColor = Colors.white;
-        text = tr.pending;
+        text = tr.rejected;
         break;
-      case ReservationStatus.completed:
-        bgColor = Colors.blue.withAlpha(220);
-        textColor = Colors.white;
-        text = tr.completed;
-        break;
-      case ReservationStatus.cancelled:
-        bgColor = Colors.red.withAlpha(220);
+      case 'cancelled':
+        bgColor = Colors.grey.withAlpha(230);
         textColor = Colors.white;
         text = tr.cancelled;
+        break;
+      case 'pending':
+      default:
+        bgColor = Colors.orange.withAlpha(230);
+        textColor = Colors.white;
+        text = tr.pending;
         break;
     }
 
@@ -385,26 +658,4 @@ class _MyReservationsScreenState extends State<MyReservationsScreen>
       ),
     );
   }
-}
-
-enum ReservationStatus { confirmed, pending, completed, cancelled }
-
-class _ReservationItem {
-  final String propertyName;
-  final String location;
-  final String checkIn;
-  final String checkOut;
-  final ReservationStatus status;
-  final String imageUrl;
-  final String price;
-
-  const _ReservationItem({
-    required this.propertyName,
-    required this.location,
-    required this.checkIn,
-    required this.checkOut,
-    required this.status,
-    required this.imageUrl,
-    required this.price,
-  });
 }

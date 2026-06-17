@@ -1,31 +1,67 @@
 import 'dart:async';
+
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/configuration/app_images.dart';
-import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/controller/shared_prefs.dart';
+import 'package:dar_plus_app/core/notifications/notification_service.dart';
+import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
+import 'package:dar_plus_app/features/fcm/presentation/providers/fcm_providers.dart';
+import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/auth/welcome_screen.dart';
 import 'package:dar_plus_app/screens/bottom_nav_bar_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _fade;
 
+  Future<void> _syncFcmTokenIfLoggedIn() async {
+    final sharedPrefs = SharedPerfManager();
+    if (!sharedPrefs.isLoggedIn) return;
+
+    try {
+      var userId = sharedPrefs.userEmail;
+      if (userId.isEmpty) {
+        final profile = await ref.read(authRepositoryProvider).getProfile();
+        userId = profile.email;
+        sharedPrefs.userEmail = userId;
+      }
+
+      final fcmToken =
+          await NotificationService.getToken() ?? sharedPrefs.fcmToken;
+      if (userId.isEmpty || fcmToken.isEmpty) return;
+
+      await ref.read(fcmRepositoryProvider).updateDeviceToken(
+            userId: userId,
+            fcmToken: fcmToken,
+          );
+    } catch (e) {
+      debugPrint('FCM token sync failed: $e');
+    }
+  }
+
   Future<void> _startSplashTimer() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.wait([
+      Future.delayed(const Duration(seconds: 3)),
+      _syncFcmTokenIfLoggedIn(),
+    ]);
+
     if (!mounted) return;
+
     if (SharedPerfManager().isLoggedIn) {
       AppNavigator.of(context).pushAndRemoveUntil(const BottomNavBarScreen());
     } else {

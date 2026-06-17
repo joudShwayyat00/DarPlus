@@ -58,6 +58,7 @@ class RegisterController extends _$RegisterController {
       final sharedPrefs = SharedPerfManager();
       sharedPrefs.token = response.accessToken;
       sharedPrefs.isLoggedIn = true;
+      sharedPrefs.userEmail = email;
       DioFactory.updateAuthToken();
 
       return response;
@@ -82,6 +83,7 @@ class LoginController extends _$LoginController {
       final sharedPrefs = SharedPerfManager();
       sharedPrefs.token = response.accessToken;
       sharedPrefs.isLoggedIn = true;
+      sharedPrefs.userEmail = email;
       DioFactory.updateAuthToken();
 
       return response;

@@ -239,11 +239,12 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                           assetId: assetId,
                           checkIn: _apiDate(_checkIn!),
                           checkOut: _apiDate(_checkOut!),
-                          nights: _nights,
                           guests: _guests,
                           paymentMethod: _payment == PaymentMethod.cash
                               ? 'cod'
                               : 'card',
+                          rentType: rentType,
+                          periodCount: _periodsCount(rentType),
                           notes: _notes.text.trim().isEmpty
                               ? null
                               : _notes.text.trim(),

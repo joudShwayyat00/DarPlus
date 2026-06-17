@@ -64,7 +64,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get email_required => 'البريد الإلكتروني مطلوب';
 
   @override
-  String get enter_valid_email => ' الرجاء إدخال بريد إلكتروني صالح';
+  String get enter_valid_email => 'أدخل بريدًا إلكترونيًا صالحًا';
 
   @override
   String get submit => 'إرسال';
@@ -370,6 +370,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get no_past_reservations => 'لا توجد حجوزات سابقة';
 
   @override
+  String get no_bookings_found => 'لا توجد حجوزات';
+
+  @override
+  String no_bookings_for_status(Object status) {
+    return 'لا توجد حجوزات $status حتى الآن';
+  }
+
+  @override
   String get search => 'بحث';
 
   @override
@@ -658,6 +666,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pending => 'قيد الانتظار';
+
+  @override
+  String get approved => 'موافق عليه';
+
+  @override
+  String get rejected => 'مرفوض';
 
   @override
   String get completed => 'مكتمل';
@@ -1051,4 +1065,109 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get camera => 'التقط صورة';
+
+  @override
+  String get add_new_asset => 'إضافة عقار جديد';
+
+  @override
+  String get basic_information => 'المعلومات الأساسية';
+
+  @override
+  String get name_english => 'الاسم (إنجليزي)';
+
+  @override
+  String get name_arabic => 'الاسم (عربي)';
+
+  @override
+  String get description_english => 'الوصف (إنجليزي)';
+
+  @override
+  String get description_arabic => 'الوصف (عربي)';
+
+  @override
+  String get category_and_type => 'الفئة والنوع';
+
+  @override
+  String get pricing_section => 'التسعير';
+
+  @override
+  String get rent_price => 'سعر الإيجار';
+
+  @override
+  String get rent_price_per_day => 'سعر الإيجار لليوم';
+
+  @override
+  String get rent_price_per_month => 'سعر الإيجار شهريًا';
+
+  @override
+  String get rent_price_per_year => 'سعر الإيجار سنويًا';
+
+  @override
+  String get months_count => 'عدد الأشهر';
+
+  @override
+  String get years_count => 'عدد السنوات';
+
+  @override
+  String get location_section => 'الموقع';
+
+  @override
+  String get location_address_hint => 'الموقع (العنوان / المنطقة)';
+
+  @override
+  String get latitude => 'خط العرض';
+
+  @override
+  String get longitude => 'خط الطول';
+
+  @override
+  String get select_location => 'اختر الموقع';
+
+  @override
+  String get contact_section => 'التواصل';
+
+  @override
+  String get media_section => 'الوسائط';
+
+  @override
+  String get video_url_optional => 'رابط الفيديو (اختياري)';
+
+  @override
+  String get publish_asset => 'نشر العقار';
+
+  @override
+  String get select_category => 'اختر الفئة';
+
+  @override
+  String get please_select_category => 'يرجى اختيار الفئة';
+
+  @override
+  String get please_select_image => 'يرجى اختيار صورة';
+
+  @override
+  String get field_required => 'هذا الحقل مطلوب';
+
+  @override
+  String get valid_latitude => 'يرجى إدخال خط عرض صالح (−90 إلى 90)';
+
+  @override
+  String get valid_longitude => 'يرجى إدخال خط طول صالح (−180 إلى 180)';
+
+  @override
+  String get asset_added_successfully => 'تمت إضافة العقار بنجاح!';
+
+  @override
+  String get something_went_wrong => 'حدث خطأ ما';
+
+  @override
+  String get tap_add_property_image => 'اضغط لإضافة صورة العقار';
+
+  @override
+  String get image_format_hint => 'JPG, PNG — جودة عالية';
+
+  @override
+  String get change => 'تغيير';
+
+  @override
+  String get could_not_load_amenities => 'تعذر تحميل المرافق';
 }

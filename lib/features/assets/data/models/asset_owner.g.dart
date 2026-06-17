@@ -14,7 +14,7 @@ AssetOwner _$AssetOwnerFromJson(Map<String, dynamic> json) => AssetOwner(
   image: json['image'] as String?,
   status: json['status'] as String,
   role: json['role'] as String,
-  rating: (json['rating'] as num?)?.toDouble(),
+  rating: AssetOwner._nullableDoubleFromJson(json['rating']),
 );
 
 Map<String, dynamic> _$AssetOwnerToJson(AssetOwner instance) =>

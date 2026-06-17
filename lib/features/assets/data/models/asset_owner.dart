@@ -12,6 +12,7 @@ class AssetOwner {
   final String? image;
   final String status;
   final String role;
+  @JsonKey(fromJson: _nullableDoubleFromJson)
   final double? rating;
 
   const AssetOwner({
@@ -24,6 +25,13 @@ class AssetOwner {
     required this.role,
     this.rating,
   });
+
+  static double? _nullableDoubleFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
+  }
 
   factory AssetOwner.fromJson(Map<String, dynamic> json) =>
       _$AssetOwnerFromJson(json);

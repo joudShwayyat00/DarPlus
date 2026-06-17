@@ -122,7 +122,7 @@ final class RegisterControllerProvider
 }
 
 String _$registerControllerHash() =>
-    r'ccee005d15783482e8d9aaf67238e2a0c14c013a';
+    r'7e1aa7c0c0cbda08fe79aeeab6afe5b07d9b6ec3';
 
 abstract class _$RegisterController extends $AsyncNotifier<RegisterResponse?> {
   FutureOr<RegisterResponse?> build();
@@ -168,7 +168,7 @@ final class LoginControllerProvider
   LoginController create() => LoginController();
 }
 
-String _$loginControllerHash() => r'c51c5ce51f3cfe4e7980877cc24377dc2ad1a2a5';
+String _$loginControllerHash() => r'c7619ce94daabaf4d72d5a5b1a1a914f60c43aba';
 
 abstract class _$LoginController extends $AsyncNotifier<RegisterResponse?> {
   FutureOr<RegisterResponse?> build();

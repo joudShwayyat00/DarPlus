@@ -3,7 +3,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/network/dio_factory.dart';
 import '../../data/data_sources/booking_service_client.dart';
 import '../../data/models/booking_response.dart';
+import '../../data/models/my_booking_item.dart';
 import '../../data/repositories/booking_repository_impl.dart';
+import '../../domain/booking_status_filter.dart';
 import '../../domain/repositories/booking_repository.dart';
 
 part 'booking_providers.g.dart';
@@ -29,11 +31,27 @@ class BookingController extends _$BookingController {
     required int assetId,
     required String checkIn,
     required String checkOut,
-    required int nights,
     required int guests,
     required String paymentMethod,
+    required String? rentType,
+    required int periodCount,
     String? notes,
   }) async {
+    int? nights;
+    int? monthsCount;
+    int? yearsCount;
+
+    switch (rentType) {
+      case 'monthly':
+        monthsCount = periodCount;
+        break;
+      case 'yearly':
+        yearsCount = periodCount;
+        break;
+      default:
+        nights = periodCount;
+    }
+
     state = const AsyncLoading();
     state = await AsyncValue.guard<BookingData?>(() async {
       final response = await ref.read(bookingRepositoryProvider).bookAsset(
@@ -41,6 +59,8 @@ class BookingController extends _$BookingController {
         checkIn: checkIn,
         checkOut: checkOut,
         nights: nights,
+        monthsCount: monthsCount,
+        yearsCount: yearsCount,
         guests: guests,
         paymentMethod: paymentMethod,
         notes: notes,
@@ -50,4 +70,23 @@ class BookingController extends _$BookingController {
   }
 
   void reset() => state = const AsyncData(null);
+}
+
+@riverpod
+class MyBookingsController extends _$MyBookingsController {
+  @override
+  FutureOr<List<MyBookingItem>> build(BookingStatusFilter status) async {
+    return ref
+        .read(bookingRepositoryProvider)
+        .getMyBookings(status: status.apiValue);
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      return ref
+          .read(bookingRepositoryProvider)
+          .getMyBookings(status: status.apiValue);
+    });
+  }
 }

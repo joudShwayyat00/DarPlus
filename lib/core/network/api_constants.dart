@@ -32,6 +32,8 @@ class ApiConstants {
   static const String addAsset = "api/the_assets/add";
   // Book asset endpoint
   static const String bookAsset = "api/assets/book";
+  // My bookings (requires auth, filter by status)
+  static const String myBookings = "api/my_bookings";
   // Add appointment endpoint
   static const String addAppointment = "api/appointments/add";
   // Terms & conditions
@@ -53,6 +55,8 @@ class ApiConstants {
   static const String packages = "api/packages";
   // Notifications (language suffix is provided as path param)
   static const String notifications = "api/notifications";
+  // FCM device token
+  static const String updateDeviceToken = "api/fcm/update_device_token";
   // Filter endpoint (language suffix is provided as path param)
   static const String filter = "api/filter";
 

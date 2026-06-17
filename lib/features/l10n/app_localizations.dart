@@ -209,7 +209,7 @@ abstract class AppLocalizations {
   /// No description provided for @enter_valid_email.
   ///
   /// In en, this message translates to:
-  /// **'Please enter a valid email'**
+  /// **'Enter a valid email'**
   String get enter_valid_email;
 
   /// No description provided for @submit.
@@ -812,6 +812,18 @@ abstract class AppLocalizations {
   /// **'No past reservations'**
   String get no_past_reservations;
 
+  /// No description provided for @no_bookings_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings found'**
+  String get no_bookings_found;
+
+  /// No description provided for @no_bookings_for_status.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any {status} bookings yet'**
+  String no_bookings_for_status(Object status);
+
   /// No description provided for @search.
   ///
   /// In en, this message translates to:
@@ -1387,6 +1399,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pending'**
   String get pending;
+
+  /// No description provided for @approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get approved;
+
+  /// No description provided for @rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get rejected;
 
   /// No description provided for @completed.
   ///
@@ -2107,6 +2131,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Take a Photo'**
   String get camera;
+
+  /// No description provided for @add_new_asset.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Asset'**
+  String get add_new_asset;
+
+  /// No description provided for @basic_information.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Information'**
+  String get basic_information;
+
+  /// No description provided for @name_english.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (English)'**
+  String get name_english;
+
+  /// No description provided for @name_arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (Arabic)'**
+  String get name_arabic;
+
+  /// No description provided for @description_english.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (English)'**
+  String get description_english;
+
+  /// No description provided for @description_arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (Arabic)'**
+  String get description_arabic;
+
+  /// No description provided for @category_and_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Category & Type'**
+  String get category_and_type;
+
+  /// No description provided for @pricing_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing'**
+  String get pricing_section;
+
+  /// No description provided for @rent_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent Price'**
+  String get rent_price;
+
+  /// No description provided for @rent_price_per_day.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent price per day'**
+  String get rent_price_per_day;
+
+  /// No description provided for @rent_price_per_month.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent price per month'**
+  String get rent_price_per_month;
+
+  /// No description provided for @rent_price_per_year.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent price per year'**
+  String get rent_price_per_year;
+
+  /// No description provided for @months_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Months Count'**
+  String get months_count;
+
+  /// No description provided for @years_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Years Count'**
+  String get years_count;
+
+  /// No description provided for @location_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location_section;
+
+  /// No description provided for @location_address_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Location (address / area)'**
+  String get location_address_hint;
+
+  /// No description provided for @latitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude'**
+  String get latitude;
+
+  /// No description provided for @longitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude'**
+  String get longitude;
+
+  /// No description provided for @select_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Location'**
+  String get select_location;
+
+  /// No description provided for @contact_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get contact_section;
+
+  /// No description provided for @media_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get media_section;
+
+  /// No description provided for @video_url_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Video URL (optional)'**
+  String get video_url_optional;
+
+  /// No description provided for @publish_asset.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish Asset'**
+  String get publish_asset;
+
+  /// No description provided for @select_category.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Category'**
+  String get select_category;
+
+  /// No description provided for @please_select_category.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a category'**
+  String get please_select_category;
+
+  /// No description provided for @please_select_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an image'**
+  String get please_select_image;
+
+  /// No description provided for @field_required.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get field_required;
+
+  /// No description provided for @valid_latitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid latitude (−90 to 90)'**
+  String get valid_latitude;
+
+  /// No description provided for @valid_longitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid longitude (−180 to 180)'**
+  String get valid_longitude;
+
+  /// No description provided for @asset_added_successfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset added successfully!'**
+  String get asset_added_successfully;
+
+  /// No description provided for @something_went_wrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get something_went_wrong;
+
+  /// No description provided for @tap_add_property_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add property image'**
+  String get tap_add_property_image;
+
+  /// No description provided for @image_format_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'JPG, PNG — high quality'**
+  String get image_format_hint;
+
+  /// No description provided for @change.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
+
+  /// No description provided for @could_not_load_amenities.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load amenities'**
+  String get could_not_load_amenities;
 }
 
 class _AppLocalizationsDelegate

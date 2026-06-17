@@ -35,6 +35,7 @@ class AuthRepositoryImpl implements AuthRepository {
     // Save token and set logged in
     SharedPerfManager().token = response.accessToken;
     SharedPerfManager().isLoggedIn = true;
+    SharedPerfManager().userEmail = email;
     return response;
   }
 
@@ -47,6 +48,7 @@ class AuthRepositoryImpl implements AuthRepository {
     // Save token and set logged in
     SharedPerfManager().token = response.accessToken;
     SharedPerfManager().isLoggedIn = true;
+    SharedPerfManager().userEmail = email;
     return response;
   }
 
@@ -61,6 +63,7 @@ class AuthRepositoryImpl implements AuthRepository {
     if (response.status) {
       SharedPerfManager().token = '';
       SharedPerfManager().isLoggedIn = false;
+      SharedPerfManager().userEmail = '';
     }
     return response;
   }

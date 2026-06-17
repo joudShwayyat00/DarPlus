@@ -3,6 +3,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/network/api_constants.dart';
 import '../models/booking_response.dart';
+import '../models/my_booking_item.dart';
 
 part 'booking_service_client.g.dart';
 
@@ -17,9 +18,17 @@ abstract class BookingServiceClient {
     @Part(name: 'asset_id') required int assetId,
     @Part(name: 'check_in') required String checkIn,
     @Part(name: 'check_out') required String checkOut,
-    @Part(name: 'nights') required int nights,
+    @Part(name: 'nights') int? nights,
+    @Part(name: 'months_count') int? monthsCount,
+    @Part(name: 'years_count') int? yearsCount,
     @Part(name: 'guests') required int guests,
     @Part(name: 'payment_method') required String paymentMethod,
     @Part(name: 'notes') String? notes,
   });
+
+  @POST(ApiConstants.myBookings)
+  @MultiPart()
+  Future<List<MyBookingItem>> getMyBookings(
+    @Part(name: 'status') String status,
+  );
 }

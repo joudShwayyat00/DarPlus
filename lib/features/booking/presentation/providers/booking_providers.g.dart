@@ -128,7 +128,7 @@ final class BookingControllerProvider
   BookingController create() => BookingController();
 }
 
-String _$bookingControllerHash() => r'cf703fd2ce21e15384508537fe181f58572c432a';
+String _$bookingControllerHash() => r'6731f6ed557ac308a5a30099650502d3ce55d44e';
 
 abstract class _$BookingController extends $AsyncNotifier<BookingData?> {
   FutureOr<BookingData?> build();
@@ -142,6 +142,99 @@ abstract class _$BookingController extends $AsyncNotifier<BookingData?> {
             as $ClassProviderElement<
               AnyNotifier<AsyncValue<BookingData?>, BookingData?>,
               AsyncValue<BookingData?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(MyBookingsController)
+const myBookingsControllerProvider = MyBookingsControllerFamily._();
+
+final class MyBookingsControllerProvider
+    extends $AsyncNotifierProvider<MyBookingsController, List<MyBookingItem>> {
+  const MyBookingsControllerProvider._({
+    required MyBookingsControllerFamily super.from,
+    required BookingStatusFilter super.argument,
+  }) : super(
+         retry: null,
+         name: r'myBookingsControllerProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$myBookingsControllerHash();
+
+  @override
+  String toString() {
+    return r'myBookingsControllerProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  MyBookingsController create() => MyBookingsController();
+
+  @override
+  bool operator ==(Object other) {
+    return other is MyBookingsControllerProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$myBookingsControllerHash() =>
+    r'0514a4eb3bd4580cd8b73ed3b2a97639aaeec90a';
+
+final class MyBookingsControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MyBookingsController,
+          AsyncValue<List<MyBookingItem>>,
+          List<MyBookingItem>,
+          FutureOr<List<MyBookingItem>>,
+          BookingStatusFilter
+        > {
+  const MyBookingsControllerFamily._()
+    : super(
+        retry: null,
+        name: r'myBookingsControllerProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  MyBookingsControllerProvider call(BookingStatusFilter status) =>
+      MyBookingsControllerProvider._(argument: status, from: this);
+
+  @override
+  String toString() => r'myBookingsControllerProvider';
+}
+
+abstract class _$MyBookingsController
+    extends $AsyncNotifier<List<MyBookingItem>> {
+  late final _$args = ref.$arg as BookingStatusFilter;
+  BookingStatusFilter get status => _$args;
+
+  FutureOr<List<MyBookingItem>> build(BookingStatusFilter status);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref =
+        this.ref as $Ref<AsyncValue<List<MyBookingItem>>, List<MyBookingItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<MyBookingItem>>, List<MyBookingItem>>,
+              AsyncValue<List<MyBookingItem>>,
               Object?,
               Object?
             >;

@@ -26,7 +26,9 @@ class _BookingServiceClient implements BookingServiceClient {
     required int assetId,
     required String checkIn,
     required String checkOut,
-    required int nights,
+    int? nights,
+    int? monthsCount,
+    int? yearsCount,
     required int guests,
     required String paymentMethod,
     String? notes,
@@ -39,7 +41,15 @@ class _BookingServiceClient implements BookingServiceClient {
     _data.fields.add(MapEntry('asset_id', assetId.toString()));
     _data.fields.add(MapEntry('check_in', checkIn));
     _data.fields.add(MapEntry('check_out', checkOut));
-    _data.fields.add(MapEntry('nights', nights.toString()));
+    if (nights != null) {
+      _data.fields.add(MapEntry('nights', nights.toString()));
+    }
+    if (monthsCount != null) {
+      _data.fields.add(MapEntry('months_count', monthsCount.toString()));
+    }
+    if (yearsCount != null) {
+      _data.fields.add(MapEntry('years_count', yearsCount.toString()));
+    }
     _data.fields.add(MapEntry('guests', guests.toString()));
     _data.fields.add(MapEntry('payment_method', paymentMethod));
     if (notes != null) {
@@ -64,6 +74,41 @@ class _BookingServiceClient implements BookingServiceClient {
     late BookingResponse _value;
     try {
       _value = BookingResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<List<MyBookingItem>> getMyBookings(String status) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('status', status));
+    final _options = _setStreamType<List<MyBookingItem>>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            'api/my_bookings',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<MyBookingItem> _value;
+    try {
+      _value = _result.data!
+          .map((dynamic i) => MyBookingItem.fromJson(i as Map<String, dynamic>))
+          .toList();
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
