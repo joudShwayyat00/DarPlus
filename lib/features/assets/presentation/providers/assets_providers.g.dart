@@ -341,7 +341,7 @@ final class AmenitiesProvider
   }
 }
 
-String _$amenitiesHash() => r'c846ce642c69a6efc6b127b2b91d90b85c6eeef5';
+String _$amenitiesHash() => r'378cae8d0fd4d6a35cc412ed163ffc28d5262e21';
 
 @ProviderFor(AddAssetController)
 const addAssetControllerProvider = AddAssetControllerProvider._();

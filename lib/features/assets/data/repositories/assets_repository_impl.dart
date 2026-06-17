@@ -66,7 +66,7 @@ class AssetsRepositoryImpl implements AssetsRepository {
   @override
   Future<List<AmenityItem>> getAmenities(String lang) async {
     final response = await _serviceClient.getAmenities(lang);
-    return response.result;
+    return response.data;
   }
 
   @override
