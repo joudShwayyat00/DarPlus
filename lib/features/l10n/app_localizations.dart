@@ -2288,6 +2288,24 @@ abstract class AppLocalizations {
   /// **'Please select an image'**
   String get please_select_image;
 
+  /// No description provided for @please_select_country.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a country'**
+  String get please_select_country;
+
+  /// No description provided for @please_select_city.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a city'**
+  String get please_select_city;
+
+  /// No description provided for @please_select_region.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a region'**
+  String get please_select_region;
+
   /// No description provided for @field_required.
   ///
   /// In en, this message translates to:

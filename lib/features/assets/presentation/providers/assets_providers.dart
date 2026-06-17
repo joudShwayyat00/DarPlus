@@ -144,7 +144,7 @@ Future<List<AmenityItem>> amenities(Ref ref) async {
   final lang = ref.read(localeProvider).languageCode;
   final client = ref.read(assetsServiceClientProvider);
   final response = await client.getAmenities(lang);
-  return response.result;
+  return response.data;
 }
 
 @riverpod
@@ -172,6 +172,9 @@ class AddAssetController extends _$AddAssetController {
     required double latitude,
     required double longitude,
     required List<int> amenityIds,
+    required int countryId,
+    required int cityId,
+    required int regionId,
   }) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(() async {
@@ -196,6 +199,9 @@ class AddAssetController extends _$AddAssetController {
         latitude: latitude,
         longitude: longitude,
         amenityIds: amenityIds,
+        countryId: countryId,
+        cityId: cityId,
+        regionId: regionId,
       );
     });
     if (ref.mounted) state = result;

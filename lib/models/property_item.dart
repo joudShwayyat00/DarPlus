@@ -4,6 +4,9 @@ class PropertyItem {
   final int? assetId; // API asset ID for booking
   final String title;
   final String location;
+  final String? country;
+  final String? city;
+  final String? region;
   final String price;
   final double rating;
   final List<String> images;
@@ -38,6 +41,9 @@ class PropertyItem {
     this.assetId,
     required this.title,
     required this.location,
+    this.country,
+    this.city,
+    this.region,
     required this.price,
     required this.rating,
     required this.images,
@@ -62,6 +68,15 @@ class PropertyItem {
     this.snapchatUrl,
     this.tiktokUrl,
   });
+
+  String? get locationAreaLine {
+    final parts = [country, city, region]
+        .whereType<String>()
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .toList();
+    return parts.isEmpty ? null : parts.join(' · ');
+  }
 }
 
 final List<PropertyItem> recommendedProperties = [

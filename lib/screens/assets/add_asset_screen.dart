@@ -5,11 +5,13 @@ import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/assets/data/models/amenity_item.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
+import 'package:dar_plus_app/features/location/presentation/providers/location_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/select_location_screen.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:dar_plus_app/utils/widgets/location_selectors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -51,6 +53,12 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   File? _imageFile;
   final Set<int> _selectedAmenityIds = {};
   String _completePhone = '';
+  String? _countryName;
+  int? _selectedCountryId;
+  String? _cityName;
+  int? _selectedCityId;
+  String? _regionName;
+  int? _selectedRegionId;
 
   @override
   void dispose() {
@@ -133,6 +141,18 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       _showSnack(tr.please_select_category);
       return;
     }
+    if (_selectedCountryId == null) {
+      _showSnack(tr.please_select_country);
+      return;
+    }
+    if (_selectedCityId == null) {
+      _showSnack(tr.please_select_city);
+      return;
+    }
+    if (_selectedRegionId == null) {
+      _showSnack(tr.please_select_region);
+      return;
+    }
 
     final lat = double.tryParse(_latCtrl.text.trim());
     final lng = double.tryParse(_lngCtrl.text.trim());
@@ -183,6 +203,9 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
           latitude: lat,
           longitude: lng,
           amenityIds: _selectedAmenityIds.toList(),
+          countryId: _selectedCountryId!,
+          cityId: _selectedCityId!,
+          regionId: _selectedRegionId!,
         );
     EasyLoading.dismiss();
 
@@ -316,6 +339,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     SizedBox(height: 2.5.h),
                     _sectionTitle(tr.location_section),
                     SizedBox(height: 1.h),
+                    _buildLocationDropdowns(),
+                    SizedBox(height: 1.5.h),
                     _buildTextField(
                       controller: _locationCtrl,
                       hint: tr.location_address_hint,
@@ -686,6 +711,73 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  // ── Location dropdowns ───────────────────────────────────────────────────
+
+  Widget _buildLocationDropdowns() {
+    final countriesAsync = ref.watch(countriesProvider);
+
+    return Column(
+      children: [
+        countriesAsync.when(
+          data: (countries) => LocationSelector(
+            icon: Icons.public_rounded,
+            hint: tr.filter_select_country,
+            value: _countryName,
+            items: countries.map((c) => c.name).toList(),
+            onChanged: (name) {
+              if (name == null) {
+                setState(() {
+                  _countryName = null;
+                  _selectedCountryId = null;
+                  _cityName = null;
+                  _selectedCityId = null;
+                  _regionName = null;
+                  _selectedRegionId = null;
+                });
+                return;
+              }
+              final selected = countries.firstWhere((c) => c.name == name);
+              setState(() {
+                _countryName = selected.name;
+                _selectedCountryId = selected.id;
+                _cityName = null;
+                _selectedCityId = null;
+                _regionName = null;
+                _selectedRegionId = null;
+              });
+            },
+          ),
+          loading: () => _skeletonField(),
+          error: (_, __) => const SizedBox.shrink(),
+        ),
+        if (_selectedCountryId != null) ...[
+          SizedBox(height: 1.5.h),
+          CitiesDropdown(
+            countryId: _selectedCountryId!,
+            selectedCity: _cityName,
+            onChanged: (city) => setState(() {
+              _cityName = city?.name;
+              _selectedCityId = city?.id;
+              _regionName = null;
+              _selectedRegionId = null;
+            }),
+          ),
+        ],
+        if (_selectedCityId != null) ...[
+          SizedBox(height: 1.5.h),
+          RegionsDropdown(
+            cityId: _selectedCityId!,
+            selectedRegion: _regionName,
+            onChanged: (region) => setState(() {
+              _regionName = region?.name;
+              _selectedRegionId = region?.id;
+            }),
+          ),
+        ],
+      ],
     );
   }
 

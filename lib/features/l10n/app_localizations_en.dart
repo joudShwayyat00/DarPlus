@@ -1154,6 +1154,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get please_select_image => 'Please select an image';
 
   @override
+  String get please_select_country => 'Please select a country';
+
+  @override
+  String get please_select_city => 'Please select a city';
+
+  @override
+  String get please_select_region => 'Please select a region';
+
+  @override
   String get field_required => 'This field is required';
 
   @override

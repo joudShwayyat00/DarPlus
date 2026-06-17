@@ -14,6 +14,9 @@ class AssetItem {
   final String name;
   final String image;
   final String location;
+  final String? country;
+  final String? city;
+  final String? region;
   final String price;
   final CategoryItem category;
   final AssetOwner owner;
@@ -40,6 +43,9 @@ class AssetItem {
     required this.name,
     required this.image,
     required this.location,
+    this.country,
+    this.city,
+    this.region,
     required this.price,
     required this.category,
     required this.owner,
@@ -60,6 +66,16 @@ class AssetItem {
   /// Owner rating, defaults to 0.0 if not available.
   double get rating => owner.rating ?? 0.0;
 
+  /// Country, city, and region joined for display when available.
+  String? get locationAreaLine {
+    final parts = [country, city, region]
+        .whereType<String>()
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .toList();
+    return parts.isEmpty ? null : parts.join(' · ');
+  }
+
   factory AssetItem.fromJson(Map<String, dynamic> json) =>
       _$AssetItemFromJson(json);
 
@@ -70,6 +86,9 @@ class AssetItem {
     assetId: id,
     title: name,
     location: location,
+    country: country,
+    city: city,
+    region: region,
     price: price,
     rating: rating,
     images: [image],

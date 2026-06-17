@@ -318,6 +318,7 @@ class _InfoCard extends StatelessWidget {
           ),
           SizedBox(height: 0.8.h),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
                 Icons.place_rounded,
@@ -326,16 +327,35 @@ class _InfoCard extends StatelessWidget {
               ),
               SizedBox(width: 1.w),
               Expanded(
-                child: Text(
-                  asset.location,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 11.5.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black.withAlpha(160),
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      asset.location,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 11.5.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black.withAlpha(160),
+                      ),
+                    ),
+                    if (asset.locationAreaLine != null) ...[
+                      SizedBox(height: 0.4.h),
+                      Text(
+                        asset.locationAreaLine!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: appTextStyle(
+                          context,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.goldBrandColor.withAlpha(220),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
               Container(

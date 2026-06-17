@@ -44,5 +44,8 @@ abstract class AssetsRepository {
     required double latitude,
     required double longitude,
     required List<int> amenityIds,
+    required int countryId,
+    required int cityId,
+    required int regionId,
   });
 }

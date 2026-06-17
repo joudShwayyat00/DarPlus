@@ -1145,6 +1145,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get please_select_image => 'يرجى اختيار صورة';
 
   @override
+  String get please_select_country => 'يرجى اختيار الدولة';
+
+  @override
+  String get please_select_city => 'يرجى اختيار المدينة';
+
+  @override
+  String get please_select_region => 'يرجى اختيار المنطقة';
+
+  @override
   String get field_required => 'هذا الحقل مطلوب';
 
   @override

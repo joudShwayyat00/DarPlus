@@ -119,6 +119,9 @@ class AssetsRepositoryImpl implements AssetsRepository {
     required double latitude,
     required double longitude,
     required List<int> amenityIds,
+    required int countryId,
+    required int cityId,
+    required int regionId,
   }) async {
     final dio = DioFactory.getDio();
     final formData = FormData.fromMap({
@@ -144,6 +147,9 @@ class AssetsRepositoryImpl implements AssetsRepository {
       'latitude': latitude,
       'longitude': longitude,
       'amenities_ids': jsonEncode(amenityIds),
+      'country_id': countryId,
+      'city_id': cityId,
+      'region_id': regionId,
     });
     await dio.post(
       '${ApiConstants.baseUrl}${ApiConstants.addAsset}',

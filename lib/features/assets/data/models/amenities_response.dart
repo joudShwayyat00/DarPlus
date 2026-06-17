@@ -5,15 +5,9 @@ part 'amenities_response.g.dart';
 
 @JsonSerializable()
 class AmenitiesResponse {
-  final List<AmenityItem> result;
-  final List<dynamic> errors;
-  final String message;
+  final List<AmenityItem> data;
 
-  const AmenitiesResponse({
-    required this.result,
-    required this.errors,
-    required this.message,
-  });
+  const AmenitiesResponse({required this.data});
 
   factory AmenitiesResponse.fromJson(Map<String, dynamic> json) =>
       _$AmenitiesResponseFromJson(json);

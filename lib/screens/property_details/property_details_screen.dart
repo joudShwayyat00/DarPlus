@@ -298,20 +298,40 @@ class _InfoCard extends StatelessWidget {
           ),
           SizedBox(height: 1.h),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(Icons.place, size: 18, color: Colors.black.withAlpha(150)),
               SizedBox(width: 2.w),
               Expanded(
-                child: Text(
-                  item.location,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 11.8.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black.withAlpha(170),
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.location,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 11.8.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black.withAlpha(170),
+                      ),
+                    ),
+                    if (item.locationAreaLine != null) ...[
+                      SizedBox(height: 0.4.h),
+                      Text(
+                        item.locationAreaLine!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: appTextStyle(
+                          context,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.goldBrandColor.withAlpha(220),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
               _RatingPill(rating: item.rating),
