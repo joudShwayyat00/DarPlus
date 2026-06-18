@@ -11,6 +11,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/book_now_screen.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:flutter/material.dart';
@@ -406,8 +407,16 @@ class _RentInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rentType = asset.rentType ?? 'monthly';
-    final count = rentType == 'yearly' ? asset.yearsCount : asset.monthsCount;
-    final countLabel = rentType == 'yearly' ? 'Years' : 'Months';
+    final count = switch (rentType) {
+      'yearly' => asset.yearsCount,
+      'daily' => asset.daysCount,
+      _ => asset.monthsCount,
+    };
+    final countLabel = switch (rentType) {
+      'yearly' => 'Years',
+      'daily' => 'Days',
+      _ => 'Months',
+    };
 
     String rentTypeLabel;
     IconData rentTypeIcon;
@@ -781,6 +790,17 @@ class _ContactCard extends StatelessWidget {
 
   bool _has(String? v) => v != null && v.trim().isNotEmpty;
 
+  Future<void> _launch(
+    BuildContext context,
+    Future<bool> Function() action,
+  ) async {
+    final ok = await action();
+    if (!context.mounted || ok) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(tr.something_went_wrong)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final phone = _has(asset.phone) ? asset.phone! : asset.owner.phoneNumber;
@@ -801,12 +821,24 @@ class _ContactCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _ContactRow(icon: Icons.phone_rounded, label: tr.phone, value: phone),
+          _ContactRow(
+            icon: Icons.phone_rounded,
+            label: tr.phone,
+            value: phone,
+            onTap: () => _launch(
+              context,
+              () => launchPhoneCall(phone),
+            ),
+          ),
           Divider(height: 2.h, color: Colors.black.withAlpha(12)),
           _ContactRow(
             icon: Icons.email_outlined,
             label: tr.email,
             value: email,
+            onTap: () => _launch(
+              context,
+              () => launchEmail(email),
+            ),
           ),
         ],
       ),
@@ -818,52 +850,65 @@ class _ContactRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
+  final VoidCallback onTap;
 
   const _ContactRow({
     required this.icon,
     required this.label,
     required this.value,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(2.4.w),
-          decoration: BoxDecoration(
-            color: AppColors.goldBrandColor.withAlpha(18),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, size: 18, color: AppColors.goldBrandColor),
-        ),
-        SizedBox(width: 3.w),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: appTextStyle(
-                  context,
-                  fontSize: 9.5.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black.withAlpha(130),
-                ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 0.4.h),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(2.4.w),
+              decoration: BoxDecoration(
+                color: AppColors.goldBrandColor.withAlpha(18),
+                borderRadius: BorderRadius.circular(12),
               ),
-              Text(
-                value,
-                style: appTextStyle(
-                  context,
-                  fontSize: 11.5.sp,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black.withAlpha(225),
-                ),
+              child: Icon(icon, size: 18, color: AppColors.goldBrandColor),
+            ),
+            SizedBox(width: 3.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 9.5.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black.withAlpha(130),
+                    ),
+                  ),
+                  Text(
+                    value,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 11.5.sp,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black.withAlpha(225),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.black.withAlpha(80),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

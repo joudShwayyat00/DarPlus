@@ -76,6 +76,14 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
     return null;
   }
 
+  int? get _maxDailyPeriods {
+    final count = widget.item.daysCount;
+    if (widget.item.rentType == 'daily' && count != null && count > 0) {
+      return count;
+    }
+    return null;
+  }
+
   /// Period count based on rent type: days for daily, months for monthly, years for yearly.
   int _periodsCount(String? rentType) {
     if (_checkIn == null || _checkOut == null) return 1;
@@ -93,7 +101,10 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
         }
         return years.clamp(1, 10);
       default: // daily
-        return _checkOut!.difference(_checkIn!).inDays.clamp(1, 365);
+        final days = _checkOut!.difference(_checkIn!).inDays;
+        final maxDays = _maxDailyPeriods;
+        if (maxDays != null) return days.clamp(1, maxDays);
+        return days.clamp(1, 365);
     }
   }
 

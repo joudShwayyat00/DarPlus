@@ -1145,6 +1145,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get years_count => 'Years Count';
 
   @override
+  String get days_count => 'Days Count';
+
+  @override
   String get location_section => 'Location';
 
   @override
@@ -1211,6 +1214,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get image_format_hint => 'JPG, PNG — high quality';
 
   @override
+  String get add_more_images => 'Add more';
+
+  @override
+  String get cover_image => 'Cover';
+
+  @override
+  String images_selected_count(int count, int max) {
+    return '$count of $max images';
+  }
+
+  @override
+  String max_images_reached(int count) {
+    return 'You can upload up to $count images';
+  }
+
+  @override
   String get change => 'Change';
 
   @override
@@ -1272,4 +1291,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get login_to_rate_owner => 'Please log in to rate this owner';
+
+  @override
+  String get rating_score => 'Rating';
 }

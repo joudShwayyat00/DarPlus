@@ -7,9 +7,10 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/screens/home/widgets/owner_avatar.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
-import 'package:dar_plus_app/utils/widgets/rate_owner_dialog.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
+import 'package:dar_plus_app/utils/widgets/rate_owner_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
@@ -28,137 +29,20 @@ class OwnerProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final detailAsync = ref.watch(ownerDetailControllerProvider(ownerId));
     final detail = detailAsync.whenOrNull(data: (d) => d);
+    final profile = detail?.profile ?? initialOwner;
 
-    if (detail == null && initialOwner == null && detailAsync.isLoading) {
+    if (profile == null) {
       return Scaffold(
-        backgroundColor: const Color(0xFFF8F7F4),
+        backgroundColor: AppColors.whiteColor,
         body: SafeArea(child: _buildShimmer()),
       );
     }
 
-    final profile = detail?.profile ?? initialOwner!;
-    final assets = detail?.assets ?? const <AssetItem>[];
-
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F7F4),
-      body: RefreshIndicator(
-        color: AppColors.goldBrandColor,
-        onRefresh: () =>
-            ref.read(ownerDetailControllerProvider(ownerId).notifier).refresh(),
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(child: _ProfileHeader(profile: profile)),
-            if (detailAsync.isLoading && detail == null)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 1.h),
-                  child: const LinearProgressIndicator(
-                    color: AppColors.goldBrandColor,
-                    backgroundColor: Color(0x22E07B00),
-                    minHeight: 2,
-                  ),
-                ),
-              ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 1.h),
-                child: _ContactSection(profile: profile),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(5.w, 0, 5.w, 1.h),
-                child: _RateOwnerButton(ownerId: ownerId, profile: profile),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(5.w, 1.h, 5.w, 1.h),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 4,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: AppColors.goldBrandColor,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    SizedBox(width: 2.w),
-                    Expanded(
-                      child: Text(
-                        tr.owner_properties,
-                        style: appTextStyle(
-                          context,
-                          fontSize: 12.5.sp,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.black.withAlpha(230),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      tr.owner_properties_count(assets.length),
-                      style: appTextStyle(
-                        context,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black.withAlpha(120),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (assets.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: Text(
-                      tr.no_owner_properties,
-                      textAlign: TextAlign.center,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black.withAlpha(120),
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            else
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(5.w, 0, 5.w, 3.h),
-                sliver: SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 3.w,
-                    mainAxisSpacing: 2.h,
-                    childAspectRatio: 0.72,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final asset = assets[index];
-                      return _OwnerAssetCard(
-                        asset: asset,
-                        onTap: () => AppNavigator.of(context).push(
-                          AssetDetailsScreen(
-                            assetId: asset.id,
-                            initialAsset: asset,
-                          ),
-                        ),
-                      );
-                    },
-                    childCount: assets.length,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
+    return _OwnerProfileBody(
+      ownerId: ownerId,
+      profile: profile,
+      assets: detail?.assets ?? const <AssetItem>[],
+      isRefreshing: detailAsync.isLoading,
     );
   }
 
@@ -169,13 +53,13 @@ class OwnerProfileScreen extends ConsumerWidget {
         children: [
           ShimmerPlaceholder(
             width: double.infinity,
-            height: 28.h,
-            borderRadius: BorderRadius.circular(24),
+            height: 10.h,
+            borderRadius: BorderRadius.circular(18),
           ),
           SizedBox(height: 2.h),
           ShimmerPlaceholder(
             width: double.infinity,
-            height: 14.h,
+            height: 12.h,
             borderRadius: BorderRadius.circular(18),
           ),
         ],
@@ -184,10 +68,18 @@ class OwnerProfileScreen extends ConsumerWidget {
   }
 }
 
-class _ProfileHeader extends StatelessWidget {
+class _OwnerProfileBody extends StatelessWidget {
+  final int ownerId;
   final AssetOwner profile;
+  final List<AssetItem> assets;
+  final bool isRefreshing;
 
-  const _ProfileHeader({required this.profile});
+  const _OwnerProfileBody({
+    required this.ownerId,
+    required this.profile,
+    required this.assets,
+    required this.isRefreshing,
+  });
 
   String get _statusLabel {
     if (profile.status.isEmpty) return profile.role;
@@ -196,172 +88,353 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          height: 30.h,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.goldBrandColor,
-                AppColors.goldBrandColor.withAlpha(200),
-                const Color(0xFFB35700),
-              ],
-            ),
-            borderRadius: const BorderRadius.vertical(
-              bottom: Radius.circular(32),
-            ),
-          ),
-        ),
-        SafeArea(
-          bottom: false,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(4.w, 1.h, 4.w, 0),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(230),
-                      shape: BoxShape.circle,
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      body: CustomScrollView(
+        slivers: [
+          _buildAppBar(context),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 2.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (isRefreshing) ...[
+                    LinearProgressIndicator(
+                      color: AppColors.goldBrandColor,
+                      backgroundColor: AppColors.goldBrandColor.withAlpha(30),
+                      minHeight: 2,
                     ),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 18,
-                      color: AppColors.blackColor,
-                    ),
+                    SizedBox(height: 1.2.h),
+                  ],
+                  _ProfileCard(
+                    profile: profile,
+                    statusLabel: _statusLabel,
+                    propertiesCount: assets.length,
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          left: 5.w,
-          right: 5.w,
-          bottom: 2.5.h,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              OwnerAvatar(owner: profile, size: 78),
-              SizedBox(width: 4.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      profile.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                  SizedBox(height: 2.h),
+                  _SectionTitle(title: tr.contact_and_social),
+                  SizedBox(height: 1.h),
+                  _ContactCard(profile: profile),
+                  SizedBox(height: 2.2.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _SectionTitle(title: tr.owner_properties),
                       ),
-                    ),
-                    SizedBox(height: 0.6.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 2.8.w,
-                        vertical: 0.4.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(40),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        _statusLabel,
+                      Text(
+                        tr.owner_properties_count(assets.length),
                         style: appTextStyle(
                           context,
-                          fontSize: 9.sp,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black.withAlpha(120),
                         ),
                       ),
-                    ),
-                    if (profile.rating != null) ...[
-                      SizedBox(height: 0.6.h),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star_rounded,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                          SizedBox(width: 1.w),
-                          Text(
-                            profile.rating!.toStringAsFixed(1),
-                            style: appTextStyle(
-                              context,
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
+                  ),
+                  if (assets.isEmpty) ...[
+                    SizedBox(height: 2.h),
+                    _EmptyPropertiesState(),
                   ],
+                  SizedBox(height: assets.isEmpty ? 2.h : 1.2.h),
+                ],
+              ),
+            ),
+          ),
+          if (assets.isNotEmpty)
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(5.w, 0, 5.w, 10.h),
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 3.w,
+                  mainAxisSpacing: 2.h,
+                  childAspectRatio: 0.74,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final asset = assets[index];
+                    return _OwnerAssetCard(
+                      asset: asset,
+                      onTap: () => AppNavigator.of(context).push(
+                        AssetDetailsScreen(
+                          assetId: asset.id,
+                          initialAsset: asset,
+                        ),
+                      ),
+                    );
+                  },
+                  childCount: assets.length,
                 ),
               ),
-            ],
-          ),
-        ),
-      ],
+            ),
+        ],
+      ),
+      bottomNavigationBar: _BottomBar(profile: profile, ownerId: ownerId),
     );
   }
-}
 
-class _RateOwnerButton extends StatelessWidget {
-  final int ownerId;
-  final AssetOwner profile;
-
-  const _RateOwnerButton({
-    required this.ownerId,
-    required this.profile,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 48,
-      child: OutlinedButton.icon(
-        onPressed: () => showRateOwnerDialog(
+  SliverAppBar _buildAppBar(BuildContext context) {
+    return SliverAppBar(
+      pinned: true,
+      backgroundColor: AppColors.whiteColor,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      leading: IconButton(
+        onPressed: () => AppNavigator.of(context).pop(),
+        icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
+      ),
+      title: Text(
+        profile.name,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: appTextStyle(
           context,
-          ownerId: ownerId,
-          owner: profile,
-        ),
-        icon: const Icon(Icons.star_rounded, size: 20),
-        label: Text(
-          tr.rate_owner,
-          style: appTextStyle(
-            context,
-            fontSize: 11.5.sp,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.goldBrandColor,
-          side: BorderSide(color: AppColors.goldBrandColor.withAlpha(180)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w800,
+          color: Colors.black.withAlpha(230),
         ),
       ),
     );
   }
 }
 
-class _ContactSection extends StatelessWidget {
+class _ProfileCard extends StatelessWidget {
+  final AssetOwner profile;
+  final String statusLabel;
+  final int propertiesCount;
+
+  const _ProfileCard({
+    required this.profile,
+    required this.statusLabel,
+    required this.propertiesCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final statusStyle = _statusStyle(profile.status);
+
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.goldBrandColor.withAlpha(60)),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+            color: Colors.black.withAlpha(10),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          OwnerAvatar(owner: profile, size: 60, showRing: false),
+          SizedBox(width: 3.5.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  profile.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black.withAlpha(240),
+                  ),
+                ),
+                SizedBox(height: 0.4.h),
+                Text(
+                  profile.role,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black.withAlpha(130),
+                  ),
+                ),
+                SizedBox(height: 0.8.h),
+                Wrap(
+                  spacing: 2.w,
+                  runSpacing: 0.6.h,
+                  children: [
+                    _StatusChip(
+                      label: statusLabel,
+                      backgroundColor: statusStyle.background,
+                      foregroundColor: statusStyle.foreground,
+                      icon: statusStyle.icon,
+                    ),
+                    if (profile.rating != null)
+                      _MetaChip(
+                        icon: Icons.star_rounded,
+                        label:
+                            '${profile.rating!.toStringAsFixed(1)} ${tr.rating_score}',
+                      ),
+                    _MetaChip(
+                      icon: Icons.home_work_outlined,
+                      label: tr.owner_properties_count(propertiesCount),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusStyle {
+  final Color background;
+  final Color foreground;
+  final IconData icon;
+
+  const _StatusStyle({
+    required this.background,
+    required this.foreground,
+    required this.icon,
+  });
+}
+
+_StatusStyle _statusStyle(String status) {
+  final normalized = status.toLowerCase();
+  if (normalized.contains('block')) {
+    return _StatusStyle(
+      background: const Color(0xFFFFE8E8),
+      foreground: const Color(0xFFC62828),
+      icon: Icons.block_rounded,
+    );
+  }
+  if (normalized.contains('active') || normalized.contains('verified')) {
+    return _StatusStyle(
+      background: const Color(0xFFE8F5E9),
+      foreground: const Color(0xFF2E7D32),
+      icon: Icons.verified_rounded,
+    );
+  }
+  return _StatusStyle(
+    background: Colors.black.withAlpha(12),
+    foreground: Colors.black.withAlpha(170),
+    icon: Icons.info_outline_rounded,
+  );
+}
+
+class _StatusChip extends StatelessWidget {
+  final String label;
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final IconData icon;
+
+  const _StatusChip({
+    required this.label,
+    required this.backgroundColor,
+    required this.foregroundColor,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 0.4.h),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: foregroundColor),
+          SizedBox(width: 1.w),
+          Text(
+            label,
+            style: appTextStyle(
+              context,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
+              color: foregroundColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetaChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _MetaChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 0.4.h),
+      decoration: BoxDecoration(
+        color: AppColors.goldBrandColor.withAlpha(18),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: AppColors.goldBrandColor),
+          SizedBox(width: 1.w),
+          Text(
+            label,
+            style: appTextStyle(
+              context,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.goldBrandColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  final String title;
+
+  const _SectionTitle({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: appTextStyle(
+        context,
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w900,
+        color: Colors.black.withAlpha(240),
+      ),
+    );
+  }
+}
+
+class _ContactCard extends StatelessWidget {
   final AssetOwner profile;
 
-  const _ContactSection({required this.profile});
+  const _ContactCard({required this.profile});
+
+  Future<void> _launch(
+    BuildContext context,
+    Future<bool> Function() action,
+  ) async {
+    final ok = await action();
+    if (!context.mounted || ok) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(tr.something_went_wrong)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -369,39 +442,35 @@ class _ContactSection extends StatelessWidget {
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.black.withAlpha(8)),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(8),
-            blurRadius: 16,
+            blurRadius: 14,
             offset: const Offset(0, 6),
+            color: Colors.black.withAlpha(8),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            tr.contact_and_social,
-            style: appTextStyle(
+          _ContactRow(
+            icon: Icons.phone_rounded,
+            label: tr.phone,
+            value: profile.phoneNumber,
+            onTap: () => _launch(
               context,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w800,
-              color: Colors.black.withAlpha(220),
+              () => launchPhoneCall(profile.phoneNumber),
             ),
           ),
-          SizedBox(height: 1.2.h),
+          Divider(height: 2.h, color: Colors.black.withAlpha(12)),
           _ContactRow(
             icon: Icons.email_outlined,
             label: tr.email,
             value: profile.email,
-          ),
-          Divider(height: 2.h, color: Colors.black.withAlpha(12)),
-          _ContactRow(
-            icon: Icons.phone_outlined,
-            label: tr.phone,
-            value: profile.phoneNumber,
+            onTap: () => _launch(
+              context,
+              () => launchEmail(profile.email),
+            ),
           ),
         ],
       ),
@@ -413,53 +482,207 @@ class _ContactRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
+  final VoidCallback onTap;
 
   const _ContactRow({
     required this.icon,
     required this.label,
     required this.value,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(2.5.w),
-          decoration: BoxDecoration(
-            color: AppColors.goldBrandColor.withAlpha(18),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, size: 18, color: AppColors.goldBrandColor),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 0.4.h),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(2.4.w),
+              decoration: BoxDecoration(
+                color: AppColors.goldBrandColor.withAlpha(18),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, size: 18, color: AppColors.goldBrandColor),
+            ),
+            SizedBox(width: 3.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 9.5.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black.withAlpha(110),
+                    ),
+                  ),
+                  SizedBox(height: 0.2.h),
+                  Text(
+                    value,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black.withAlpha(210),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.black.withAlpha(80),
+            ),
+          ],
         ),
-        SizedBox(width: 3.w),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: appTextStyle(
-                  context,
-                  fontSize: 9.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black.withAlpha(110),
+      ),
+    );
+  }
+}
+
+class _EmptyPropertiesState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 3.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFAFAF8),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.black.withAlpha(8)),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.home_work_outlined,
+            size: 36,
+            color: Colors.black.withAlpha(60),
+          ),
+          SizedBox(height: 1.h),
+          Text(
+            tr.no_owner_properties,
+            textAlign: TextAlign.center,
+            style: appTextStyle(
+              context,
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.black.withAlpha(120),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BottomBar extends StatelessWidget {
+  final AssetOwner profile;
+  final int ownerId;
+
+  const _BottomBar({required this.profile, required this.ownerId});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.6.h),
+        decoration: BoxDecoration(
+          color: AppColors.whiteColor,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 18,
+              offset: const Offset(0, -6),
+              color: Colors.black.withAlpha(12),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    profile.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black.withAlpha(230),
+                    ),
+                  ),
+                  if (profile.rating != null) ...[
+                    SizedBox(height: 0.2.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.star_rounded,
+                          size: 14,
+                          color: AppColors.goldBrandColor,
+                        ),
+                        SizedBox(width: 1.w),
+                        Text(
+                          profile.rating!.toStringAsFixed(1),
+                          style: appTextStyle(
+                            context,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black.withAlpha(150),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            SizedBox(width: 3.w),
+            GestureDetector(
+              onTap: () => showRateOwnerDialog(
+                context,
+                ownerId: ownerId,
+                owner: profile,
+              ),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.5.h),
+                decoration: BoxDecoration(
+                  color: AppColors.goldBrandColor,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.star_rounded,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 2.w),
+                    Text(
+                      tr.rate_owner,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 11.5.sp,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 0.2.h),
-              Text(
-                value,
-                style: appTextStyle(
-                  context,
-                  fontSize: 10.5.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black.withAlpha(210),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

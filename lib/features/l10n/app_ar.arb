@@ -382,6 +382,7 @@
   "rent_price_per_year": "سعر الإيجار سنويًا",
   "months_count": "عدد الأشهر",
   "years_count": "عدد السنوات",
+  "days_count": "عدد الأيام",
   "location_section": "الموقع",
   "location_address_hint": "الموقع (العنوان / المنطقة)",
   "latitude": "خط العرض",
@@ -405,6 +406,21 @@
   "something_went_wrong": "حدث خطأ ما",
   "tap_add_property_image": "اضغط لإضافة صورة العقار",
   "image_format_hint": "JPG, PNG — جودة عالية",
+  "add_more_images": "إضافة المزيد",
+  "cover_image": "الغلاف",
+  "images_selected_count": "{count} من {max} صور",
+  "@images_selected_count": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "max_images_reached": "يمكنك رفع حتى {count} صور",
+  "@max_images_reached": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "change": "تغيير",
   "could_not_load_amenities": "تعذر تحميل المرافق",
   "rate_asset": "تقييم العقار",
@@ -425,5 +441,6 @@
   "rating_label_excellent": "ممتاز",
   "rate_owner": "تقييم المالك",
   "rate_this_owner": "قيّم هذا المالك",
-  "login_to_rate_owner": "يرجى تسجيل الدخول لتقييم هذا المالك"
+  "login_to_rate_owner": "يرجى تسجيل الدخول لتقييم هذا المالك",
+  "rating_score": "التقييم"
 }

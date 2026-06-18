@@ -31,6 +31,7 @@ class PropertyItem {
   final num? rentPrice;
   final int? monthsCount;
   final int? yearsCount;
+  final int? daysCount;
 
   // ✅ روابط السوشيال / الفيديو
   final String? youtubeUrl;
@@ -66,6 +67,7 @@ class PropertyItem {
     this.rentPrice,
     this.monthsCount,
     this.yearsCount,
+    this.daysCount,
     this.youtubeUrl,
     this.facebookUrl,
     this.instagramUrl,

@@ -4,6 +4,7 @@ import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/screens/book_now_screen.dart';
 import 'package:dar_plus_app/screens/property_details/widget/property_images_slider.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -350,6 +351,17 @@ class _ContactLinksCard extends StatelessWidget {
 
   bool _has(String? v) => v != null && v.trim().isNotEmpty;
 
+  Future<void> _launch(
+    BuildContext context,
+    Future<bool> Function() action,
+  ) async {
+    final ok = await action();
+    if (!context.mounted || ok) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(tr.something_went_wrong)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final socialItems = <_SocialItem>[
@@ -397,18 +409,20 @@ class _ContactLinksCard extends StatelessWidget {
             title: tr.phone,
             value: _has(item.phone) ? item.phone! : tr.not_provided,
             enabled: _has(item.phone),
-            onTap: () {
-              // TODO: launchUrl(Uri.parse("tel:${item.phone}"));
-            },
+            onTap: () => _launch(
+              context,
+              () => launchPhoneCall(item.phone!),
+            ),
           ),
           _ContactRow(
             icon: Icons.email,
             title: tr.email,
             value: _has(item.email) ? item.email! : tr.not_provided,
             enabled: _has(item.email),
-            onTap: () {
-              // TODO: launchUrl(Uri.parse("mailto:${item.email}"));
-            },
+            onTap: () => _launch(
+              context,
+              () => launchEmail(item.email!),
+            ),
           ),
           if (socialItems.isNotEmpty) ...[
             SizedBox(height: 1.2.h),

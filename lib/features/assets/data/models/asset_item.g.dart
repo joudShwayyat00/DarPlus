@@ -23,8 +23,10 @@ AssetItem _$AssetItemFromJson(Map<String, dynamic> json) => AssetItem(
   email: json['email'] as String?,
   monthsCount: (json['months_count'] as num?)?.toInt(),
   yearsCount: (json['years_count'] as num?)?.toInt(),
+  daysCount: (json['days_count'] as num?)?.toInt(),
   rentType: json['rent_type'] as String?,
   rentPrice: json['rent_price'] as num?,
+  galleryImages: AssetItem._imagesFromJson(json['images']),
   attributes: (json['attributes'] as List<dynamic>?)
       ?.map((e) => AssetAttribute.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -50,8 +52,10 @@ Map<String, dynamic> _$AssetItemToJson(AssetItem instance) => <String, dynamic>{
   'email': instance.email,
   'months_count': instance.monthsCount,
   'years_count': instance.yearsCount,
+  'days_count': instance.daysCount,
   'rent_type': instance.rentType,
   'rent_price': instance.rentPrice,
+  'images': instance.galleryImages,
   'attributes': instance.attributes,
   'amenities': instance.amenities,
 };

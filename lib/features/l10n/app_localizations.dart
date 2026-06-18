@@ -2258,6 +2258,12 @@ abstract class AppLocalizations {
   /// **'Years Count'**
   String get years_count;
 
+  /// No description provided for @days_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Days Count'**
+  String get days_count;
+
   /// No description provided for @location_section.
   ///
   /// In en, this message translates to:
@@ -2390,6 +2396,30 @@ abstract class AppLocalizations {
   /// **'JPG, PNG — high quality'**
   String get image_format_hint;
 
+  /// No description provided for @add_more_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Add more'**
+  String get add_more_images;
+
+  /// No description provided for @cover_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover'**
+  String get cover_image;
+
+  /// No description provided for @images_selected_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {max} images'**
+  String images_selected_count(int count, int max);
+
+  /// No description provided for @max_images_reached.
+  ///
+  /// In en, this message translates to:
+  /// **'You can upload up to {count} images'**
+  String max_images_reached(int count);
+
   /// No description provided for @change.
   ///
   /// In en, this message translates to:
@@ -2515,6 +2545,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please log in to rate this owner'**
   String get login_to_rate_owner;
+
+  /// No description provided for @rating_score.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating_score;
 }
 
 class _AppLocalizationsDelegate
