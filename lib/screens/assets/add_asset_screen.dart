@@ -46,14 +46,13 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   final _monthsCtrl = TextEditingController();
   final _yearsCtrl = TextEditingController();
   final _daysCtrl = TextEditingController();
-
- 
+  final _dayPriceCtrl = TextEditingController();
 
   // State
   int? _selectedCategoryId;
   String _type = 'rent'; // 'rent' | 'sale'
   String _rentType = 'monthly'; // 'monthly' | 'yearly'
-  final List<File> _imageFiles = [];
+  File? _imageFile;
   final Set<int> _selectedAmenityIds = {};
   String _completePhone = '';
   String? _countryName;
@@ -80,32 +79,19 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     _monthsCtrl.dispose();
     _yearsCtrl.dispose();
     _daysCtrl.dispose();
+    _dayPriceCtrl.dispose();
     super.dispose();
   }
 
   // ── Image picker ──────────────────────────────────────────────────────────
 
-  Future<void> _pickImages() async {
-    final remaining = _maxImages - _imageFiles.length;
-    if (remaining <= 0) {
-      _showSnack(tr.max_images_reached(_maxImages));
-      return;
-    }
-
+  Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final picked = await picker.pickMultiImage(
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
       imageQuality: 85,
-      limit: remaining,
     );
-    if (picked.isEmpty) return;
-
-    setState(() {
-      _imageFiles.addAll(picked.map((file) => File(file.path)));
-    });
-  }
-
-  void _removeImage(int index) {
-    setState(() => _imageFiles.removeAt(index));
+    if (picked != null) setState(() => _imageFile = File(picked.path));
   }
 
   // ── Map location picker ───────────────────────────────────────────────────
@@ -151,7 +137,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_imageFiles.isEmpty) {
+    if (_imageFile == null) {
       _showSnack(tr.please_select_image);
       return;
     }
@@ -196,7 +182,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
           descriptionAr: _descArCtrl.text.trim(),
           categoryId: _selectedCategoryId!,
           price: _type == 'sale' ? salePrice : (rentPrice ?? 0),
-          imagePaths: _imageFiles.map((file) => file.path).toList(),
+          imagePath: _imageFile!.path,
           video: _videoCtrl.text.trim().isEmpty ? null : _videoCtrl.text.trim(),
           location: _locationCtrl.text.trim(),
           email: _emailCtrl.text.trim(),
@@ -222,6 +208,12 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                   _rentType == 'daily' &&
                   _daysCtrl.text.isNotEmpty
               ? int.tryParse(_daysCtrl.text.trim())
+              : null,
+          dayPrice:
+              _type == 'rent' &&
+                  _rentType == 'monthly' &&
+                  _dayPriceCtrl.text.isNotEmpty
+              ? double.tryParse(_dayPriceCtrl.text.trim())
               : null,
           rentPrice: _type == 'rent' ? rentPrice : null,
           latitude: lat,
@@ -342,6 +334,20 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
+                          ],
+                        ),
+                        SizedBox(height: 1.5.h),
+                        _buildTextField(
+                          controller: _dayPriceCtrl,
+                          hint: tr.day_price,
+                          icon: Icons.payments_outlined,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9.]'),
+                            ),
                           ],
                         ),
                       ],
@@ -897,87 +903,102 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   // ── Image picker ──────────────────────────────────────────────────────────
 
   Widget _buildImagePicker() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (_imageFiles.isEmpty)
-          GestureDetector(
-            onTap: _pickImages,
-            child: Container(
-              height: 20.h,
-              decoration: BoxDecoration(
-                color: AppColors.grayBrandColor.withAlpha(12),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppColors.grayBrandColor.withAlpha(70)),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_photo_alternate_outlined,
-                    size: 36,
-                    color: AppColors.grayBrandColor.withAlpha(140),
-                  ),
-                  SizedBox(height: 1.h),
-                  Text(
-                    tr.tap_add_property_image,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 10.5.sp,
-                      color: AppColors.grayBrandColor,
-                    ),
-                  ),
-                  SizedBox(height: 0.4.h),
-                  Text(
-                    tr.image_format_hint,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 9.sp,
-                      color: AppColors.grayBrandColor.withAlpha(130),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        else
-          SizedBox(
-            height: 14.h,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: _imageFiles.length + 1,
-              separatorBuilder: (_, __) => SizedBox(width: 2.5.w),
-              itemBuilder: (context, index) {
-                if (index == _imageFiles.length) {
-                  if (_imageFiles.length >= _maxImages) {
-                    return const SizedBox.shrink();
-                  }
-                  return _AddImageTile(onTap: _pickImages);
-                }
-
-                final file = _imageFiles[index];
-                return _ImageThumbnail(
-                  file: file,
-                  isCover: index == 0,
-                  onRemove: () => _removeImage(index),
-                  onTap: _pickImages,
-                );
-              },
-            ),
+    return GestureDetector(
+      onTap: _pickImage,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        height: 20.h,
+        decoration: BoxDecoration(
+          color: AppColors.grayBrandColor.withAlpha(12),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: _imageFile != null
+                ? AppColors.goldBrandColor
+                : AppColors.grayBrandColor.withAlpha(70),
+            width: _imageFile != null ? 2 : 1,
           ),
-        if (_imageFiles.isNotEmpty) ...[
-          SizedBox(height: 1.h),
-          Text(
-            tr.images_selected_count(_imageFiles.length, _maxImages),
-            style: appTextStyle(
-              context,
-              fontSize: 9.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.black.withAlpha(120),
-            ),
-          ),
-        ],
-      ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(17),
+          child: _imageFile != null
+              ? Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.file(_imageFile!, fit: BoxFit.cover),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () => setState(() => _imageFile = null),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.close_rounded,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.goldBrandColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          tr.change,
+                          style: appTextStyle(
+                            context,
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add_photo_alternate_outlined,
+                      size: 36,
+                      color: AppColors.grayBrandColor.withAlpha(140),
+                    ),
+                    SizedBox(height: 1.h),
+                    Text(
+                      tr.tap_add_property_image,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 10.5.sp,
+                        color: AppColors.grayBrandColor,
+                      ),
+                    ),
+                    SizedBox(height: 0.4.h),
+                    Text(
+                      tr.image_format_hint,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 9.sp,
+                        color: AppColors.grayBrandColor.withAlpha(130),
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ),
     );
   }
 
@@ -1090,130 +1111,4 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
 
   String? _requiredValidator(String? v) =>
       (v == null || v.trim().isEmpty) ? tr.field_required : null;
-}
-
-class _ImageThumbnail extends StatelessWidget {
-  final File file;
-  final bool isCover;
-  final VoidCallback onRemove;
-  final VoidCallback onTap;
-
-  const _ImageThumbnail({
-    required this.file,
-    required this.isCover,
-    required this.onRemove,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Stack(
-        children: [
-          Container(
-            width: 28.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isCover
-                    ? AppColors.goldBrandColor
-                    : Colors.black.withAlpha(20),
-                width: isCover ? 2 : 1,
-              ),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Image.file(file, fit: BoxFit.cover),
-            ),
-          ),
-          if (isCover)
-            Positioned(
-              left: 6,
-              bottom: 6,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.goldBrandColor,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  tr.cover_image,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 8.sp,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          Positioned(
-            top: 4,
-            right: 4,
-            child: GestureDetector(
-              onTap: onRemove,
-              child: Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.close_rounded,
-                  size: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AddImageTile extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _AddImageTile({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 28.w,
-        decoration: BoxDecoration(
-          color: AppColors.grayBrandColor.withAlpha(12),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AppColors.goldBrandColor.withAlpha(120),
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add_rounded,
-              color: AppColors.goldBrandColor,
-              size: 28,
-            ),
-            SizedBox(height: 0.5.h),
-            Text(
-              tr.add_more_images,
-              textAlign: TextAlign.center,
-              style: appTextStyle(
-                context,
-                fontSize: 8.5.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColors.goldBrandColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

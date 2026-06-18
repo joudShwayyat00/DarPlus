@@ -380,6 +380,7 @@
   "rent_price_per_day": "Rent price per day",
   "rent_price_per_month": "Rent price per month",
   "rent_price_per_year": "Rent price per year",
+  "day_price": "Day price",
   "months_count": "Months Count",
   "years_count": "Years Count",
   "days_count": "Days Count",
@@ -406,21 +407,6 @@
   "something_went_wrong": "Something went wrong",
   "tap_add_property_image": "Tap to add property image",
   "image_format_hint": "JPG, PNG — high quality",
-  "add_more_images": "Add more",
-  "cover_image": "Cover",
-  "images_selected_count": "{count} of {max} images",
-  "@images_selected_count": {
-    "placeholders": {
-      "count": { "type": "int" },
-      "max": { "type": "int" }
-    }
-  },
-  "max_images_reached": "You can upload up to {count} images",
-  "@max_images_reached": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
   "change": "Change",
   "could_not_load_amenities": "Could not load amenities",
   "rate_asset": "Rate Property",

@@ -37,8 +37,6 @@ class AssetItem {
   final String? rentType;
   @JsonKey(name: 'rent_price')
   final num? rentPrice;
-  @JsonKey(name: 'images', fromJson: _imagesFromJson)
-  final List<String>? galleryImages;
   final List<AssetAttribute>? attributes;
   final List<AssetAmenity>? amenities;
 
@@ -62,7 +60,6 @@ class AssetItem {
     this.daysCount,
     this.rentType,
     this.rentPrice,
-    this.galleryImages,
     this.attributes,
     this.amenities,
   });
@@ -71,33 +68,6 @@ class AssetItem {
 
   /// Owner rating, defaults to 0.0 if not available.
   double get rating => owner.rating ?? 0.0;
-
-  List<String> get allImages {
-    final extra = galleryImages ?? const <String>[];
-    if (extra.isNotEmpty) return extra;
-    if (image.isNotEmpty) return [image];
-    return const [];
-  }
-
-  static List<String>? _imagesFromJson(dynamic value) {
-    if (value == null) return null;
-    if (value is List) {
-      final urls = value
-          .map((item) {
-            if (item is String) return item;
-            if (item is Map<String, dynamic>) {
-              return (item['url'] ?? item['image'] ?? item['path'])?.toString();
-            }
-            return item?.toString();
-          })
-          .whereType<String>()
-          .where((url) => url.trim().isNotEmpty)
-          .toList();
-      return urls.isEmpty ? null : urls;
-    }
-    if (value is String && value.trim().isNotEmpty) return [value];
-    return null;
-  }
 
   /// Country, city, and region joined for display when available.
   String? get locationAreaLine {
@@ -124,7 +94,7 @@ class AssetItem {
     region: region,
     price: price,
     rating: rating,
-    images: allImages,
+    images: [image],
     description: description ?? '',
     guests: 0,
     bedrooms: 0,

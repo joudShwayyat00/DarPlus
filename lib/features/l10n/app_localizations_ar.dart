@@ -1205,22 +1205,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get image_format_hint => 'JPG, PNG — جودة عالية';
 
   @override
-  String get add_more_images => 'إضافة المزيد';
-
-  @override
-  String get cover_image => 'الغلاف';
-
-  @override
-  String images_selected_count(int count, int max) {
-    return '$count من $max صور';
-  }
-
-  @override
-  String max_images_reached(int count) {
-    return 'يمكنك رفع حتى $count صور';
-  }
-
-  @override
   String get change => 'تغيير';
 
   @override

@@ -106,7 +106,7 @@ class AssetsRepositoryImpl implements AssetsRepository {
     required String descriptionAr,
     required int categoryId,
     required double price,
-    required List<String> imagePaths,
+    required String imagePath,
     String? video,
     required String location,
     required String email,
@@ -117,6 +117,7 @@ class AssetsRepositoryImpl implements AssetsRepository {
     int? yearsCount,
     int? daysCount,
     double? rentPrice,
+    double? dayPrice,
     required double latitude,
     required double longitude,
     required List<int> amenityIds,
@@ -124,10 +125,6 @@ class AssetsRepositoryImpl implements AssetsRepository {
     required int cityId,
     required int regionId,
   }) async {
-    if (imagePaths.isEmpty) {
-      throw Exception('At least one image is required');
-    }
-
     final dio = DioFactory.getDio();
     final formData = FormData.fromMap({
       'name_en': nameEn,
@@ -137,8 +134,8 @@ class AssetsRepositoryImpl implements AssetsRepository {
       'category_id': categoryId,
       'price': price,
       'image': await MultipartFile.fromFile(
-        imagePaths.first,
-        filename: imagePaths.first.split('/').last,
+        imagePath,
+        filename: imagePath.split('/').last,
       ),
       if (video != null && video.isNotEmpty) 'video': video,
       'location': location,
@@ -150,6 +147,7 @@ class AssetsRepositoryImpl implements AssetsRepository {
       if (yearsCount != null) 'years_count': yearsCount,
       if (daysCount != null) 'days_count': daysCount,
       if (rentPrice != null) 'rent_price': rentPrice,
+      if (dayPrice != null) 'day_price': dayPrice,
       'latitude': latitude,
       'longitude': longitude,
       'amenities_ids': jsonEncode(amenityIds),
@@ -157,20 +155,6 @@ class AssetsRepositoryImpl implements AssetsRepository {
       'city_id': cityId,
       'region_id': regionId,
     });
-
-    for (var i = 1; i < imagePaths.length; i++) {
-      final path = imagePaths[i];
-      formData.files.add(
-        MapEntry(
-          'images[]',
-          await MultipartFile.fromFile(
-            path,
-            filename: path.split('/').last,
-          ),
-        ),
-      );
-    }
-
     await dio.post(
       '${ApiConstants.baseUrl}${ApiConstants.addAsset}',
       data: formData,

@@ -1214,22 +1214,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get image_format_hint => 'JPG, PNG — high quality';
 
   @override
-  String get add_more_images => 'Add more';
-
-  @override
-  String get cover_image => 'Cover';
-
-  @override
-  String images_selected_count(int count, int max) {
-    return '$count of $max images';
-  }
-
-  @override
-  String max_images_reached(int count) {
-    return 'You can upload up to $count images';
-  }
-
-  @override
   String get change => 'Change';
 
   @override
