@@ -450,32 +450,37 @@ class _RentInfoCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: 1.5.h),
-          Row(
-            children: [
-              // Rent type chip
-              _RentDetailTile(
-                icon: rentTypeIcon,
-                label: 'Rent Type',
-                value: rentTypeLabel,
-              ),
-              if (count != null && count > 0) ...[
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: _RentDetailTile(
+                    icon: rentTypeIcon,
+                    label: 'Rent Type',
+                    value: rentTypeLabel,
+                  ),
+                ),
                 SizedBox(width: 3.w),
-                _RentDetailTile(
-                  icon: Icons.timelapse_rounded,
-                  label: countLabel,
-                  value: count.toString(),
+                Expanded(
+                  child: _RentDetailTile(
+                    icon: Icons.timelapse_rounded,
+                    label: countLabel,
+                    value: count != null && count > 0 ? count.toString() : '-',
+                  ),
+                ),
+                SizedBox(width: 3.w),
+                Expanded(
+                  child: _RentDetailTile(
+                    icon: Icons.payments_outlined,
+                    label: 'Rent Price',
+                    value: asset.rentPrice != null
+                        ? '${asset.rentPrice!.toStringAsFixed(2)} ${tr.currency_jod}'
+                        : '-',
+                  ),
                 ),
               ],
-              if (asset.rentPrice != null) ...[
-                SizedBox(width: 3.w),
-                _RentDetailTile(
-                  icon: Icons.payments_outlined,
-                  label: 'Rent Price',
-                  value:
-                      '${asset.rentPrice!.toStringAsFixed(2)} ${tr.currency_jod}',
-                ),
-              ],
-            ],
+            ),
           ),
         ],
       ),
@@ -496,43 +501,44 @@ class _RentDetailTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 1.4.h, horizontal: 2.w),
-        decoration: BoxDecoration(
-          color: AppColors.goldBrandColor.withAlpha(15),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.goldBrandColor.withAlpha(50)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 20, color: AppColors.goldBrandColor),
-            SizedBox(height: 0.6.h),
-            Text(
-              label,
-              style: appTextStyle(
-                context,
-                fontSize: 9.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.black.withAlpha(130),
-              ),
-              textAlign: TextAlign.center,
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 1.4.h, horizontal: 2.w),
+      decoration: BoxDecoration(
+        color: AppColors.goldBrandColor.withAlpha(15),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.goldBrandColor.withAlpha(50)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 20, color: AppColors.goldBrandColor),
+          SizedBox(height: 0.6.h),
+          Text(
+            label,
+            style: appTextStyle(
+              context,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.black.withAlpha(130),
             ),
-            SizedBox(height: 0.3.h),
-            Text(
-              value,
-              style: appTextStyle(
-                context,
-                fontSize: 10.5.sp,
-                fontWeight: FontWeight.w900,
-                color: Colors.black.withAlpha(230),
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 0.3.h),
+          Text(
+            value,
+            style: appTextStyle(
+              context,
+              fontSize: 10.5.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.black.withAlpha(230),
             ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }

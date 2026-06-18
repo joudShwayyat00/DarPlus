@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../controller/local_provider.dart';
@@ -51,7 +49,7 @@ class AssetsController extends _$AssetsController {
     _currentPage = 1;
     _hasMore = false;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+    final next = await AsyncValue.guard(() async {
       final lang = ref.read(localeProvider).languageCode;
       final result = await ref
           .read(assetsRepositoryProvider)
@@ -59,13 +57,14 @@ class AssetsController extends _$AssetsController {
       _hasMore = result.hasMore;
       return result.items;
     });
+    if (ref.mounted) state = next;
   }
 
   Future<void> refresh() async {
     _currentPage = 1;
     _hasMore = false;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+    final next = await AsyncValue.guard(() async {
       final lang = ref.read(localeProvider).languageCode;
       final result = await ref
           .read(assetsRepositoryProvider)
@@ -73,6 +72,7 @@ class AssetsController extends _$AssetsController {
       _hasMore = result.hasMore;
       return result.items;
     });
+    if (ref.mounted) state = next;
   }
 
   Future<void> loadMore() async {
@@ -93,6 +93,7 @@ class AssetsController extends _$AssetsController {
             categoryId: _currentCategoryId,
             page: _currentPage + 1,
           );
+      if (!ref.mounted) return;
       _currentPage += 1;
       _hasMore = result.hasMore;
       state = AsyncData([...current, ...result.items]);
@@ -112,9 +113,10 @@ class TopRatedAssetsController extends _$TopRatedAssetsController {
 
   Future<void> refresh() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
+    final next = await AsyncValue.guard(
       () => ref.read(assetsRepositoryProvider).getTopRatedAssets(),
     );
+    if (ref.mounted) state = next;
   }
 }
 
@@ -131,11 +133,12 @@ class AssetDetailController extends _$AssetDetailController {
 
   Future<void> refresh() async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+    final next = await AsyncValue.guard(() async {
       final lang = ref.read(localeProvider).languageCode;
       final repository = ref.read(assetsRepositoryProvider);
       return await repository.getAssetDetail(id: assetId, lang: lang);
     });
+    if (ref.mounted) state = next;
   }
 }
 
@@ -235,7 +238,7 @@ class MyAssetsController extends _$MyAssetsController {
     _currentPage = 1;
     _hasMore = false;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+    final next = await AsyncValue.guard(() async {
       final lang = ref.read(localeProvider).languageCode;
       final result = await ref
           .read(assetsRepositoryProvider)
@@ -243,13 +246,14 @@ class MyAssetsController extends _$MyAssetsController {
       _hasMore = result.hasMore;
       return result.items;
     });
+    if (ref.mounted) state = next;
   }
 
   Future<void> refresh() async {
     _currentPage = 1;
     _hasMore = false;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+    final next = await AsyncValue.guard(() async {
       final lang = ref.read(localeProvider).languageCode;
       final result = await ref
           .read(assetsRepositoryProvider)
@@ -257,6 +261,7 @@ class MyAssetsController extends _$MyAssetsController {
       _hasMore = result.hasMore;
       return result.items;
     });
+    if (ref.mounted) state = next;
   }
 
   Future<void> loadMore() async {
@@ -277,6 +282,7 @@ class MyAssetsController extends _$MyAssetsController {
             categoryId: _currentCategoryId,
             page: _currentPage + 1,
           );
+      if (!ref.mounted) return;
       _currentPage += 1;
       _hasMore = result.hasMore;
       state = AsyncData([...current, ...result.items]);
@@ -328,7 +334,8 @@ class FilteredAssetsController extends _$FilteredAssetsController {
     _currentPage = 1;
     _hasMore = false;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _fetchPage(filter, 1));
+    final next = await AsyncValue.guard(() => _fetchPage(filter, 1));
+    if (ref.mounted) state = next;
   }
 
   Future<void> loadMore() async {
@@ -343,6 +350,7 @@ class FilteredAssetsController extends _$FilteredAssetsController {
     try {
       final nextPage = _currentPage + 1;
       final more = await _fetchPage(_filter, nextPage);
+      if (!ref.mounted) return;
       _currentPage = nextPage;
       state = AsyncData([...current, ...more]);
     } finally {

@@ -142,6 +142,22 @@
   "notes": "ملاحظات",
   "price_summary": "ملخص السعر",
   "please_select_checkin_date": "الرجاء اختيار تاريخ الوصول.",
+  "max_rental_months_exceeded": "يمكنك الحجز لمدة {count} شهر كحد أقصى لهذا العقار.",
+  "@max_rental_months_exceeded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "max_rental_months_hint": "الحد الأقصى للإقامة: {count} شهر (28–29 يوم لكل شهر).",
+  "@max_rental_months_hint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "please_accept_booking_policy": "الرجاء قبول سياسة الحجز.",
   "hotel_apartments": "شقق فندقية",
   "family_apartments": "شقق عائلية",

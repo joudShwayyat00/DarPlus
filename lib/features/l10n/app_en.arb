@@ -142,6 +142,22 @@
   "notes": "Notes",
   "price_summary": "Price summary",
   "please_select_checkin_date": "Please select check-in date.",
+  "max_rental_months_exceeded": "You can book up to {count} months for this property.",
+  "@max_rental_months_exceeded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "max_rental_months_hint": "Maximum stay: {count} months (28–29 days each).",
+  "@max_rental_months_hint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "please_accept_booking_policy": "Please accept the booking policy.",
   "hotel_apartments": "Hotel Apartments",
   "family_apartments": "Family Apartments",

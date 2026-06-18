@@ -36,21 +36,81 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
     return _checkOut!.difference(_checkIn!).inDays.clamp(1, 365);
   }
 
+  static bool _isLeapYear(int year) =>
+      (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+
+  /// Rental months use 28 days, or 29 for February in a leap year.
+  static int _daysInRentalMonth(DateTime from) {
+    if (from.month == 2 && _isLeapYear(from.year)) return 29;
+    return 28;
+  }
+
+  static DateTime _addRentalMonths(DateTime from, int months) {
+    var cursor = from;
+    for (var i = 0; i < months; i++) {
+      cursor = cursor.add(Duration(days: _daysInRentalMonth(cursor)));
+    }
+    return cursor;
+  }
+
+  int _countMonthlyPeriods(DateTime checkIn, DateTime checkOut) {
+    final totalDays = checkOut.difference(checkIn).inDays;
+    if (totalDays <= 0) return 1;
+
+    var periods = 0;
+    var remaining = totalDays;
+    var cursor = checkIn;
+    while (remaining > 0) {
+      periods++;
+      final monthDays = _daysInRentalMonth(cursor);
+      remaining -= monthDays;
+      cursor = cursor.add(Duration(days: monthDays));
+    }
+    return periods;
+  }
+
+  int? get _maxMonthlyPeriods {
+    final count = widget.item.monthsCount;
+    if (widget.item.rentType == 'monthly' && count != null && count > 0) {
+      return count;
+    }
+    return null;
+  }
+
   /// Period count based on rent type: days for daily, months for monthly, years for yearly.
   int _periodsCount(String? rentType) {
     if (_checkIn == null || _checkOut == null) return 1;
     switch (rentType) {
       case 'monthly':
-        final months =
-            (_checkOut!.year - _checkIn!.year) * 12 +
-            (_checkOut!.month - _checkIn!.month);
-        return months.clamp(1, 120);
+        final periods = _countMonthlyPeriods(_checkIn!, _checkOut!);
+        final maxMonths = _maxMonthlyPeriods;
+        if (maxMonths != null) return periods.clamp(1, maxMonths);
+        return periods.clamp(1, 120);
       case 'yearly':
         final years = _checkOut!.year - _checkIn!.year;
+        final maxYears = widget.item.yearsCount;
+        if (maxYears != null && maxYears > 0) {
+          return years.clamp(1, maxYears);
+        }
         return years.clamp(1, 10);
       default: // daily
         return _checkOut!.difference(_checkIn!).inDays.clamp(1, 365);
     }
+  }
+
+  DateTime? _maxCheckOutDate() {
+    if (_checkIn == null) return null;
+    final maxMonths = _maxMonthlyPeriods;
+    if (maxMonths == null) return null;
+    return _addRentalMonths(_checkIn!, maxMonths);
+  }
+
+  bool _exceedsMonthlyLimit() {
+    final maxMonths = _maxMonthlyPeriods;
+    if (maxMonths == null || _checkIn == null || _checkOut == null) {
+      return false;
+    }
+    return _countMonthlyPeriods(_checkIn!, _checkOut!) > maxMonths;
   }
 
   @override
@@ -141,6 +201,9 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
               checkIn: _checkIn,
               checkOut: _checkOut,
               nights: _nights,
+              rentType: isForSale ? null : rentType,
+              periods: _periodsCount(rentType),
+              maxMonths: _maxMonthlyPeriods,
               onPickCheckIn: () => _pickDate(context, isCheckIn: true),
               onPickCheckOut: () => _pickDate(context, isCheckIn: false),
               onClear: () => setState(() {
@@ -221,6 +284,13 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                   onPressed: () async {
                     if (_checkIn == null || _checkOut == null) {
                       _toast(context, tr.please_select_checkin_date);
+                      return;
+                    }
+                    if (_exceedsMonthlyLimit()) {
+                      _toast(
+                        context,
+                        tr.max_rental_months_exceeded(_maxMonthlyPeriods!),
+                      );
                       return;
                     }
                     if (!_agree) {
@@ -331,6 +401,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
     required bool isCheckIn,
   }) async {
     final now = DateTime.now();
+    final rentType = widget.item.rentType;
     final initialDate = isCheckIn
         ? (_checkIn ?? now)
         : (_checkOut ??
@@ -341,11 +412,27 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
         : (_checkIn?.add(const Duration(days: 1)) ??
               DateTime(now.year, now.month, now.day + 1));
 
+    var lastDate = DateTime(now.year + 2);
+    if (!isCheckIn && rentType == 'monthly') {
+      final maxOut = _maxCheckOutDate();
+      if (maxOut != null && maxOut.isBefore(lastDate)) {
+        lastDate = maxOut;
+      }
+    }
+
+    if (!isCheckIn && firstDate.isAfter(lastDate)) {
+      final maxMonths = _maxMonthlyPeriods;
+      if (maxMonths != null) {
+        _toast(context, tr.max_rental_months_exceeded(maxMonths));
+      }
+      return;
+    }
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: initialDate,
+      initialDate: initialDate.isAfter(lastDate) ? lastDate : initialDate,
       firstDate: firstDate,
-      lastDate: DateTime(now.year + 2),
+      lastDate: lastDate,
       builder: (context, child) {
         final base = Theme.of(context);
         return Theme(
@@ -378,13 +465,31 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
         );
       },
     );
+    if (!mounted) return;
     if (picked == null) return;
+
+    if (!isCheckIn && rentType == 'monthly' && _checkIn != null) {
+      final maxOut = _maxCheckOutDate();
+      if (maxOut != null && picked.isAfter(maxOut)) {
+        if (!context.mounted) return;
+        _toast(
+          context,
+          tr.max_rental_months_exceeded(_maxMonthlyPeriods!),
+        );
+        return;
+      }
+    }
+
     setState(() {
       if (isCheckIn) {
         _checkIn = picked;
-        // Reset checkout if it's now before check-in
-        if (_checkOut != null && !_checkOut!.isAfter(picked)) {
-          _checkOut = null;
+        if (_checkOut != null) {
+          final exceedsMonthly = rentType == 'monthly' &&
+              _maxMonthlyPeriods != null &&
+              _countMonthlyPeriods(picked, _checkOut!) > _maxMonthlyPeriods!;
+          if (!_checkOut!.isAfter(picked) || exceedsMonthly) {
+            _checkOut = null;
+          }
         }
       } else {
         _checkOut = picked;
@@ -637,6 +742,9 @@ class _StayCard extends StatelessWidget {
   final DateTime? checkIn;
   final DateTime? checkOut;
   final int nights;
+  final String? rentType;
+  final int periods;
+  final int? maxMonths;
   final VoidCallback onPickCheckIn;
   final VoidCallback onPickCheckOut;
   final VoidCallback onClear;
@@ -645,6 +753,9 @@ class _StayCard extends StatelessWidget {
     required this.checkIn,
     required this.checkOut,
     required this.nights,
+    required this.rentType,
+    required this.periods,
+    required this.maxMonths,
     required this.onPickCheckIn,
     required this.onPickCheckOut,
     required this.onClear,
@@ -673,6 +784,18 @@ class _StayCard extends StatelessWidget {
             onTap: hasIn ? onPickCheckOut : null,
             onClear: null,
           ),
+          if (rentType == 'monthly' && maxMonths != null) ...[
+            SizedBox(height: 1.h),
+            Text(
+              tr.max_rental_months_hint(maxMonths!),
+              style: appTextStyle(
+                context,
+                fontSize: 9.5.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black.withAlpha(130),
+              ),
+            ),
+          ],
           if (hasIn && hasOut) ...[
             SizedBox(height: 1.h),
             Container(
@@ -684,13 +807,17 @@ class _StayCard extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    Icons.nights_stay_outlined,
+                    rentType == 'monthly'
+                        ? Icons.calendar_month_outlined
+                        : Icons.nights_stay_outlined,
                     size: 18,
                     color: AppColors.goldBrandColor,
                   ),
                   SizedBox(width: 2.w),
                   Text(
-                    "$nights ${tr.nights}",
+                    rentType == 'monthly'
+                        ? '$periods ${tr.months}'
+                        : '$nights ${tr.nights}',
                     style: appTextStyle(
                       context,
                       fontSize: 11.sp,

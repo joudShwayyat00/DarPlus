@@ -950,6 +950,18 @@ abstract class AppLocalizations {
   /// **'Please select check-in date.'**
   String get please_select_checkin_date;
 
+  /// No description provided for @max_rental_months_exceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'You can book up to {count} months for this property.'**
+  String max_rental_months_exceeded(int count);
+
+  /// No description provided for @max_rental_months_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum stay: {count} months (28–29 days each).'**
+  String max_rental_months_hint(int count);
+
   /// No description provided for @please_accept_booking_policy.
   ///
   /// In en, this message translates to:

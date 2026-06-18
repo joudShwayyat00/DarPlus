@@ -441,6 +441,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get please_select_checkin_date => 'الرجاء اختيار تاريخ الوصول.';
 
   @override
+  String max_rental_months_exceeded(int count) {
+    return 'يمكنك الحجز لمدة $count شهر كحد أقصى لهذا العقار.';
+  }
+
+  @override
+  String max_rental_months_hint(int count) {
+    return 'الحد الأقصى للإقامة: $count شهر (28–29 يوم لكل شهر).';
+  }
+
+  @override
   String get please_accept_booking_policy => 'الرجاء قبول سياسة الحجز.';
 
   @override

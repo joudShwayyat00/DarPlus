@@ -29,6 +29,8 @@ class PropertyItem {
   // Rent details
   final String? rentType; // 'daily', 'monthly', 'yearly'
   final num? rentPrice;
+  final int? monthsCount;
+  final int? yearsCount;
 
   // ✅ روابط السوشيال / الفيديو
   final String? youtubeUrl;
@@ -62,6 +64,8 @@ class PropertyItem {
     this.email,
     this.rentType,
     this.rentPrice,
+    this.monthsCount,
+    this.yearsCount,
     this.youtubeUrl,
     this.facebookUrl,
     this.instagramUrl,

@@ -105,5 +105,7 @@ class AssetItem {
     email: email ?? owner.email,
     rentType: rentType,
     rentPrice: rentPrice,
+    monthsCount: monthsCount,
+    yearsCount: yearsCount,
   );
 }

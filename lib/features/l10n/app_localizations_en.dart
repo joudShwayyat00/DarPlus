@@ -445,6 +445,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get please_select_checkin_date => 'Please select check-in date.';
 
   @override
+  String max_rental_months_exceeded(int count) {
+    return 'You can book up to $count months for this property.';
+  }
+
+  @override
+  String max_rental_months_hint(int count) {
+    return 'Maximum stay: $count months (28–29 days each).';
+  }
+
+  @override
   String get please_accept_booking_policy =>
       'Please accept the booking policy.';
 
