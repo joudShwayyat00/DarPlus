@@ -22,7 +22,8 @@ class OwnerCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 36.w,
-        padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.8.h),
+        height: 18.h,
+        padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.4.h),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -36,23 +37,28 @@ class OwnerCard extends StatelessWidget {
           ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
             OwnerAvatar(owner: owner, size: 58),
-            SizedBox(height: 1.2.h),
-            Text(
-              owner.name,
-              maxLines: 2,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: appTextStyle(
-                context,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColors.blackColor,
+            SizedBox(height: 1.h),
+            SizedBox(
+              height: 2.6.h,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  owner.name,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.blackColor,
+                  ),
+                ),
               ),
             ),
-            SizedBox(height: 0.4.h),
+            SizedBox(height: 0.3.h),
             Text(
               _statusLabel,
               maxLines: 1,
@@ -64,30 +70,33 @@ class OwnerCard extends StatelessWidget {
                 color: Colors.grey.shade500,
               ),
             ),
-            if (owner.rating != null) ...[
-              SizedBox(height: 0.8.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.star_rounded,
-                    color: AppColors.goldBrandColor,
-                    size: 14,
-                  ),
-                  const SizedBox(width: 3),
-                  Text(
-                    owner.rating!.toStringAsFixed(1),
-                    style: appTextStyle(
-                      context,
-                      fontSize: 9.5.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.goldBrandColor,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            const Spacer(),
+            SizedBox(
+              height: 2.h,
+              child: owner.rating != null
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.star_rounded,
+                          color: AppColors.goldBrandColor,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          owner.rating!.toStringAsFixed(1),
+                          style: appTextStyle(
+                            context,
+                            fontSize: 9.5.sp,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.goldBrandColor,
+                          ),
+                        ),
+                      ],
+                    )
+                  : null,
+            ),
           ],
         ),
       ),

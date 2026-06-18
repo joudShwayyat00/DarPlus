@@ -164,7 +164,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         const AllOwnersScreen(),
                       ),
                     ),
-                    SizedBox(height: 1.5.h),
                     _buildTopOwners(),
 
                     SizedBox(height: 2.h),
@@ -270,40 +269,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       data: (owners) {
         if (owners.isEmpty) return const SizedBox.shrink();
 
-        return SizedBox(
-          height: 24.h,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.zero,
-            itemCount: owners.length,
-            separatorBuilder: (_, __) => SizedBox(width: 3.w),
-            itemBuilder: (context, index) {
-              final owner = owners[index];
-              return OwnerCard(
-                owner: owner,
-                onTap: () => AppNavigator.of(context).push(
-                  OwnerProfileScreen(
-                    ownerId: owner.id,
-                    initialOwner: owner,
+        final preview = owners.take(5).toList();
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.zero,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var i = 0; i < preview.length; i++) ...[
+                if (i > 0) SizedBox(width: 3.w),
+                OwnerCard(
+                  owner: preview[i],
+                  onTap: () => AppNavigator.of(context).push(
+                    OwnerProfileScreen(
+                      ownerId: preview[i].id,
+                      initialOwner: preview[i],
+                    ),
                   ),
                 ),
-              );
-            },
+              ],
+            ],
           ),
         );
       },
-      loading: () => SizedBox(
-        height: 24.h,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.zero,
-          itemCount: 3,
-          separatorBuilder: (_, __) => SizedBox(width: 3.w),
-          itemBuilder: (_, __) => ShimmerPlaceholder(
-            width: 36.w,
-            height: 24.h,
-            borderRadius: BorderRadius.circular(20),
-          ),
+      loading: () => SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.zero,
+        child: Row(
+          children: [
+            for (var i = 0; i < 3; i++) ...[
+              if (i > 0) SizedBox(width: 3.w),
+              ShimmerPlaceholder(
+                width: 36.w,
+                height: 18.h,
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ],
+          ],
         ),
       ),
       error: (_, __) => const SizedBox.shrink(),
