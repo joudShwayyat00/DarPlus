@@ -1139,6 +1139,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rent_price_per_year => 'Rent price per year';
 
   @override
+  String get day_price => 'Day price';
+
+  @override
   String get months_count => 'Months Count';
 
   @override

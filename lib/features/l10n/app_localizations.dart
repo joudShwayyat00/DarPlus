@@ -2246,6 +2246,12 @@ abstract class AppLocalizations {
   /// **'Rent price per year'**
   String get rent_price_per_year;
 
+  /// No description provided for @day_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Day price'**
+  String get day_price;
+
   /// No description provided for @months_count.
   ///
   /// In en, this message translates to:

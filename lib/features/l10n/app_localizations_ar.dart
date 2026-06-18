@@ -1130,6 +1130,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rent_price_per_year => 'سعر الإيجار سنويًا';
 
   @override
+  String get day_price => 'سعر اليوم';
+
+  @override
   String get months_count => 'عدد الأشهر';
 
   @override
