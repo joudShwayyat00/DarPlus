@@ -43,6 +43,18 @@
   "both": "Both",
   "what_are_you_interested_in": "What are you interested in?",
   "top_rated_owners": "Top Rated Owners",
+  "all_owners": "All Owners",
+  "no_owners_found": "No owners found",
+  "owner_properties": "Properties",
+  "owner_properties_count": "{count} properties",
+  "@owner_properties_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "no_owner_properties": "This owner has no listed properties yet",
   "top_rated": "Top Rated",
   "book_now": "Book Now",
   "request_appointment": "Request Appointment",
@@ -410,5 +422,8 @@
   "rating_label_fair": "Fair",
   "rating_label_good": "Good",
   "rating_label_great": "Great",
-  "rating_label_excellent": "Excellent"
+  "rating_label_excellent": "Excellent",
+  "rate_owner": "Rate Owner",
+  "rate_this_owner": "Rate this owner",
+  "login_to_rate_owner": "Please log in to rate this owner"
 }

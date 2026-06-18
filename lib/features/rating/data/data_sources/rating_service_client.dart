@@ -3,6 +3,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/network/api_constants.dart';
 import '../models/rate_asset_response.dart';
+import '../models/rate_owner_response.dart';
 
 part 'rating_service_client.g.dart';
 
@@ -15,6 +16,14 @@ abstract class RatingServiceClient {
   Future<RateAssetResponse> rateAsset({
     @Part(name: 'rating') required int rating,
     @Part(name: 'asset_id') required int assetId,
+    @Part(name: 'comment') String? comment,
+  });
+
+  @POST(ApiConstants.rateOwner)
+  @MultiPart()
+  Future<RateOwnerResponse> rateOwner({
+    @Part(name: 'owner_id') required int ownerId,
+    @Part(name: 'rating') required int rating,
     @Part(name: 'comment') String? comment,
   });
 }

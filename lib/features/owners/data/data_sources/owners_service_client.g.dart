@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'rating_service_client.dart';
+part of 'owners_service_client.dart';
 
 // dart format off
 
@@ -10,8 +10,8 @@ part of 'rating_service_client.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter,avoid_unused_constructor_parameters,unreachable_from_main
 
-class _RatingServiceClient implements RatingServiceClient {
-  _RatingServiceClient(this._dio, {this.baseUrl, this.errorLogger}) {
+class _OwnersServiceClient implements OwnersServiceClient {
+  _OwnersServiceClient(this._dio, {this.baseUrl, this.errorLogger}) {
     baseUrl ??= 'https://darplus.moneymaker-app.com/';
   }
 
@@ -22,40 +22,25 @@ class _RatingServiceClient implements RatingServiceClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<RateAssetResponse> rateAsset({
-    required int rating,
-    required int assetId,
-    String? comment,
-  }) async {
+  Future<OwnersResponse> getOwners() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('rating', rating.toString()));
-    _data.fields.add(MapEntry('asset_id', assetId.toString()));
-    if (comment != null) {
-      _data.fields.add(MapEntry('comment', comment));
-    }
-    final _options = _setStreamType<RateAssetResponse>(
-      Options(
-            method: 'POST',
-            headers: _headers,
-            extra: _extra,
-            contentType: 'multipart/form-data',
-          )
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<OwnersResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/rate',
+            'api/owners/get',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late RateAssetResponse _value;
+    late OwnersResponse _value;
     try {
-      _value = RateAssetResponse.fromJson(_result.data!);
+      _value = OwnersResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
@@ -64,40 +49,25 @@ class _RatingServiceClient implements RatingServiceClient {
   }
 
   @override
-  Future<RateOwnerResponse> rateOwner({
-    required int ownerId,
-    required int rating,
-    String? comment,
-  }) async {
+  Future<OwnerDetailResponse> getOwnerDetail(int id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = FormData();
-    _data.fields.add(MapEntry('owner_id', ownerId.toString()));
-    _data.fields.add(MapEntry('rating', rating.toString()));
-    if (comment != null) {
-      _data.fields.add(MapEntry('comment', comment));
-    }
-    final _options = _setStreamType<RateOwnerResponse>(
-      Options(
-            method: 'POST',
-            headers: _headers,
-            extra: _extra,
-            contentType: 'multipart/form-data',
-          )
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<OwnerDetailResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/rating',
+            'api/owners/${id}',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late RateOwnerResponse _value;
+    late OwnerDetailResponse _value;
     try {
-      _value = RateOwnerResponse.fromJson(_result.data!);
+      _value = OwnerDetailResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;

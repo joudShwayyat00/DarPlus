@@ -140,6 +140,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get top_rated_owners => 'أفضل الملاك';
 
   @override
+  String get all_owners => 'جميع الملاك';
+
+  @override
+  String get no_owners_found => 'لا يوجد ملاك';
+
+  @override
+  String get owner_properties => 'العقارات';
+
+  @override
+  String owner_properties_count(int count) {
+    return '$count عقار';
+  }
+
+  @override
+  String get no_owner_properties => 'لا توجد عقارات مدرجة لهذا المالك بعد';
+
+  @override
   String get top_rated => 'الأعلى تقييماً';
 
   @override
@@ -1237,4 +1254,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rating_label_excellent => 'ممتاز';
+
+  @override
+  String get rate_owner => 'تقييم المالك';
+
+  @override
+  String get rate_this_owner => 'قيّم هذا المالك';
+
+  @override
+  String get login_to_rate_owner => 'يرجى تسجيل الدخول لتقييم هذا المالك';
 }

@@ -142,6 +142,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get top_rated_owners => 'Top Rated Owners';
 
   @override
+  String get all_owners => 'All Owners';
+
+  @override
+  String get no_owners_found => 'No owners found';
+
+  @override
+  String get owner_properties => 'Properties';
+
+  @override
+  String owner_properties_count(int count) {
+    return '$count properties';
+  }
+
+  @override
+  String get no_owner_properties => 'This owner has no listed properties yet';
+
+  @override
   String get top_rated => 'Top Rated';
 
   @override
@@ -1246,4 +1263,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rating_label_excellent => 'Excellent';
+
+  @override
+  String get rate_owner => 'Rate Owner';
+
+  @override
+  String get rate_this_owner => 'Rate this owner';
+
+  @override
+  String get login_to_rate_owner => 'Please log in to rate this owner';
 }

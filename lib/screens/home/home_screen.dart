@@ -1,4 +1,5 @@
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
+import 'package:dar_plus_app/features/owners/presentation/providers/owners_providers.dart';
 import 'package:dar_plus_app/screens/assets/assets_screen.dart';
 import 'package:dar_plus_app/screens/assets/top_rated_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
@@ -10,6 +11,8 @@ import 'package:dar_plus_app/screens/home/widgets/home_slider.dart';
 import 'package:dar_plus_app/screens/home/widgets/owner_card.dart';
 import 'package:dar_plus_app/screens/home/widgets/property_tile.dart';
 import 'package:dar_plus_app/screens/home/widgets/section_header.dart';
+import 'package:dar_plus_app/screens/owners/all_owners_screen.dart';
+import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:flutter/material.dart';
@@ -39,44 +42,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     _listingType = _ListingType.both;
   }
-
-  static const List<_OwnerItem> _topOwners = [
-    _OwnerItem(
-      name: "Ahmad Al-Mansouri",
-      imageUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-      rating: 4.9,
-      reviewCount: 128,
-      specialty: "Luxury Villas",
-    ),
-    _OwnerItem(
-      name: "Sara Al-Khatib",
-      imageUrl: "https://randomuser.me/api/portraits/women/44.jpg",
-      rating: 4.8,
-      reviewCount: 97,
-      specialty: "Family Chalets",
-    ),
-    _OwnerItem(
-      name: "Omar Nasser",
-      imageUrl: "https://randomuser.me/api/portraits/men/65.jpg",
-      rating: 4.7,
-      reviewCount: 84,
-      specialty: "Sea View Apartments",
-    ),
-    _OwnerItem(
-      name: "Lina Haddad",
-      imageUrl: "https://randomuser.me/api/portraits/women/21.jpg",
-      rating: 4.7,
-      reviewCount: 72,
-      specialty: "Hotel Apartments",
-    ),
-    _OwnerItem(
-      name: "Khalid Barakat",
-      imageUrl: "https://randomuser.me/api/portraits/men/78.jpg",
-      rating: 4.6,
-      reviewCount: 61,
-      specialty: "Farms & Resorts",
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -193,27 +158,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     SizedBox(height: 2.5.h),
 
                     // ── Top Rated Owners ────────────────────────────────
-                    SectionHeader(title: tr.top_rated_owners, onSeeAll: () {}),
-                    SizedBox(height: 1.5.h),
-                    SizedBox(
-                      height: 24.h,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        padding: EdgeInsets.zero,
-                        itemCount: _topOwners.length,
-                        separatorBuilder: (_, __) => SizedBox(width: 3.w),
-                        itemBuilder: (context, index) {
-                          final o = _topOwners[index];
-                          return OwnerCard(
-                            name: o.name,
-                            imageUrl: o.imageUrl,
-                            rating: o.rating,
-                            reviewCount: o.reviewCount,
-                            specialty: o.specialty,
-                          );
-                        },
+                    SectionHeader(
+                      title: tr.top_rated_owners,
+                      onSeeAll: () => AppNavigator.of(context).push(
+                        const AllOwnersScreen(),
                       ),
                     ),
+                    SizedBox(height: 1.5.h),
+                    _buildTopOwners(),
 
                     SizedBox(height: 2.h),
                   ],
@@ -310,22 +262,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       error: (_, __) => const SizedBox.shrink(),
     );
   }
-}
 
-// ─── Data Models ─────────────────────────────────────────────────────────────
+  Widget _buildTopOwners() {
+    final ownersAsync = ref.watch(ownersControllerProvider);
 
-class _OwnerItem {
-  final String name;
-  final String imageUrl;
-  final double rating;
-  final int reviewCount;
-  final String specialty;
+    return ownersAsync.when(
+      data: (owners) {
+        if (owners.isEmpty) return const SizedBox.shrink();
 
-  const _OwnerItem({
-    required this.name,
-    required this.imageUrl,
-    required this.rating,
-    required this.reviewCount,
-    required this.specialty,
-  });
+        return SizedBox(
+          height: 24.h,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.zero,
+            itemCount: owners.length,
+            separatorBuilder: (_, __) => SizedBox(width: 3.w),
+            itemBuilder: (context, index) {
+              final owner = owners[index];
+              return OwnerCard(
+                owner: owner,
+                onTap: () => AppNavigator.of(context).push(
+                  OwnerProfileScreen(
+                    ownerId: owner.id,
+                    initialOwner: owner,
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+      loading: () => SizedBox(
+        height: 24.h,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.zero,
+          itemCount: 3,
+          separatorBuilder: (_, __) => SizedBox(width: 3.w),
+          itemBuilder: (_, __) => ShimmerPlaceholder(
+            width: 36.w,
+            height: 24.h,
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
 }

@@ -59,8 +59,14 @@ class ApiConstants {
   static const String updateDeviceToken = "api/fcm/update_device_token";
   // Rate asset
   static const String rateAsset = "api/rate";
+  // Rate owner
+  static const String rateOwner = "api/rating";
   // Filter endpoint (language suffix is provided as path param)
   static const String filter = "api/filter";
+  // Owners list
+  static const String owners = "api/owners/get";
+  // Single owner profile ({id})
+  static const String ownerDetail = "api/owners";
 
   static const String contentType = "application/json";
   static const String accept = "application/json";

@@ -127,7 +127,7 @@ final class AssetsControllerProvider
   AssetsController create() => AssetsController();
 }
 
-String _$assetsControllerHash() => r'db62b03fea63d5b5fb37a8c2fc1a516e3151dda0';
+String _$assetsControllerHash() => r'552b27d95c99cfd826501b53e2dc9e0680d237a4';
 
 abstract class _$AssetsController extends $AsyncNotifier<List<AssetItem>> {
   FutureOr<List<AssetItem>> build();
@@ -173,7 +173,7 @@ final class TopRatedAssetsControllerProvider
 }
 
 String _$topRatedAssetsControllerHash() =>
-    r'7cc028d200602d3a14bd1f801313cd56a8803bfa';
+    r'0f2b878641ad72fab4f1f46022bd2609d2f677d6';
 
 abstract class _$TopRatedAssetsController
     extends $AsyncNotifier<List<AssetItem>> {
@@ -244,7 +244,7 @@ final class AssetDetailControllerProvider
 }
 
 String _$assetDetailControllerHash() =>
-    r'123cfa7b13fe588a0fa146a4ee755a0455045aeb';
+    r'd31d58d8a31591f92be3d2904a4eb4dc66701e35';
 
 /// Family provider — one instance per [assetId].
 /// Usage: ref.watch(assetDetailControllerProvider(assetId))
@@ -422,7 +422,7 @@ final class MyAssetsControllerProvider
 }
 
 String _$myAssetsControllerHash() =>
-    r'00a68e2790382ca818015e9f2d6cf958dfb81aa4';
+    r'452e06210556a80fb4b03fa084bc3d4e95294861';
 
 abstract class _$MyAssetsController extends $AsyncNotifier<List<AssetItem>> {
   FutureOr<List<AssetItem>> build();
@@ -486,7 +486,7 @@ final class FilteredAssetsControllerProvider
 }
 
 String _$filteredAssetsControllerHash() =>
-    r'eb68bb761dfcd2b6c428059b3d966b3dfbcaf148';
+    r'2e9768d0b801b06ae2c1f744126420beb3b36706';
 
 final class FilteredAssetsControllerFamily extends $Family
     with

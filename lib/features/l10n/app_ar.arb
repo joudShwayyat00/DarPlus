@@ -40,6 +40,18 @@
   "both": "كلاهما",
   "what_are_you_interested_in": "ما الذي تبحث عنه؟",
   "top_rated_owners": "أفضل الملاك",
+  "all_owners": "جميع الملاك",
+  "no_owners_found": "لا يوجد ملاك",
+  "owner_properties": "العقارات",
+  "owner_properties_count": "{count} عقار",
+  "@owner_properties_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "no_owner_properties": "لا توجد عقارات مدرجة لهذا المالك بعد",
   "browse_by_category": "تصفح حسب الفئة",
   "top_rated": "الأعلى تقييماً",
   "book_now": "احجز الآن",
@@ -410,5 +422,8 @@
   "rating_label_fair": "مقبول",
   "rating_label_good": "جيد",
   "rating_label_great": "رائع",
-  "rating_label_excellent": "ممتاز"
+  "rating_label_excellent": "ممتاز",
+  "rate_owner": "تقييم المالك",
+  "rate_this_owner": "قيّم هذا المالك",
+  "login_to_rate_owner": "يرجى تسجيل الدخول لتقييم هذا المالك"
 }

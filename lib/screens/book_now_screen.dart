@@ -25,7 +25,6 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
   DateTime? _checkOut;
   int _guests = 2;
 
-  PaymentMethod _payment = PaymentMethod.cash;
   bool _agree = true;
 
   final TextEditingController _notes = TextEditingController();
@@ -226,10 +225,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
 
             _SectionTitle(text: tr.payment),
             SizedBox(height: 1.2.h),
-            _PaymentCard(
-              value: _payment,
-              onChanged: (m) => setState(() => _payment = m),
-            ),
+            _PaymentCard(),
 
             SizedBox(height: 2.0.h),
 
@@ -310,9 +306,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                           checkIn: _apiDate(_checkIn!),
                           checkOut: _apiDate(_checkOut!),
                           guests: _guests,
-                          paymentMethod: _payment == PaymentMethod.cash
-                              ? 'cod'
-                              : 'card',
+                          paymentMethod: 'cod',
                           rentType: rentType,
                           periodCount: _periodsCount(rentType),
                           notes: _notes.text.trim().isEmpty
@@ -614,8 +608,6 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
     );
   }
 }
-
-enum PaymentMethod { cash, card }
 
 // ---------------- UI ----------------
 
@@ -989,32 +981,17 @@ class _GuestsCard extends StatelessWidget {
 }
 
 class _PaymentCard extends StatelessWidget {
-  final PaymentMethod value;
-  final ValueChanged<PaymentMethod> onChanged;
-
-  const _PaymentCard({required this.value, required this.onChanged});
+  const _PaymentCard();
 
   @override
   Widget build(BuildContext context) {
     return _CardShell(
-      child: Column(
-        children: [
-          _RadioRow(
-            title: tr.cash_on_arrival,
-            subtitle: tr.pay_when_checkin,
-            icon: Icons.payments_outlined,
-            selected: value == PaymentMethod.cash,
-            onTap: () => onChanged(PaymentMethod.cash),
-          ),
-          Divider(color: Colors.black.withAlpha(18), height: 2.2.h),
-          _RadioRow(
-            title: tr.credit_debit_card,
-            subtitle: tr.pay_securely_online,
-            icon: Icons.credit_card,
-            selected: value == PaymentMethod.card,
-            onTap: () => onChanged(PaymentMethod.card),
-          ),
-        ],
+      child: _RadioRow(
+        title: tr.cash_on_arrival,
+        subtitle: tr.pay_when_checkin,
+        icon: Icons.payments_outlined,
+        selected: true,
+        onTap: () {},
       ),
     );
   }

@@ -356,6 +356,36 @@ abstract class AppLocalizations {
   /// **'Top Rated Owners'**
   String get top_rated_owners;
 
+  /// No description provided for @all_owners.
+  ///
+  /// In en, this message translates to:
+  /// **'All Owners'**
+  String get all_owners;
+
+  /// No description provided for @no_owners_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No owners found'**
+  String get no_owners_found;
+
+  /// No description provided for @owner_properties.
+  ///
+  /// In en, this message translates to:
+  /// **'Properties'**
+  String get owner_properties;
+
+  /// No description provided for @owner_properties_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} properties'**
+  String owner_properties_count(int count);
+
+  /// No description provided for @no_owner_properties.
+  ///
+  /// In en, this message translates to:
+  /// **'This owner has no listed properties yet'**
+  String get no_owner_properties;
+
   /// No description provided for @top_rated.
   ///
   /// In en, this message translates to:
@@ -2467,6 +2497,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Excellent'**
   String get rating_label_excellent;
+
+  /// No description provided for @rate_owner.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Owner'**
+  String get rate_owner;
+
+  /// No description provided for @rate_this_owner.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate this owner'**
+  String get rate_this_owner;
+
+  /// No description provided for @login_to_rate_owner.
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to rate this owner'**
+  String get login_to_rate_owner;
 }
 
 class _AppLocalizationsDelegate

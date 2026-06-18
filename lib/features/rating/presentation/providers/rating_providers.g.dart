@@ -135,7 +135,7 @@ final class RatingControllerProvider
   }
 }
 
-String _$ratingControllerHash() => r'7b2ea908862642e749b869610b21772b2fa65b70';
+String _$ratingControllerHash() => r'f1a1abf3bb752a062bde645828553dc056952f9d';
 
 abstract class _$RatingController extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();

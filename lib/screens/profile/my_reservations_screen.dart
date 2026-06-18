@@ -337,6 +337,7 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
     final asset = booking.asset;
     final currencySymbol = booking.currencySymbol;
     final canRate = booking.status.toLowerCase() == 'approved';
+    final durationChips = _durationChips(booking);
 
     return Container(
       margin: EdgeInsets.only(bottom: 2.h),
@@ -499,15 +500,14 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
                   SizedBox(height: 1.5.h),
                   Row(
                     children: [
-                      _buildInfoChip(
-                        Icons.nights_stay_rounded,
-                        '${booking.nights} ${tr.nights}',
-                      ),
-                      SizedBox(width: 2.w),
-                      _buildInfoChip(
-                        Icons.people_alt_rounded,
-                        '${booking.guests} ${tr.guests}',
-                      ),
+                      ...durationChips,
+                      if (booking.guests > 0) ...[
+                        if (durationChips.isNotEmpty) SizedBox(width: 2.w),
+                        _buildInfoChip(
+                          Icons.people_alt_rounded,
+                          '${booking.guests} ${tr.guests}',
+                        ),
+                      ],
                       const Spacer(),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -593,6 +593,33 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
         ],
       ),
     );
+  }
+
+  List<Widget> _durationChips(MyBookingItem booking) {
+    final chips = <Widget>[];
+
+    void addChip(IconData icon, String text) {
+      if (chips.isNotEmpty) chips.add(SizedBox(width: 2.w));
+      chips.add(_buildInfoChip(icon, text));
+    }
+
+    if (booking.nights > 0) {
+      addChip(Icons.nights_stay_rounded, '${booking.nights} ${tr.nights}');
+    }
+    if (booking.monthsCount > 0) {
+      addChip(
+        Icons.calendar_month_rounded,
+        '${booking.monthsCount} ${tr.months}',
+      );
+    }
+    if (booking.yearsCount > 0) {
+      addChip(
+        Icons.calendar_today_rounded,
+        '${booking.yearsCount} ${tr.years}',
+      );
+    }
+
+    return chips;
   }
 
   Widget _buildDateColumn(
