@@ -1325,5 +1325,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'سجّل الدخول لطلب موعد لمعاينة هذا العقار.';
 
   @override
+  String get login_required_subscriptions =>
+      'سجّل الدخول للاشتراك في باقة والاستفادة من الميزات المميزة.';
+
+  @override
   String get rating_score => 'التقييم';
 }

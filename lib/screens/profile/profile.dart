@@ -141,20 +141,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               );
                             },
                           ),
-                        if (isLoggedIn)
-                          _MenuItem(
-                            icon: Icons.card_membership_rounded,
-                            title: tr.subscriptions,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const SubscriptionsScreen(),
-                                ),
-                              );
-                            },
-                          ),
+                        _MenuItem(
+                          icon: Icons.card_membership_rounded,
+                          title: tr.subscriptions,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const SubscriptionsScreen(),
+                              ),
+                            );
+                          },
+                        ),
                         _MenuItem(
                           icon: Icons.notifications_outlined,
                           title: tr.notifications,

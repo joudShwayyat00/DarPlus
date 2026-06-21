@@ -4,6 +4,7 @@ import 'package:dar_plus_app/features/packages/data/models/package_item.dart';
 import 'package:dar_plus_app/features/packages/presentation/providers/packages_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/profile/widgets/content_widgets.dart';
+import 'package:dar_plus_app/utils/widgets/auth_required_sheet.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +117,14 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
           SizedBox(height: 3.h),
           AppButton(
             backgroundColor: AppColors.goldBrandColor,
-            onPressed: () {
+            onPressed: () async {
+              if (!await requireAuth(
+                context,
+                message: tr.login_required_subscriptions,
+                icon: Icons.card_membership_rounded,
+              )) {
+                return;
+              }
               // TODO: Process subscription purchase
             },
             child: Text(

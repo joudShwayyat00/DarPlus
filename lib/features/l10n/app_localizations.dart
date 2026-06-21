@@ -2618,6 +2618,12 @@ abstract class AppLocalizations {
   /// **'Sign in to request a viewing appointment for this property.'**
   String get login_required_appointment;
 
+  /// No description provided for @login_required_subscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to subscribe to a plan and unlock premium features.'**
+  String get login_required_subscriptions;
+
   /// No description provided for @rating_score.
   ///
   /// In en, this message translates to:

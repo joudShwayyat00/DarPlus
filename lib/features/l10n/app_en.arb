@@ -443,5 +443,6 @@
   "login_required_rate_owner": "Sign in to rate this owner and help the community make better choices.",
   "login_required_booking": "Sign in to book this property and manage your reservations.",
   "login_required_appointment": "Sign in to request a viewing appointment for this property.",
+  "login_required_subscriptions": "Sign in to subscribe to a plan and unlock premium features.",
   "rating_score": "Rating"
 }

@@ -1334,5 +1334,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign in to request a viewing appointment for this property.';
 
   @override
+  String get login_required_subscriptions =>
+      'Sign in to subscribe to a plan and unlock premium features.';
+
+  @override
   String get rating_score => 'Rating';
 }
