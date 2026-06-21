@@ -26,6 +26,13 @@ AssetItem _$AssetItemFromJson(Map<String, dynamic> json) => AssetItem(
   daysCount: (json['days_count'] as num?)?.toInt(),
   rentType: json['rent_type'] as String?,
   rentPrice: json['rent_price'] as num?,
+  dayPrice: AssetItem._nullableDoubleFromJson(json['day_price']),
+  video: json['video'] as String?,
+  latitude: AssetItem._nullableDoubleFromJson(json['latitude']),
+  longitude: AssetItem._nullableDoubleFromJson(json['longitude']),
+  countryId: (json['country_id'] as num?)?.toInt(),
+  cityId: (json['city_id'] as num?)?.toInt(),
+  regionId: (json['region_id'] as num?)?.toInt(),
   attributes: (json['attributes'] as List<dynamic>?)
       ?.map((e) => AssetAttribute.fromJson(e as Map<String, dynamic>))
       .toList(),
@@ -54,6 +61,13 @@ Map<String, dynamic> _$AssetItemToJson(AssetItem instance) => <String, dynamic>{
   'days_count': instance.daysCount,
   'rent_type': instance.rentType,
   'rent_price': instance.rentPrice,
+  'day_price': instance.dayPrice,
+  'video': instance.video,
+  'latitude': instance.latitude,
+  'longitude': instance.longitude,
+  'country_id': instance.countryId,
+  'city_id': instance.cityId,
+  'region_id': instance.regionId,
   'attributes': instance.attributes,
   'amenities': instance.amenities,
 };

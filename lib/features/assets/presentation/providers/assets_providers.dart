@@ -217,6 +217,90 @@ class AddAssetController extends _$AddAssetController {
 }
 
 @riverpod
+class UpdateAssetController extends _$UpdateAssetController {
+  @override
+  AsyncValue<void> build() => const AsyncData(null);
+
+  Future<bool> submit({
+    required int assetId,
+    required String nameEn,
+    required String nameAr,
+    required String descriptionEn,
+    required String descriptionAr,
+    required int categoryId,
+    required double price,
+    String? imagePath,
+    String? video,
+    required String location,
+    required String email,
+    required String phone,
+    required String type,
+    String? rentType,
+    int? monthsCount,
+    int? yearsCount,
+    int? daysCount,
+    double? rentPrice,
+    double? dayPrice,
+    required double latitude,
+    required double longitude,
+    required List<int> amenityIds,
+    required int countryId,
+    required int cityId,
+    required int regionId,
+  }) async {
+    state = const AsyncLoading();
+    final result = await AsyncValue.guard(() async {
+      final repository = ref.read(assetsRepositoryProvider);
+      await repository.updateAsset(
+        assetId: assetId,
+        nameEn: nameEn,
+        nameAr: nameAr,
+        descriptionEn: descriptionEn,
+        descriptionAr: descriptionAr,
+        categoryId: categoryId,
+        price: price,
+        imagePath: imagePath,
+        video: video,
+        location: location,
+        email: email,
+        phone: phone,
+        type: type,
+        rentType: rentType,
+        monthsCount: monthsCount,
+        yearsCount: yearsCount,
+        daysCount: daysCount,
+        rentPrice: rentPrice,
+        dayPrice: dayPrice,
+        latitude: latitude,
+        longitude: longitude,
+        amenityIds: amenityIds,
+        countryId: countryId,
+        cityId: cityId,
+        regionId: regionId,
+      );
+    });
+    if (ref.mounted) state = result;
+    return result is AsyncData;
+  }
+}
+
+@riverpod
+class DeleteAssetController extends _$DeleteAssetController {
+  @override
+  AsyncValue<void> build() => const AsyncData(null);
+
+  Future<bool> submit({required int assetId}) async {
+    state = const AsyncLoading();
+    final result = await AsyncValue.guard(() async {
+      final repository = ref.read(assetsRepositoryProvider);
+      await repository.deleteAsset(assetId: assetId);
+    });
+    if (ref.mounted) state = result;
+    return result is AsyncData;
+  }
+}
+
+@riverpod
 class MyAssetsController extends _$MyAssetsController {
   int? _currentCategoryId;
   int _currentPage = 1;

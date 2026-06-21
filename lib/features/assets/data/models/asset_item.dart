@@ -37,8 +37,28 @@ class AssetItem {
   final String? rentType;
   @JsonKey(name: 'rent_price')
   final num? rentPrice;
+  @JsonKey(name: 'day_price', fromJson: _nullableDoubleFromJson)
+  final double? dayPrice;
+  final String? video;
+  @JsonKey(fromJson: _nullableDoubleFromJson)
+  final double? latitude;
+  @JsonKey(fromJson: _nullableDoubleFromJson)
+  final double? longitude;
+  @JsonKey(name: 'country_id')
+  final int? countryId;
+  @JsonKey(name: 'city_id')
+  final int? cityId;
+  @JsonKey(name: 'region_id')
+  final int? regionId;
   final List<AssetAttribute>? attributes;
   final List<AssetAmenity>? amenities;
+
+  static double? _nullableDoubleFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
+  }
 
   const AssetItem({
     required this.id,
@@ -60,6 +80,13 @@ class AssetItem {
     this.daysCount,
     this.rentType,
     this.rentPrice,
+    this.dayPrice,
+    this.video,
+    this.latitude,
+    this.longitude,
+    this.countryId,
+    this.cityId,
+    this.regionId,
     this.attributes,
     this.amenities,
   });

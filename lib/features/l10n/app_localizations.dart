@@ -1334,6 +1334,12 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
   /// No description provided for @delete_confirm_message.
   ///
   /// In en, this message translates to:
@@ -2383,6 +2389,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Asset added successfully!'**
   String get asset_added_successfully;
+
+  /// No description provided for @edit_asset.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Asset'**
+  String get edit_asset;
+
+  /// No description provided for @update_asset.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Asset'**
+  String get update_asset;
+
+  /// No description provided for @asset_updated_successfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset updated successfully!'**
+  String get asset_updated_successfully;
+
+  /// No description provided for @delete_asset.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Asset'**
+  String get delete_asset;
+
+  /// No description provided for @delete_asset_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this asset? This action cannot be undone.'**
+  String get delete_asset_confirm;
+
+  /// No description provided for @asset_deleted_successfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset deleted successfully!'**
+  String get asset_deleted_successfully;
+
+  /// No description provided for @keep_image_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Current image will be kept unless you choose a new one'**
+  String get keep_image_hint;
 
   /// No description provided for @something_went_wrong.
   ///

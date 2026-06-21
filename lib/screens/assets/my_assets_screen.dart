@@ -1,5 +1,4 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
-import 'package:dar_plus_app/configuration/app_images.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
@@ -7,10 +6,12 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 
@@ -41,6 +42,45 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 300) {
       ref.read(myAssetsControllerProvider.notifier).loadMore();
+    }
+  }
+
+  Future<void> _openEditAsset(AssetItem asset) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AddAssetScreen(assetId: asset.id)),
+    );
+    if (mounted) {
+      ref.read(myAssetsControllerProvider.notifier).refresh();
+    }
+  }
+
+  Future<void> _confirmDeleteAsset(AssetItem asset) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierColor: Colors.black.withAlpha(140),
+      builder: (ctx) => _DeleteAssetDialog(asset: asset),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    EasyLoading.show();
+    final success = await ref
+        .read(deleteAssetControllerProvider.notifier)
+        .submit(assetId: asset.id);
+    EasyLoading.dismiss();
+
+    if (!mounted) return;
+    if (success) {
+      EasyLoading.showSuccess(tr.asset_deleted_successfully);
+      ref.invalidate(myAssetsControllerProvider);
+      ref.invalidate(assetsControllerProvider);
+      ref.invalidate(assetDetailControllerProvider(asset.id));
+    } else {
+      final err = ref.read(deleteAssetControllerProvider).error;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(err?.toString() ?? tr.something_went_wrong)),
+      );
     }
   }
 
@@ -239,7 +279,7 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.70,
+                    childAspectRatio: 0.62,
                     mainAxisSpacing: 2.h,
                     crossAxisSpacing: 3.w,
                   ),
@@ -253,6 +293,8 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
                           initialAsset: asset,
                         ),
                       ),
+                      onEdit: () => _openEditAsset(asset),
+                      onDelete: () => _confirmDeleteAsset(asset),
                     );
                   }, childCount: assets.length),
                 ),
@@ -293,7 +335,7 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
         padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 3.h),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.70,
+          childAspectRatio: 0.62,
           mainAxisSpacing: 2.h,
           crossAxisSpacing: 3.w,
         ),
@@ -351,13 +393,203 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
   }
 }
 
+class _DeleteAssetDialog extends StatelessWidget {
+  final AssetItem asset;
+
+  const _DeleteAssetDialog({required this.asset});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.symmetric(horizontal: 7.w),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(35),
+              blurRadius: 28,
+              offset: const Offset(0, 14),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 2.8.h),
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.delete_forever_rounded,
+                size: 32,
+                color: Colors.red.shade500,
+              ),
+            ),
+            SizedBox(height: 1.8.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 6.w),
+              child: Text(
+                tr.delete_asset,
+                textAlign: TextAlign.center,
+                style: appTextStyle(
+                  context,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black.withAlpha(235),
+                ),
+              ),
+            ),
+            SizedBox(height: 1.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 6.w),
+              child: Text(
+                tr.delete_asset_confirm,
+                textAlign: TextAlign.center,
+                style: appTextStyle(
+                  context,
+                  fontSize: 10.8.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black.withAlpha(130),
+                  height: 1.45,
+                ),
+              ),
+            ),
+            SizedBox(height: 2.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              child: Container(
+                padding: EdgeInsets.all(3.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F7F4),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.black.withAlpha(12)),
+                ),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: SizedBox(
+                        width: 16.w,
+                        height: 16.w,
+                        child: AppNetImage(url: asset.image),
+                      ),
+                    ),
+                    SizedBox(width: 3.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            asset.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black.withAlpha(220),
+                            ),
+                          ),
+                          SizedBox(height: 0.4.h),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.place_rounded,
+                                size: 13,
+                                color: Colors.black.withAlpha(110),
+                              ),
+                              SizedBox(width: 0.8.w),
+                              Expanded(
+                                child: Text(
+                                  asset.location,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: appTextStyle(
+                                    context,
+                                    fontSize: 9.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black.withAlpha(120),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 2.4.h),
+            Padding(
+              padding: EdgeInsets.fromLTRB(5.w, 0, 5.w, 2.8.h),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: AppButton(
+                      height: 5.5.h,
+                      backgroundColor: Colors.grey.shade100,
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: Text(
+                        tr.cancel,
+                        style: appTextStyle(
+                          context,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black.withAlpha(170),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 3.w),
+                  Expanded(
+                    child: AppButton(
+                      height: 5.5.h,
+                      backgroundColor: Colors.red.shade500,
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: Text(
+                        tr.delete,
+                        style: appTextStyle(
+                          context,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // ─── Card ─────────────────────────────────────────────────────────────────────
 
 class _MyAssetGridCard extends StatelessWidget {
   final AssetItem asset;
   final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
-  const _MyAssetGridCard({required this.asset, required this.onTap});
+  const _MyAssetGridCard({
+    required this.asset,
+    required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -507,12 +739,83 @@ class _MyAssetGridCard extends StatelessWidget {
                           color: AppColors.goldBrandColor,
                         ),
                       ),
+                      SizedBox(height: 0.6.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _AssetActionButton(
+                              icon: Icons.edit_outlined,
+                              label: tr.edit,
+                              color: AppColors.goldBrandColor,
+                              onTap: onEdit,
+                            ),
+                          ),
+                          SizedBox(width: 1.5.w),
+                          Expanded(
+                            child: _AssetActionButton(
+                              icon: Icons.delete_outline_rounded,
+                              label: tr.delete,
+                              color: Colors.red.shade500,
+                              onTap: onDelete,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AssetActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _AssetActionButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 0.55.h),
+        decoration: BoxDecoration(
+          color: color.withAlpha(18),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: color.withAlpha(50)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 13, color: color),
+            SizedBox(width: 1.w),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: appTextStyle(
+                  context,
+                  fontSize: 8.sp,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

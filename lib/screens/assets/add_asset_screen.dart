@@ -2,9 +2,14 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/features/assets/data/models/amenity_item.dart';
+import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
+import 'package:dar_plus_app/features/location/data/models/city_item.dart';
+import 'package:dar_plus_app/features/location/data/models/country_item.dart';
+import 'package:dar_plus_app/features/location/data/models/region_item.dart';
 import 'package:dar_plus_app/features/location/presentation/providers/location_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/select_location_screen.dart';
@@ -21,7 +26,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 
 class AddAssetScreen extends ConsumerStatefulWidget {
-  const AddAssetScreen({super.key});
+  final int? assetId;
+
+  const AddAssetScreen({super.key, this.assetId});
 
   @override
   ConsumerState<AddAssetScreen> createState() => _AddAssetScreenState();
@@ -53,6 +60,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   String _type = 'rent'; // 'rent' | 'sale'
   String _rentType = 'monthly'; // 'monthly' | 'yearly'
   File? _imageFile;
+  String? _existingImageUrl;
+  bool _isLoadingAsset = false;
   final Set<int> _selectedAmenityIds = {};
   String _completePhone = '';
   String? _countryName;
@@ -61,6 +70,135 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   int? _selectedCityId;
   String? _regionName;
   int? _selectedRegionId;
+
+  bool get _isEditMode => widget.assetId != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isEditMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _loadAssetForEdit());
+    }
+  }
+
+  Future<void> _loadAssetForEdit() async {
+    setState(() => _isLoadingAsset = true);
+    try {
+      final lang = ref.read(localeProvider).languageCode;
+      final asset = await ref
+          .read(assetsRepositoryProvider)
+          .getAssetDetail(id: widget.assetId!, lang: lang);
+      if (!mounted) return;
+      await _populateFromAsset(asset);
+    } catch (_) {
+      if (mounted) _showSnack(tr.error_occurred);
+    } finally {
+      if (mounted) setState(() => _isLoadingAsset = false);
+    }
+  }
+
+  Future<void> _populateFromAsset(AssetItem asset) async {
+    _nameEnCtrl.text = asset.name;
+    _nameArCtrl.text = asset.name;
+    _descEnCtrl.text = asset.description ?? '';
+    _descArCtrl.text = asset.description ?? '';
+    _locationCtrl.text = asset.location;
+    _emailCtrl.text = asset.email ?? asset.owner.email;
+    _phoneCtrl.text = asset.phone ?? asset.owner.phoneNumber;
+    _videoCtrl.text = asset.video ?? '';
+    _selectedCategoryId = asset.category.id;
+    _type = asset.type;
+    _rentType = asset.rentType ?? 'monthly';
+    _existingImageUrl = asset.image;
+
+    if (asset.isForSale) {
+      _priceCtrl.text = asset.price;
+    } else {
+      _rentPriceCtrl.text = asset.rentPrice?.toString() ?? asset.price;
+    }
+    if (asset.monthsCount != null) {
+      _monthsCtrl.text = asset.monthsCount.toString();
+    }
+    if (asset.yearsCount != null) {
+      _yearsCtrl.text = asset.yearsCount.toString();
+    }
+    if (asset.daysCount != null) {
+      _daysCtrl.text = asset.daysCount.toString();
+    }
+    if (asset.dayPrice != null) {
+      _dayPriceCtrl.text = asset.dayPrice.toString();
+    }
+    if (asset.latitude != null) {
+      _latCtrl.text = asset.latitude!.toString();
+    }
+    if (asset.longitude != null) {
+      _lngCtrl.text = asset.longitude!.toString();
+    }
+
+    _selectedAmenityIds
+      ..clear()
+      ..addAll(asset.amenities?.map((a) => a.id) ?? const []);
+
+    await _resolveLocationFromAsset(asset);
+    setState(() {});
+  }
+
+  Future<void> _resolveLocationFromAsset(AssetItem asset) async {
+    if (asset.countryId != null) {
+      _selectedCountryId = asset.countryId;
+      _countryName = asset.country;
+      if (asset.cityId != null) {
+        _selectedCityId = asset.cityId;
+        _cityName = asset.city;
+        if (asset.regionId != null) {
+          _selectedRegionId = asset.regionId;
+          _regionName = asset.region;
+        }
+      }
+      return;
+    }
+
+    final countries = await ref.read(countriesProvider.future);
+    CountryItem? country;
+    for (final item in countries) {
+      if (item.name == asset.country) {
+        country = item;
+        break;
+      }
+    }
+    if (country == null) return;
+
+    _selectedCountryId = country.id;
+    _countryName = country.name;
+
+    if (asset.city == null) return;
+    final cities = await ref.read(citiesProvider(country.id).future);
+    CityItem? city;
+    for (final item in cities) {
+      if (item.name == asset.city) {
+        city = item;
+        break;
+      }
+    }
+    if (city == null) return;
+
+    _selectedCityId = city.id;
+    _cityName = city.name;
+
+    if (asset.region == null) return;
+    final regions = await ref.read(regionsProvider(city.id).future);
+    RegionItem? region;
+    for (final item in regions) {
+      if (item.name == asset.region) {
+        region = item;
+        break;
+      }
+    }
+    if (region == null) return;
+
+    _selectedRegionId = region.id;
+    _regionName = region.name;
+  }
 
   @override
   void dispose() {
@@ -137,7 +275,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_imageFile == null) {
+    if (_imageFile == null && _existingImageUrl == null) {
       _showSnack(tr.please_select_image);
       return;
     }
@@ -173,66 +311,134 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     final rentPrice = double.tryParse(_rentPriceCtrl.text.trim());
 
     EasyLoading.show();
-    final success = await ref
-        .read(addAssetControllerProvider.notifier)
-        .submit(
-          nameEn: _nameEnCtrl.text.trim(),
-          nameAr: _nameArCtrl.text.trim(),
-          descriptionEn: _descEnCtrl.text.trim(),
-          descriptionAr: _descArCtrl.text.trim(),
-          categoryId: _selectedCategoryId!,
-          price: _type == 'sale' ? salePrice : (rentPrice ?? 0),
-          imagePath: _imageFile!.path,
-          video: _videoCtrl.text.trim().isEmpty ? null : _videoCtrl.text.trim(),
-          location: _locationCtrl.text.trim(),
-          email: _emailCtrl.text.trim(),
-          phone: _completePhone.isNotEmpty
-              ? _completePhone
-              : _phoneCtrl.text.trim(),
-          type: _type,
-          rentType: _type == 'rent' ? _rentType : null,
-          monthsCount:
-              _type == 'rent' &&
-                  _rentType == 'monthly' &&
-                  _monthsCtrl.text.isNotEmpty
-              ? int.tryParse(_monthsCtrl.text.trim())
-              : null,
-          yearsCount:
-              _type == 'rent' &&
-                  _rentType == 'yearly' &&
-                  _yearsCtrl.text.isNotEmpty
-              ? int.tryParse(_yearsCtrl.text.trim())
-              : null,
-          daysCount:
-              _type == 'rent' &&
-                  _rentType == 'daily' &&
-                  _daysCtrl.text.isNotEmpty
-              ? int.tryParse(_daysCtrl.text.trim())
-              : null,
-          dayPrice:
-              _type == 'rent' &&
-                  _rentType == 'monthly' &&
-                  _dayPriceCtrl.text.isNotEmpty
-              ? double.tryParse(_dayPriceCtrl.text.trim())
-              : null,
-          rentPrice: _type == 'rent' ? rentPrice : null,
-          latitude: lat,
-          longitude: lng,
-          amenityIds: _selectedAmenityIds.toList(),
-          countryId: _selectedCountryId!,
-          cityId: _selectedCityId!,
-          regionId: _selectedRegionId!,
-        );
+    final payload = (
+      nameEn: _nameEnCtrl.text.trim(),
+      nameAr: _nameArCtrl.text.trim(),
+      descriptionEn: _descEnCtrl.text.trim(),
+      descriptionAr: _descArCtrl.text.trim(),
+      categoryId: _selectedCategoryId!,
+      price: _type == 'sale' ? salePrice : (rentPrice ?? 0),
+      imagePath: _imageFile?.path,
+      video: _videoCtrl.text.trim().isEmpty ? null : _videoCtrl.text.trim(),
+      location: _locationCtrl.text.trim(),
+      email: _emailCtrl.text.trim(),
+      phone: _completePhone.isNotEmpty
+          ? _completePhone
+          : _phoneCtrl.text.trim(),
+      type: _type,
+      rentType: _type == 'rent' ? _rentType : null,
+      monthsCount:
+          _type == 'rent' &&
+              _rentType == 'monthly' &&
+              _monthsCtrl.text.isNotEmpty
+          ? int.tryParse(_monthsCtrl.text.trim())
+          : null,
+      yearsCount:
+          _type == 'rent' &&
+              _rentType == 'yearly' &&
+              _yearsCtrl.text.isNotEmpty
+          ? int.tryParse(_yearsCtrl.text.trim())
+          : null,
+      daysCount:
+          _type == 'rent' &&
+              _rentType == 'daily' &&
+              _daysCtrl.text.isNotEmpty
+          ? int.tryParse(_daysCtrl.text.trim())
+          : null,
+      dayPrice:
+          _type == 'rent' &&
+              _rentType == 'monthly' &&
+              _dayPriceCtrl.text.isNotEmpty
+          ? double.tryParse(_dayPriceCtrl.text.trim())
+          : null,
+      rentPrice: _type == 'rent' ? rentPrice : null,
+      latitude: lat,
+      longitude: lng,
+      amenityIds: _selectedAmenityIds.toList(),
+      countryId: _selectedCountryId!,
+      cityId: _selectedCityId!,
+      regionId: _selectedRegionId!,
+    );
+
+    final bool success;
+    if (_isEditMode) {
+      success = await ref.read(updateAssetControllerProvider.notifier).submit(
+            assetId: widget.assetId!,
+            nameEn: payload.nameEn,
+            nameAr: payload.nameAr,
+            descriptionEn: payload.descriptionEn,
+            descriptionAr: payload.descriptionAr,
+            categoryId: payload.categoryId,
+            price: payload.price,
+            imagePath: payload.imagePath,
+            video: payload.video,
+            location: payload.location,
+            email: payload.email,
+            phone: payload.phone,
+            type: payload.type,
+            rentType: payload.rentType,
+            monthsCount: payload.monthsCount,
+            yearsCount: payload.yearsCount,
+            daysCount: payload.daysCount,
+            rentPrice: payload.rentPrice,
+            dayPrice: payload.dayPrice,
+            latitude: payload.latitude,
+            longitude: payload.longitude,
+            amenityIds: payload.amenityIds,
+            countryId: payload.countryId,
+            cityId: payload.cityId,
+            regionId: payload.regionId,
+          );
+    } else {
+      if (payload.imagePath == null) {
+        EasyLoading.dismiss();
+        _showSnack(tr.please_select_image);
+        return;
+      }
+      success = await ref.read(addAssetControllerProvider.notifier).submit(
+            nameEn: payload.nameEn,
+            nameAr: payload.nameAr,
+            descriptionEn: payload.descriptionEn,
+            descriptionAr: payload.descriptionAr,
+            categoryId: payload.categoryId,
+            price: payload.price,
+            imagePath: payload.imagePath!,
+            video: payload.video,
+            location: payload.location,
+            email: payload.email,
+            phone: payload.phone,
+            type: payload.type,
+            rentType: payload.rentType,
+            monthsCount: payload.monthsCount,
+            yearsCount: payload.yearsCount,
+            daysCount: payload.daysCount,
+            rentPrice: payload.rentPrice,
+            dayPrice: payload.dayPrice,
+            latitude: payload.latitude,
+            longitude: payload.longitude,
+            amenityIds: payload.amenityIds,
+            countryId: payload.countryId,
+            cityId: payload.cityId,
+            regionId: payload.regionId,
+          );
+    }
     EasyLoading.dismiss();
 
     if (success && mounted) {
-      EasyLoading.showSuccess(tr.asset_added_successfully);
+      EasyLoading.showSuccess(
+        _isEditMode ? tr.asset_updated_successfully : tr.asset_added_successfully,
+      );
       ref.invalidate(assetsControllerProvider);
       ref.invalidate(myAssetsControllerProvider);
+      if (_isEditMode) {
+        ref.invalidate(assetDetailControllerProvider(widget.assetId!));
+      }
       await Future.delayed(const Duration(seconds: 1));
       if (mounted) Navigator.of(context).pop();
     } else if (mounted) {
-      final err = ref.read(addAssetControllerProvider).error;
+      final err = _isEditMode
+          ? ref.read(updateAssetControllerProvider).error
+          : ref.read(addAssetControllerProvider).error;
       _showSnack(err?.toString() ?? tr.something_went_wrong);
     }
   }
@@ -247,6 +453,15 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
         child: Column(
           children: [
             _buildHeader(),
+            if (_isLoadingAsset)
+              const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.goldBrandColor,
+                  ),
+                ),
+              )
+            else
             Expanded(
               child: Form(
                 key: _formKey,
@@ -439,7 +654,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                       onPressed: _submit,
                       backgroundColor: AppColors.goldBrandColor,
                       child: Text(
-                        tr.publish_asset,
+                        _isEditMode ? tr.update_asset : tr.publish_asset,
                         style: appTextStyle(
                           context,
                           fontSize: 12.sp,
@@ -493,7 +708,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
           ),
           SizedBox(width: 3.w),
           Text(
-            tr.add_new_asset,
+            _isEditMode ? tr.edit_asset : tr.add_new_asset,
             style: appTextStyle(
               context,
               fontSize: 16.sp,
@@ -903,6 +1118,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   // ── Image picker ──────────────────────────────────────────────────────────
 
   Widget _buildImagePicker() {
+    final hasImage = _imageFile != null || _existingImageUrl != null;
+
     return GestureDetector(
       onTap: _pickImage,
       child: AnimatedContainer(
@@ -912,10 +1129,10 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
           color: AppColors.grayBrandColor.withAlpha(12),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: _imageFile != null
+            color: hasImage
                 ? AppColors.goldBrandColor
                 : AppColors.grayBrandColor.withAlpha(70),
-            width: _imageFile != null ? 2 : 1,
+            width: hasImage ? 2 : 1,
           ),
         ),
         child: ClipRRect(
@@ -929,7 +1146,10 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                       top: 8,
                       right: 8,
                       child: GestureDetector(
-                        onTap: () => setState(() => _imageFile = null),
+                        onTap: () => setState(() {
+                          _imageFile = null;
+                          if (!_isEditMode) _existingImageUrl = null;
+                        }),
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
@@ -939,6 +1159,64 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                           child: const Icon(
                             Icons.close_rounded,
                             size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.goldBrandColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          tr.change,
+                          style: appTextStyle(
+                            context,
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : _existingImageUrl != null
+              ? Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: _existingImageUrl!,
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      bottom: 8,
+                      left: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          tr.keep_image_hint,
+                          textAlign: TextAlign.center,
+                          style: appTextStyle(
+                            context,
+                            fontSize: 8.5.sp,
+                            fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
                         ),

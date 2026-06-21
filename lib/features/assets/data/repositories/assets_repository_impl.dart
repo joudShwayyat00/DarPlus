@@ -161,4 +161,82 @@ class AssetsRepositoryImpl implements AssetsRepository {
       options: Options(contentType: 'multipart/form-data'),
     );
   }
+
+  @override
+  Future<void> updateAsset({
+    required int assetId,
+    required String nameEn,
+    required String nameAr,
+    required String descriptionEn,
+    required String descriptionAr,
+    required int categoryId,
+    required double price,
+    String? imagePath,
+    String? video,
+    required String location,
+    required String email,
+    required String phone,
+    required String type,
+    String? rentType,
+    int? monthsCount,
+    int? yearsCount,
+    int? daysCount,
+    double? rentPrice,
+    double? dayPrice,
+    required double latitude,
+    required double longitude,
+    required List<int> amenityIds,
+    required int countryId,
+    required int cityId,
+    required int regionId,
+  }) async {
+    final dio = DioFactory.getDio();
+    final formData = FormData.fromMap({
+      'asset_id': assetId,
+      'name_en': nameEn,
+      'name_ar': nameAr,
+      'description_en': descriptionEn,
+      'description_ar': descriptionAr,
+      'category_id': categoryId,
+      'price': price,
+      if (imagePath != null)
+        'image': await MultipartFile.fromFile(
+          imagePath,
+          filename: imagePath.split('/').last,
+        ),
+      if (video != null && video.isNotEmpty) 'video': video,
+      'location': location,
+      'email': email,
+      'phone': phone,
+      'type': type,
+      if (rentType != null) 'rent_type': rentType,
+      if (monthsCount != null) 'months_count': monthsCount,
+      if (yearsCount != null) 'years_count': yearsCount,
+      if (daysCount != null) 'days_count': daysCount,
+      if (rentPrice != null) 'rent_price': rentPrice,
+      if (dayPrice != null) 'day_price': dayPrice,
+      'latitude': latitude,
+      'longitude': longitude,
+      'amenities_ids': jsonEncode(amenityIds),
+      'country_id': countryId,
+      'city_id': cityId,
+      'region_id': regionId,
+    });
+    await dio.post(
+      '${ApiConstants.baseUrl}${ApiConstants.updateAsset}',
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+  }
+
+  @override
+  Future<void> deleteAsset({required int assetId}) async {
+    final dio = DioFactory.getDio();
+    final formData = FormData.fromMap({'asset_id': assetId});
+    await dio.post(
+      '${ApiConstants.baseUrl}${ApiConstants.deleteAsset}',
+      data: formData,
+      options: Options(contentType: 'multipart/form-data'),
+    );
+  }
 }

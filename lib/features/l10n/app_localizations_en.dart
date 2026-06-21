@@ -646,6 +646,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
+  String get edit => 'Edit';
+
+  @override
   String get delete_confirm_message =>
       'This action cannot be undone. All your data will be permanently deleted. Are you sure you want to continue?';
 
@@ -1206,6 +1209,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get asset_added_successfully => 'Asset added successfully!';
+
+  @override
+  String get edit_asset => 'Edit Asset';
+
+  @override
+  String get update_asset => 'Update Asset';
+
+  @override
+  String get asset_updated_successfully => 'Asset updated successfully!';
+
+  @override
+  String get delete_asset => 'Delete Asset';
+
+  @override
+  String get delete_asset_confirm =>
+      'Are you sure you want to delete this asset? This action cannot be undone.';
+
+  @override
+  String get asset_deleted_successfully => 'Asset deleted successfully!';
+
+  @override
+  String get keep_image_hint =>
+      'Current image will be kept unless you choose a new one';
 
   @override
   String get something_went_wrong => 'Something went wrong';

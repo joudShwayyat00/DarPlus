@@ -30,6 +30,9 @@ class ApiConstants {
   static const String amenities = "api/amenities/all";
   // Add asset endpoint
   static const String addAsset = "api/the_assets/add";
+  // Update / delete asset endpoints (owner, requires auth)
+  static const String updateAsset = "api/the_assets/update";
+  static const String deleteAsset = "api/the_assets/delete";
   // Book asset endpoint
   static const String bookAsset = "api/assets/book";
   // My bookings (requires auth, filter by status)

@@ -376,9 +376,117 @@ final class AddAssetControllerProvider
 }
 
 String _$addAssetControllerHash() =>
-    r'1f54050cdb2923d6d009bee60d7f52af1c7fcd11';
+    r'0e107ddf65d5d314ff9f0add01960decd3306cfa';
 
 abstract class _$AddAssetController extends $Notifier<AsyncValue<void>> {
+  AsyncValue<void> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<void>, AsyncValue<void>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, AsyncValue<void>>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(UpdateAssetController)
+const updateAssetControllerProvider = UpdateAssetControllerProvider._();
+
+final class UpdateAssetControllerProvider
+    extends $NotifierProvider<UpdateAssetController, AsyncValue<void>> {
+  const UpdateAssetControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updateAssetControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updateAssetControllerHash();
+
+  @$internal
+  @override
+  UpdateAssetController create() => UpdateAssetController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<void> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
+  }
+}
+
+String _$updateAssetControllerHash() =>
+    r'33d869dddcedf2ed738a860b2beee15eb7aced2d';
+
+abstract class _$UpdateAssetController extends $Notifier<AsyncValue<void>> {
+  AsyncValue<void> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<void>, AsyncValue<void>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, AsyncValue<void>>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(DeleteAssetController)
+const deleteAssetControllerProvider = DeleteAssetControllerProvider._();
+
+final class DeleteAssetControllerProvider
+    extends $NotifierProvider<DeleteAssetController, AsyncValue<void>> {
+  const DeleteAssetControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteAssetControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteAssetControllerHash();
+
+  @$internal
+  @override
+  DeleteAssetController create() => DeleteAssetController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AsyncValue<void> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AsyncValue<void>>(value),
+    );
+  }
+}
+
+String _$deleteAssetControllerHash() =>
+    r'8f41d6e0f575498ec82ca793ab3eeb9f066f2160';
+
+abstract class _$DeleteAssetController extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();
   @$mustCallSuper
   @override

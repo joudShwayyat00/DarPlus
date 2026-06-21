@@ -640,6 +640,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get delete => 'حذف';
 
   @override
+  String get edit => 'تعديل';
+
+  @override
   String get delete_confirm_message =>
       'لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع بياناتك نهائيًا. هل أنت متأكد أنك تريد المتابعة؟';
 
@@ -1197,6 +1200,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get asset_added_successfully => 'تمت إضافة العقار بنجاح!';
+
+  @override
+  String get edit_asset => 'تعديل العقار';
+
+  @override
+  String get update_asset => 'تحديث العقار';
+
+  @override
+  String get asset_updated_successfully => 'تم تحديث العقار بنجاح!';
+
+  @override
+  String get delete_asset => 'حذف العقار';
+
+  @override
+  String get delete_asset_confirm =>
+      'هل أنت متأكد من حذف هذا العقار؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get asset_deleted_successfully => 'تم حذف العقار بنجاح!';
+
+  @override
+  String get keep_image_hint =>
+      'سيتم الاحتفاظ بالصورة الحالية ما لم تختر صورة جديدة';
 
   @override
   String get something_went_wrong => 'حدث خطأ ما';

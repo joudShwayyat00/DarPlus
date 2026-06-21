@@ -50,4 +50,32 @@ abstract class AssetsRepository {
     required int cityId,
     required int regionId,
   });
+  Future<void> updateAsset({
+    required int assetId,
+    required String nameEn,
+    required String nameAr,
+    required String descriptionEn,
+    required String descriptionAr,
+    required int categoryId,
+    required double price,
+    String? imagePath,
+    String? video,
+    required String location,
+    required String email,
+    required String phone,
+    required String type,
+    String? rentType,
+    int? monthsCount,
+    int? yearsCount,
+    int? daysCount,
+    double? rentPrice,
+    double? dayPrice,
+    required double latitude,
+    required double longitude,
+    required List<int> amenityIds,
+    required int countryId,
+    required int cityId,
+    required int regionId,
+  });
+  Future<void> deleteAsset({required int assetId});
 }
