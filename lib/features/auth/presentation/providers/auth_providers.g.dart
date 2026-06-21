@@ -97,6 +97,51 @@ final class AuthRepositoryProvider
 
 String _$authRepositoryHash() => r'78ac713939f0c35741c5b74c13527c19c8f2d2a5';
 
+/// Tracks login state; rebuilds when [profileControllerProvider] updates.
+
+@ProviderFor(isLoggedIn)
+const isLoggedInProvider = IsLoggedInProvider._();
+
+/// Tracks login state; rebuilds when [profileControllerProvider] updates.
+
+final class IsLoggedInProvider extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// Tracks login state; rebuilds when [profileControllerProvider] updates.
+  const IsLoggedInProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isLoggedInProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$isLoggedInHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return isLoggedIn(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$isLoggedInHash() => r'bcf31f6ed6ecdc8f923d8b55cbbd8fcf85c90760';
+
 @ProviderFor(RegisterController)
 const registerControllerProvider = RegisterControllerProvider._();
 
@@ -122,7 +167,7 @@ final class RegisterControllerProvider
 }
 
 String _$registerControllerHash() =>
-    r'7e1aa7c0c0cbda08fe79aeeab6afe5b07d9b6ec3';
+    r'66937a3f22a929f9a85f6d597bc81b3816cee36f';
 
 abstract class _$RegisterController extends $AsyncNotifier<RegisterResponse?> {
   FutureOr<RegisterResponse?> build();
@@ -168,7 +213,7 @@ final class LoginControllerProvider
   LoginController create() => LoginController();
 }
 
-String _$loginControllerHash() => r'c7619ce94daabaf4d72d5a5b1a1a914f60c43aba';
+String _$loginControllerHash() => r'431f15f9db6db09a56d717a517bd165342e77c8e';
 
 abstract class _$LoginController extends $AsyncNotifier<RegisterResponse?> {
   FutureOr<RegisterResponse?> build();

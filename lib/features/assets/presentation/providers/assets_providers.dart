@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../controller/local_provider.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../../../core/network/dio_factory.dart';
 import '../../data/data_sources/assets_service_client.dart';
 import '../../data/models/amenity_item.dart';
@@ -312,6 +313,7 @@ class MyAssetsController extends _$MyAssetsController {
 
   @override
   FutureOr<List<AssetItem>> build() async {
+    if (!ref.read(isLoggedInProvider)) return [];
     _currentPage = 1;
     final lang = ref.read(localeProvider).languageCode;
     final result = await ref
@@ -322,6 +324,10 @@ class MyAssetsController extends _$MyAssetsController {
   }
 
   Future<void> fetchByCategory(int? categoryId) async {
+    if (!ref.read(isLoggedInProvider)) {
+      state = const AsyncData([]);
+      return;
+    }
     _currentCategoryId = categoryId;
     _currentPage = 1;
     _hasMore = false;
@@ -338,6 +344,10 @@ class MyAssetsController extends _$MyAssetsController {
   }
 
   Future<void> refresh() async {
+    if (!ref.read(isLoggedInProvider)) {
+      state = const AsyncData([]);
+      return;
+    }
     _currentPage = 1;
     _hasMore = false;
     state = const AsyncLoading();
@@ -353,6 +363,7 @@ class MyAssetsController extends _$MyAssetsController {
   }
 
   Future<void> loadMore() async {
+    if (!ref.read(isLoggedInProvider)) return;
     if (!_hasMore || _isLoadingMore) return;
     final current = state.when(
       data: (d) => d,

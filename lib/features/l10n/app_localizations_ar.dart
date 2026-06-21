@@ -1297,5 +1297,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get login_to_rate_owner => 'يرجى تسجيل الدخول لتقييم هذا المالك';
 
   @override
+  String get login_required_bookings =>
+      'سجّل الدخول لعرض حجوزاتك وإدارتها ومتابعة حالتها وتقييم إقامتك.';
+
+  @override
+  String get login_required_notifications =>
+      'سجّل الدخول لتلقي التحديثات حول حجوزاتك والعروض ونشاط حسابك.';
+
+  @override
+  String get login_required_account =>
+      'أنشئ حسابًا أو سجّل الدخول للوصول إلى ملفك الشخصي وحجوزاتك والمزيد.';
+
+  @override
   String get rating_score => 'التقييم';
 }

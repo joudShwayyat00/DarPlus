@@ -27,6 +27,13 @@ AuthRepository authRepository(Ref ref) {
   return AuthRepositoryImpl(authService);
 }
 
+/// Tracks login state; rebuilds when [profileControllerProvider] updates.
+@riverpod
+bool isLoggedIn(Ref ref) {
+  ref.watch(profileControllerProvider);
+  return SharedPerfManager().isLoggedIn;
+}
+
 @riverpod
 class RegisterController extends _$RegisterController {
   @override
@@ -60,6 +67,7 @@ class RegisterController extends _$RegisterController {
       sharedPrefs.isLoggedIn = true;
       sharedPrefs.userEmail = email;
       DioFactory.updateAuthToken();
+      ref.invalidate(profileControllerProvider);
 
       return response;
     });
@@ -85,6 +93,7 @@ class LoginController extends _$LoginController {
       sharedPrefs.isLoggedIn = true;
       sharedPrefs.userEmail = email;
       DioFactory.updateAuthToken();
+      ref.invalidate(profileControllerProvider);
 
       return response;
     });

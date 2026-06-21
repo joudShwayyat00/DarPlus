@@ -2576,6 +2576,24 @@ abstract class AppLocalizations {
   /// **'Please log in to rate this owner'**
   String get login_to_rate_owner;
 
+  /// No description provided for @login_required_bookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to view and manage your bookings, track status, and rate your stays.'**
+  String get login_required_bookings;
+
+  /// No description provided for @login_required_notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to receive updates about your bookings, offers, and account activity.'**
+  String get login_required_notifications;
+
+  /// No description provided for @login_required_account.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account or sign in to access your profile, bookings, and more.'**
+  String get login_required_account;
+
   /// No description provided for @rating_score.
   ///
   /// In en, this message translates to:

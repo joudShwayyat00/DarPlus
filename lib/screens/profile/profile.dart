@@ -1,6 +1,8 @@
 import 'package:dar_plus_app/screens/assets/my_assets_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/controller/local_provider.dart';
+import 'package:dar_plus_app/screens/auth/login_screen.dart';
+import 'package:dar_plus_app/screens/auth/sign_up_screen.dart';
 import 'package:dar_plus_app/screens/auth/welcome_screen.dart';
 import 'package:dar_plus_app/screens/profile/about_screen.dart';
 import 'package:dar_plus_app/screens/profile/contact_us_screen.dart';
@@ -30,17 +32,31 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  void _openIfLoggedIn(VoidCallback action) {
+    if (ref.read(isLoggedInProvider)) {
+      action();
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final notificationBadge = ref
-        .watch(notificationsControllerProvider)
-        .maybeWhen(
-          data: (notifications) {
-            if (notifications.isEmpty) return null;
-            return _buildNotificationBadge(context, notifications.length);
-          },
-          orElse: () => null,
-        );
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    final notificationBadge = isLoggedIn
+        ? ref
+              .watch(notificationsControllerProvider)
+              .maybeWhen(
+                data: (notifications) {
+                  if (notifications.isEmpty) return null;
+                  return _buildNotificationBadge(context, notifications.length);
+                },
+                orElse: () => null,
+              )
+        : null;
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -55,7 +71,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   .watch(profileControllerProvider)
                   .when(
                     data: (user) => user == null
-                        ? const SizedBox.shrink()
+                        ? _buildGuestHeader(context)
                         : _buildProfileHeader(context, user),
                     loading: () => _buildProfileHeaderLoading(context),
                     error: (err, stack) =>
@@ -79,19 +95,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         _MenuItem(
                           icon: Icons.person_outline_rounded,
                           title: tr.edit_profile,
-                          onTap: () {
+                          onTap: () => _openIfLoggedIn(() {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const EditProfileScreen(),
                               ),
                             );
-                          },
+                          }),
                         ),
                         _MenuItem(
                           icon: Icons.lock_outline_rounded,
                           title: tr.change_password,
-                          onTap: () {
+                          onTap: () => _openIfLoggedIn(() {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -99,7 +115,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     const UpdatePasswordScreen(),
                               ),
                             );
-                          },
+                          }),
                         ),
                         if (ref
                                 .watch(profileControllerProvider)
@@ -109,32 +125,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           _MenuItem(
                             icon: Icons.apartment_rounded,
                             title: tr.my_assets,
-                            onTap: () {
+                            onTap: () => _openIfLoggedIn(() {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const MyAssetsScreen(),
                                 ),
                               );
-                            },
+                            }),
                           ),
-                        _MenuItem(
-                          icon: Icons.calendar_month_rounded,
-                          title: tr.my_reservations,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const MyReservationsScreen(),
-                              ),
-                            );
-                          },
-                        ),
+
                         _MenuItem(
                           icon: Icons.card_membership_rounded,
                           title: tr.subscriptions,
-                          onTap: () {
+                          onTap: () => _openIfLoggedIn(() {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -142,13 +146,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     const SubscriptionsScreen(),
                               ),
                             );
-                          },
+                          }),
                         ),
                         _MenuItem(
                           icon: Icons.notifications_outlined,
                           title: tr.notifications,
-                          // trailing: notificationBadge,
-                          onTap: () async {
+                          trailing: notificationBadge,
+                          onTap: () => _openIfLoggedIn(() async {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -156,8 +160,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     const NotificationsScreen(),
                               ),
                             );
-                            ref.invalidate(notificationsControllerProvider);
-                          },
+                            if (ref.read(isLoggedInProvider)) {
+                              ref.invalidate(notificationsControllerProvider);
+                            }
+                          }),
                         ),
                       ],
                     ),
@@ -275,29 +281,65 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
                     SizedBox(height: 2.5.h),
 
-                    // Danger Zone
-                    _buildMenuCard(
-                      context,
-                      items: [
-                        _MenuItem(
-                          icon: Icons.logout_rounded,
-                          title: tr.logout,
-                          iconColor: AppColors.goldBrandColor,
-                          titleColor: AppColors.goldBrandColor,
-                          onTap: () => _showLogoutDialog(context),
-                        ),
-                        _MenuItem(
-                          icon: Icons.delete_outline_rounded,
-                          title: tr.delete_account,
-                          iconColor: Colors.red,
-                          titleColor: Colors.red,
-                          showDivider: false,
-                          onTap: () {
-                            _showDeleteAccountDialog(context);
-                          },
-                        ),
-                      ],
-                    ),
+                    // Danger Zone — only when logged in
+                    if (isLoggedIn)
+                      _buildMenuCard(
+                        context,
+                        items: [
+                          _MenuItem(
+                            icon: Icons.logout_rounded,
+                            title: tr.logout,
+                            iconColor: AppColors.goldBrandColor,
+                            titleColor: AppColors.goldBrandColor,
+                            onTap: () => _showLogoutDialog(context),
+                          ),
+                          _MenuItem(
+                            icon: Icons.delete_outline_rounded,
+                            title: tr.delete_account,
+                            iconColor: Colors.red,
+                            titleColor: Colors.red,
+                            showDivider: false,
+                            onTap: () {
+                              _showDeleteAccountDialog(context);
+                            },
+                          ),
+                        ],
+                      )
+                    else
+                      _buildMenuCard(
+                        context,
+                        items: [
+                          _MenuItem(
+                            icon: Icons.login_rounded,
+                            title: tr.login,
+                            iconColor: AppColors.goldBrandColor,
+                            titleColor: AppColors.goldBrandColor,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const LoginScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _MenuItem(
+                            icon: Icons.person_add_alt_1_rounded,
+                            title: tr.create_account,
+                            iconColor: AppColors.goldBrandColor,
+                            titleColor: AppColors.goldBrandColor,
+                            showDivider: false,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const SignUpScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
 
                     SizedBox(height: 2.h),
 
@@ -321,6 +363,69 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildGuestHeader(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 5.w),
+      padding: EdgeInsets.all(5.w),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.goldBrandColor.withAlpha(25), Colors.white],
+        ),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.goldBrandColor.withAlpha(40)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(8),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: AppColors.goldBrandColor.withAlpha(25),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.person_outline_rounded,
+              size: 36,
+              color: AppColors.goldBrandColor,
+            ),
+          ),
+          SizedBox(height: 1.8.h),
+          Text(
+            tr.sign_in_to_continue,
+            textAlign: TextAlign.center,
+            style: appTextStyle(
+              context,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.black.withAlpha(230),
+            ),
+          ),
+          SizedBox(height: 0.8.h),
+          Text(
+            tr.login_required_account,
+            textAlign: TextAlign.center,
+            style: appTextStyle(
+              context,
+              fontSize: 10.5.sp,
+              fontWeight: FontWeight.w500,
+              color: Colors.black.withAlpha(120),
+              height: 1.4,
+            ),
+          ),
+        ],
       ),
     );
   }

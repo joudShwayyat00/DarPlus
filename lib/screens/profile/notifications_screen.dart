@@ -1,7 +1,9 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/notifications/data/models/notification_item.dart';
 import 'package:dar_plus_app/features/notifications/presentation/providers/notifications_providers.dart';
+import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/utils/widgets/login_required_view.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +14,7 @@ class NotificationsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notificationsAsync = ref.watch(notificationsControllerProvider);
+    final isLoggedIn = ref.watch(isLoggedInProvider);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -39,11 +41,18 @@ class NotificationsScreen extends ConsumerWidget {
         ),
         centerTitle: true,
       ),
-      body: notificationsAsync.when(
-        data: (notifications) => _buildDataState(context, ref, notifications),
-        loading: () => _buildLoadingState(),
-        error: (error, _) => _buildErrorState(context, ref),
-      ),
+      body: !isLoggedIn
+          ? LoginRequiredView(
+              icon: Icons.notifications_active_outlined,
+              title: tr.sign_in_to_continue,
+              message: tr.login_required_notifications,
+            )
+          : ref.watch(notificationsControllerProvider).when(
+              data: (notifications) =>
+                  _buildDataState(context, ref, notifications),
+              loading: () => _buildLoadingState(),
+              error: (error, _) => _buildErrorState(context, ref),
+            ),
     );
   }
 

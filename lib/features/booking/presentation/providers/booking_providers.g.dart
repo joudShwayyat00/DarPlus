@@ -191,7 +191,7 @@ final class MyBookingsControllerProvider
 }
 
 String _$myBookingsControllerHash() =>
-    r'0514a4eb3bd4580cd8b73ed3b2a97639aaeec90a';
+    r'e01a21bf9284d241eb081f0eea506e0fb7d4c2ee';
 
 final class MyBookingsControllerFamily extends $Family
     with

@@ -3,7 +3,9 @@ import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/booking/data/models/my_booking_item.dart';
 import 'package:dar_plus_app/features/booking/domain/booking_status_filter.dart';
 import 'package:dar_plus_app/features/booking/presentation/providers/booking_providers.dart';
+import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/utils/widgets/login_required_view.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -57,6 +59,36 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+
+    if (!isLoggedIn) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF8F7F4),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFF8F7F4),
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leadingWidth: 0,
+          automaticallyImplyLeading: false,
+          title: Text(
+            tr.my_bookings,
+            style: appTextStyle(
+              context,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w800,
+              color: Colors.black.withAlpha(220),
+            ),
+          ),
+          centerTitle: false,
+        ),
+        body: LoginRequiredView(
+          icon: Icons.bookmark_rounded,
+          title: tr.sign_in_to_continue,
+          message: tr.login_required_bookings,
+        ),
+      );
+    }
+
     final bookingsAsync =
         ref.watch(myBookingsControllerProvider(_selectedStatus));
 

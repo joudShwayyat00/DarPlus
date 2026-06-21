@@ -1306,5 +1306,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get login_to_rate_owner => 'Please log in to rate this owner';
 
   @override
+  String get login_required_bookings =>
+      'Sign in to view and manage your bookings, track status, and rate your stays.';
+
+  @override
+  String get login_required_notifications =>
+      'Sign in to receive updates about your bookings, offers, and account activity.';
+
+  @override
+  String get login_required_account =>
+      'Create an account or sign in to access your profile, bookings, and more.';
+
+  @override
   String get rating_score => 'Rating';
 }

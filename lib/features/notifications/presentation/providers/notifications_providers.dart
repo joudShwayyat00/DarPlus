@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../controller/local_provider.dart';
 import '../../../../core/network/dio_factory.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../data/data_sources/notifications_service_client.dart';
 import '../../data/models/notification_item.dart';
 import '../../data/repositories/notifications_repository_impl.dart';
@@ -25,11 +26,16 @@ NotificationsRepository notificationsRepository(Ref ref) {
 class NotificationsController extends _$NotificationsController {
   @override
   FutureOr<List<NotificationItem>> build() async {
+    if (!ref.read(isLoggedInProvider)) return [];
     final lang = ref.read(localeProvider).languageCode;
     return ref.read(notificationsRepositoryProvider).getNotifications(lang);
   }
 
   Future<void> refresh() async {
+    if (!ref.read(isLoggedInProvider)) {
+      state = const AsyncData([]);
+      return;
+    }
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final lang = ref.read(localeProvider).languageCode;

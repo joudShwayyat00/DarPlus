@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/network/dio_factory.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../data/data_sources/booking_service_client.dart';
 import '../../data/models/booking_response.dart';
 import '../../data/models/my_booking_item.dart';
@@ -76,12 +77,17 @@ class BookingController extends _$BookingController {
 class MyBookingsController extends _$MyBookingsController {
   @override
   FutureOr<List<MyBookingItem>> build(BookingStatusFilter status) async {
+    if (!ref.read(isLoggedInProvider)) return [];
     return ref
         .read(bookingRepositoryProvider)
         .getMyBookings(status: status.apiValue);
   }
 
   Future<void> refresh() async {
+    if (!ref.read(isLoggedInProvider)) {
+      state = const AsyncData([]);
+      return;
+    }
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       return ref
