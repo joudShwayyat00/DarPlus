@@ -1318,5 +1318,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'Create an account or sign in to access your profile, bookings, and more.';
 
   @override
+  String get login_required_rate_asset =>
+      'Sign in to rate this property and share your experience with others.';
+
+  @override
+  String get login_required_rate_owner =>
+      'Sign in to rate this owner and help the community make better choices.';
+
+  @override
+  String get login_required_booking =>
+      'Sign in to book this property and manage your reservations.';
+
+  @override
+  String get login_required_appointment =>
+      'Sign in to request a viewing appointment for this property.';
+
+  @override
   String get rating_score => 'Rating';
 }

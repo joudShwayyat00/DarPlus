@@ -1309,5 +1309,21 @@ class AppLocalizationsAr extends AppLocalizations {
       'أنشئ حسابًا أو سجّل الدخول للوصول إلى ملفك الشخصي وحجوزاتك والمزيد.';
 
   @override
+  String get login_required_rate_asset =>
+      'سجّل الدخول لتقييم هذا العقار ومشاركة تجربتك مع الآخرين.';
+
+  @override
+  String get login_required_rate_owner =>
+      'سجّل الدخول لتقييم هذا المالك ومساعدة المجتمع على اتخاذ قرارات أفضل.';
+
+  @override
+  String get login_required_booking =>
+      'سجّل الدخول لحجز هذا العقار وإدارة حجوزاتك.';
+
+  @override
+  String get login_required_appointment =>
+      'سجّل الدخول لطلب موعد لمعاينة هذا العقار.';
+
+  @override
   String get rating_score => 'التقييم';
 }

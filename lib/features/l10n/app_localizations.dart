@@ -2594,6 +2594,30 @@ abstract class AppLocalizations {
   /// **'Create an account or sign in to access your profile, bookings, and more.'**
   String get login_required_account;
 
+  /// No description provided for @login_required_rate_asset.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to rate this property and share your experience with others.'**
+  String get login_required_rate_asset;
+
+  /// No description provided for @login_required_rate_owner.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to rate this owner and help the community make better choices.'**
+  String get login_required_rate_owner;
+
+  /// No description provided for @login_required_booking.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to book this property and manage your reservations.'**
+  String get login_required_booking;
+
+  /// No description provided for @login_required_appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to request a viewing appointment for this property.'**
+  String get login_required_appointment;
+
   /// No description provided for @rating_score.
   ///
   /// In en, this message translates to:

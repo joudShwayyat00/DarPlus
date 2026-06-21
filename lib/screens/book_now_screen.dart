@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/utils/widgets/auth_required_sheet.dart';
 
 class BookingScreen extends ConsumerStatefulWidget {
   final PropertyItem item;
@@ -289,6 +290,14 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                       ? AppColors.goldBrandColor.withAlpha(160)
                       : AppColors.goldBrandColor,
                   onPressed: () async {
+                    if (!await requireAuth(
+                      context,
+                      message: tr.login_required_booking,
+                      icon: Icons.calendar_month_rounded,
+                    )) {
+                      return;
+                    }
+                    if (!context.mounted) return;
                     if (_checkIn == null || _checkOut == null) {
                       _toast(context, tr.please_select_checkin_date);
                       return;

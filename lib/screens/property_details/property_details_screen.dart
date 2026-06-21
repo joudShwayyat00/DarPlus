@@ -1,7 +1,7 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/configuration/app_images.dart';
 import 'package:dar_plus_app/models/property_item.dart';
-import 'package:dar_plus_app/screens/book_now_screen.dart';
+import 'package:dar_plus_app/utils/helpers/booking_navigation.dart';
 import 'package:dar_plus_app/screens/property_details/widget/property_images_slider.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
@@ -185,9 +185,7 @@ class PropertyDetailsScreen extends StatelessWidget {
               AppButton(
                 width: 45.w,
                 backgroundColor: AppColors.goldBrandColor,
-                onPressed: () {
-                  AppNavigator.of(context).push(BookingScreen(item: item));
-                },
+                onPressed: () => openBookingFlow(context, item),
                 child: Text(
                   item.listingType == ListingType.sale
                       ? tr.request_appointment

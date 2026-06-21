@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
-import 'package:dar_plus_app/controller/shared_prefs.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/features/booking/domain/booking_status_filter.dart';
 import 'package:dar_plus_app/features/booking/presentation/providers/booking_providers.dart';
 import 'package:dar_plus_app/features/rating/presentation/providers/rating_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:dar_plus_app/utils/widgets/auth_required_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +17,15 @@ Future<void> showRateAssetSheet(
   required int assetId,
   String? assetName,
   String? imageUrl,
-}) {
+}) async {
+  if (!await requireAuth(
+    context,
+    message: tr.login_required_rate_asset,
+    icon: Icons.star_rounded,
+  )) {
+    return;
+  }
+  if (!context.mounted) return;
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -36,7 +44,15 @@ Future<void> showRateAssetDialog(
   String? assetName,
   String? imageUrl,
   BookingStatusFilter? bookingsFilter,
-}) {
+}) async {
+  if (!await requireAuth(
+    context,
+    message: tr.login_required_rate_asset,
+    icon: Icons.star_rounded,
+  )) {
+    return;
+  }
+  if (!context.mounted) return;
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -181,12 +197,6 @@ class _RateAssetFormState extends ConsumerState<RateAssetForm> {
   }
 
   Future<void> _submit() async {
-    if (!SharedPerfManager().isLoggedIn) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tr.login_to_rate)),
-      );
-      return;
-    }
     if (_selectedRating < 1) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(tr.please_select_rating)),

@@ -2,13 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/appointment/data/models/appointment_response.dart';
 import 'package:dar_plus_app/features/appointment/presentation/providers/appointment_providers.dart';
+import 'package:dar_plus_app/utils/widgets/auth_required_sheet.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_amenity.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_attribute.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_owner.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/main.dart';
-import 'package:dar_plus_app/screens/book_now_screen.dart';
+import 'package:dar_plus_app/utils/helpers/booking_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
@@ -981,13 +982,11 @@ class _BottomBar extends ConsumerWidget {
             SizedBox(width: 4.w),
             // Action button
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 if (asset.isForSale) {
-                  _showAppointmentDialog(context, ref, asset);
+                  await _showAppointmentDialog(context, ref, asset);
                 } else {
-                  AppNavigator.of(
-                    context,
-                  ).push(BookingScreen(item: asset.toPropertyItem()));
+                  await openBookingFlow(context, asset.toPropertyItem());
                 }
               },
               child: Container(
@@ -1031,11 +1030,19 @@ class _BottomBar extends ConsumerWidget {
     );
   }
 
-  static void _showAppointmentDialog(
+  static Future<void> _showAppointmentDialog(
     BuildContext context,
     WidgetRef ref,
     AssetItem asset,
-  ) {
+  ) async {
+    if (!await requireAuth(
+      context,
+      message: tr.login_required_appointment,
+      icon: Icons.event_available_rounded,
+    )) {
+      return;
+    }
+    if (!context.mounted) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

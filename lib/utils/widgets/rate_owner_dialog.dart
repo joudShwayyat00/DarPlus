@@ -1,11 +1,11 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
-import 'package:dar_plus_app/controller/shared_prefs.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_owner.dart';
 import 'package:dar_plus_app/features/owners/presentation/providers/owners_providers.dart';
 import 'package:dar_plus_app/features/rating/presentation/providers/rating_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/home/widgets/owner_avatar.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:dar_plus_app/utils/widgets/auth_required_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +15,15 @@ Future<void> showRateOwnerDialog(
   BuildContext context, {
   required int ownerId,
   required AssetOwner owner,
-}) {
+}) async {
+  if (!await requireAuth(
+    context,
+    message: tr.login_required_rate_owner,
+    icon: Icons.star_rounded,
+  )) {
+    return;
+  }
+  if (!context.mounted) return;
   return showDialog<void>(
     context: context,
     barrierDismissible: true,
@@ -108,12 +116,6 @@ class _RateOwnerFormState extends ConsumerState<RateOwnerForm> {
   }
 
   Future<void> _submit() async {
-    if (!SharedPerfManager().isLoggedIn) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(tr.login_to_rate_owner)),
-      );
-      return;
-    }
     if (_selectedRating < 1) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(tr.please_select_rating)),

@@ -3,7 +3,9 @@ import 'package:dar_plus_app/features/notifications/data/models/notification_ite
 import 'package:dar_plus_app/features/notifications/presentation/providers/notifications_providers.dart';
 import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:dar_plus_app/main.dart';
-import 'package:dar_plus_app/utils/widgets/login_required_view.dart';
+import 'package:dar_plus_app/screens/auth/login_screen.dart';
+import 'package:dar_plus_app/screens/auth/sign_up_screen.dart';
+import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,11 +44,7 @@ class NotificationsScreen extends ConsumerWidget {
         centerTitle: true,
       ),
       body: !isLoggedIn
-          ? LoginRequiredView(
-              icon: Icons.notifications_active_outlined,
-              title: tr.sign_in_to_continue,
-              message: tr.login_required_notifications,
-            )
+          ? const _NotificationsGuestView()
           : ref.watch(notificationsControllerProvider).when(
               data: (notifications) =>
                   _buildDataState(context, ref, notifications),
@@ -303,5 +301,180 @@ class NotificationsScreen extends ConsumerWidget {
     }
 
     return Icons.notifications_outlined;
+  }
+}
+
+class _NotificationsGuestView extends StatelessWidget {
+  const _NotificationsGuestView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFFF8F7F4),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.h),
+        child: Column(
+          children: [
+            SizedBox(height: 2.h),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.goldBrandColor.withAlpha(18),
+                  ),
+                ),
+                Container(
+                  width: 88,
+                  height: 88,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppColors.goldBrandColor.withAlpha(45),
+                        AppColors.goldBrandColor.withAlpha(15),
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.goldBrandColor.withAlpha(55),
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.notifications_active_outlined,
+                    size: 42,
+                    color: AppColors.goldBrandColor,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 2.8.h),
+            Text(
+              tr.sign_in_to_continue,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w900,
+                color: Colors.black.withAlpha(230),
+              ),
+            ),
+            SizedBox(height: 1.h),
+            Text(
+              tr.login_required_notifications,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.black.withAlpha(120),
+                height: 1.5,
+              ),
+            ),
+            SizedBox(height: 3.h),
+            _GuestFeatureTile(
+              icon: Icons.mark_email_unread_outlined,
+              text: tr.login_required_notifications,
+            ),
+            SizedBox(height: 3.5.h),
+            AppButton(
+              backgroundColor: AppColors.goldBrandColor,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                );
+              },
+              child: Text(
+                tr.login,
+                style: appTextStyle(
+                  context,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            SizedBox(height: 1.2.h),
+            AppButton(
+              backgroundColor: Colors.transparent,
+              borderColor: AppColors.goldBrandColor,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                );
+              },
+              child: Text(
+                tr.create_account,
+                style: appTextStyle(
+                  context,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.goldBrandColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GuestFeatureTile extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _GuestFeatureTile({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.4.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.black.withAlpha(10)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(6),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(2.5.w),
+            decoration: BoxDecoration(
+              color: AppColors.goldBrandColor.withAlpha(20),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 20, color: AppColors.goldBrandColor),
+          ),
+          SizedBox(width: 3.w),
+          Expanded(
+            child: Text(
+              text,
+              style: appTextStyle(
+                context,
+                fontSize: 10.5.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black.withAlpha(170),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

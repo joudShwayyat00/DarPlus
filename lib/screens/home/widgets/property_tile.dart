@@ -2,8 +2,7 @@ import 'dart:ui';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/models/property_item.dart';
-import 'package:dar_plus_app/screens/book_now_screen.dart';
-import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/helpers/booking_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -165,11 +164,7 @@ class PropertyTile extends StatelessWidget {
                         : tr.book_now,
                     onPressed:
                         onBookNow ??
-                        () {
-                          AppNavigator.of(
-                            context,
-                          ).push(BookingScreen(item: item));
-                        },
+                        () => openBookingFlow(context, item),
                   ),
                 ],
               ),

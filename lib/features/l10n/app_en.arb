@@ -439,5 +439,9 @@
   "login_required_bookings": "Sign in to view and manage your bookings, track status, and rate your stays.",
   "login_required_notifications": "Sign in to receive updates about your bookings, offers, and account activity.",
   "login_required_account": "Create an account or sign in to access your profile, bookings, and more.",
+  "login_required_rate_asset": "Sign in to rate this property and share your experience with others.",
+  "login_required_rate_owner": "Sign in to rate this owner and help the community make better choices.",
+  "login_required_booking": "Sign in to book this property and manage your reservations.",
+  "login_required_appointment": "Sign in to request a viewing appointment for this property.",
   "rating_score": "Rating"
 }

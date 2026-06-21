@@ -32,17 +32,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  void _openIfLoggedIn(VoidCallback action) {
-    if (ref.read(isLoggedInProvider)) {
-      action();
-      return;
-    }
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isLoggedIn = ref.watch(isLoggedInProvider);
@@ -92,67 +81,85 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     _buildMenuCard(
                       context,
                       items: [
-                        _MenuItem(
-                          icon: Icons.person_outline_rounded,
-                          title: tr.edit_profile,
-                          onTap: () => _openIfLoggedIn(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const EditProfileScreen(),
-                              ),
-                            );
-                          }),
-                        ),
-                        _MenuItem(
-                          icon: Icons.lock_outline_rounded,
-                          title: tr.change_password,
-                          onTap: () => _openIfLoggedIn(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const UpdatePasswordScreen(),
-                              ),
-                            );
-                          }),
-                        ),
-                        if (ref
-                                .watch(profileControllerProvider)
-                                .value
-                                ?.isOwner ==
-                            true)
+                        if (isLoggedIn) ...[
+                          _MenuItem(
+                            icon: Icons.person_outline_rounded,
+                            title: tr.edit_profile,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const EditProfileScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _MenuItem(
+                            icon: Icons.lock_outline_rounded,
+                            title: tr.change_password,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const UpdatePasswordScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                        if (isLoggedIn &&
+                            ref
+                                    .watch(profileControllerProvider)
+                                    .value
+                                    ?.isOwner ==
+                                true)
                           _MenuItem(
                             icon: Icons.apartment_rounded,
                             title: tr.my_assets,
-                            onTap: () => _openIfLoggedIn(() {
+                            onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const MyAssetsScreen(),
                                 ),
                               );
-                            }),
+                            },
                           ),
-
-                        _MenuItem(
-                          icon: Icons.card_membership_rounded,
-                          title: tr.subscriptions,
-                          onTap: () => _openIfLoggedIn(() {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const SubscriptionsScreen(),
-                              ),
-                            );
-                          }),
-                        ),
+                        if (isLoggedIn)
+                          _MenuItem(
+                            icon: Icons.calendar_month_rounded,
+                            title: tr.my_reservations,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MyReservationsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        if (isLoggedIn)
+                          _MenuItem(
+                            icon: Icons.card_membership_rounded,
+                            title: tr.subscriptions,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SubscriptionsScreen(),
+                                ),
+                              );
+                            },
+                          ),
                         _MenuItem(
                           icon: Icons.notifications_outlined,
                           title: tr.notifications,
                           trailing: notificationBadge,
-                          onTap: () => _openIfLoggedIn(() async {
+                          onTap: () async {
                             await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -163,7 +170,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             if (ref.read(isLoggedInProvider)) {
                               ref.invalidate(notificationsControllerProvider);
                             }
-                          }),
+                          },
                         ),
                       ],
                     ),
