@@ -437,6 +437,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get manage_plan => 'Manage your subscription plan';
 
   @override
+  String get statistics_coming_soon => 'Statistics coming soon';
+
+  @override
+  String get statistics_coming_soon_message =>
+      'Detailed insights about your properties, views, and bookings will be available here soon.';
+
+  @override
   String get no_appointments_found => 'No appointments found';
 
   @override

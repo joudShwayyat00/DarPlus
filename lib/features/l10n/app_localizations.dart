@@ -932,6 +932,18 @@ abstract class AppLocalizations {
   /// **'Manage your subscription plan'**
   String get manage_plan;
 
+  /// No description provided for @statistics_coming_soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics coming soon'**
+  String get statistics_coming_soon;
+
+  /// No description provided for @statistics_coming_soon_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed insights about your properties, views, and bookings will be available here soon.'**
+  String get statistics_coming_soon_message;
+
   /// No description provided for @no_appointments_found.
   ///
   /// In en, this message translates to:

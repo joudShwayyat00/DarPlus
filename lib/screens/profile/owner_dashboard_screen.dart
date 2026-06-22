@@ -7,7 +7,6 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
 import 'package:dar_plus_app/screens/assets/my_assets_screen.dart';
 import 'package:dar_plus_app/screens/profile/my_appointments_screen.dart';
-import 'package:dar_plus_app/screens/profile/owner_statistics_screen.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/widgets/login_required_view.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,6 @@ class OwnerDashboardScreen extends ConsumerWidget {
 
   Future<void> _onRefresh(WidgetRef ref) async {
     ref.invalidate(myAssetsControllerProvider);
-    ref.invalidate(ownerAllAppointmentsProvider);
     for (final status in AppointmentStatusFilter.values) {
       ref.invalidate(myAppointmentsControllerProvider(status));
     }
@@ -84,20 +82,10 @@ class OwnerDashboardScreen extends ConsumerWidget {
       );
     }
 
-    final assetsAsync = ref.watch(myAssetsControllerProvider);
-    final appointmentsAsync = ref.watch(ownerAllAppointmentsProvider);
     final pendingAsync = ref.watch(
       myAppointmentsControllerProvider(AppointmentStatusFilter.pending),
     );
 
-    final assetCount = assetsAsync.maybeWhen(
-      data: (items) => items.length,
-      orElse: () => 0,
-    );
-    final appointmentCount = appointmentsAsync.maybeWhen(
-      data: (items) => items.length,
-      orElse: () => 0,
-    );
     final pendingCount = pendingAsync.maybeWhen(
       data: (items) => items.length,
       orElse: () => 0,
@@ -115,37 +103,6 @@ class OwnerDashboardScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _WelcomeCard(name: user?.name ?? ''),
-              SizedBox(height: 2.2.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: _StatCard(
-                      icon: Icons.home_work_rounded,
-                      label: tr.total_properties,
-                      value: '$assetCount',
-                      color: const Color(0xFF1B6B2F),
-                    ),
-                  ),
-                  SizedBox(width: 3.w),
-                  Expanded(
-                    child: _StatCard(
-                      icon: Icons.event_available_rounded,
-                      label: tr.pending_requests,
-                      value: '$pendingCount',
-                      color: AppColors.goldBrandColor,
-                    ),
-                  ),
-                  SizedBox(width: 3.w),
-                  Expanded(
-                    child: _StatCard(
-                      icon: Icons.insights_rounded,
-                      label: tr.total_appointment_requests,
-                      value: '$appointmentCount',
-                      color: const Color(0xFF1565C0),
-                    ),
-                  ),
-                ],
-              ),
               SizedBox(height: 2.5.h),
               Text(
                 tr.quick_actions,
@@ -191,19 +148,6 @@ class OwnerDashboardScreen extends ConsumerWidget {
                   ),
                 ),
                 badge: pendingCount > 0 ? '$pendingCount' : null,
-              ),
-              SizedBox(height: 1.2.h),
-              _DashboardTile(
-                icon: Icons.bar_chart_rounded,
-                title: tr.my_statistics,
-                subtitle: tr.track_performance,
-                gradient: const [Color(0xFF1565C0), Color(0xFF42A5F5)],
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const OwnerStatisticsScreen(),
-                  ),
-                ),
               ),
             ],
           ),
@@ -311,67 +255,6 @@ class _WelcomeCard extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-
-  const _StatCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.4.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: color.withAlpha(40)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(8),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 22),
-          SizedBox(height: 0.6.h),
-          Text(
-            value,
-            style: appTextStyle(
-              context,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w900,
-              color: Colors.black.withAlpha(230),
-            ),
-          ),
-          SizedBox(height: 0.2.h),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: appTextStyle(
-              context,
-              fontSize: 8.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.black.withAlpha(120),
             ),
           ),
         ],

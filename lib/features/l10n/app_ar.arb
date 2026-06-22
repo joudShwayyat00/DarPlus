@@ -146,6 +146,8 @@
   "view_incoming_requests": "طلبات المعاينة الواردة",
   "track_performance": "تتبع أدائك",
   "manage_plan": "إدارة خطة الاشتراك",
+  "statistics_coming_soon": "الإحصائيات قريباً",
+  "statistics_coming_soon_message": "ستتوفر هنا قريباً تفاصيل عن عقاراتك والمشاهدات والحجوزات.",
   "no_appointments_found": "لا توجد مواعيد",
   "no_appointments_for_status": "لا توجد مواعيد {status} حتى الآن",
   "@no_appointments_for_status": {

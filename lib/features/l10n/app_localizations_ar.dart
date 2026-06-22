@@ -433,6 +433,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get manage_plan => 'إدارة خطة الاشتراك';
 
   @override
+  String get statistics_coming_soon => 'الإحصائيات قريباً';
+
+  @override
+  String get statistics_coming_soon_message =>
+      'ستتوفر هنا قريباً تفاصيل عن عقاراتك والمشاهدات والحجوزات.';
+
+  @override
   String get no_appointments_found => 'لا توجد مواعيد';
 
   @override

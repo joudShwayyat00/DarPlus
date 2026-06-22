@@ -1,4 +1,5 @@
 import 'package:dar_plus_app/screens/profile/owner_dashboard_screen.dart';
+import 'package:dar_plus_app/screens/profile/owner_statistics_screen.dart';
 import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/controller/local_provider.dart';
@@ -136,6 +137,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       const SubscriptionsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _MenuItem(
+                            icon: Icons.bar_chart_rounded,
+                            title: tr.my_statistics,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const OwnerStatisticsScreen(),
                                 ),
                               );
                             },

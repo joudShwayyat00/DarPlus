@@ -146,6 +146,8 @@
   "view_incoming_requests": "Incoming viewing requests",
   "track_performance": "Track your performance",
   "manage_plan": "Manage your subscription plan",
+  "statistics_coming_soon": "Statistics coming soon",
+  "statistics_coming_soon_message": "Detailed insights about your properties, views, and bookings will be available here soon.",
   "no_appointments_found": "No appointments found",
   "no_appointments_for_status": "You don't have any {status} appointments yet",
   "@no_appointments_for_status": {
