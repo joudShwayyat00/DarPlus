@@ -1,7 +1,7 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/configuration/app_images.dart';
 import 'package:dar_plus_app/models/property_item.dart';
-import 'package:dar_plus_app/utils/helpers/booking_navigation.dart';
+import 'package:dar_plus_app/utils/helpers/property_navigation.dart';
 import 'package:dar_plus_app/screens/property_details/widget/property_images_slider.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
@@ -185,7 +185,7 @@ class PropertyDetailsScreen extends StatelessWidget {
               AppButton(
                 width: 45.w,
                 backgroundColor: AppColors.goldBrandColor,
-                onPressed: () => openBookingFlow(context, item),
+                onPressed: () => openPropertyActionFlow(context, item),
                 child: Text(
                   item.listingType == ListingType.sale
                       ? tr.request_appointment
@@ -355,9 +355,9 @@ class _ContactLinksCard extends StatelessWidget {
   ) async {
     final ok = await action();
     if (!context.mounted || ok) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(tr.something_went_wrong)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(tr.something_went_wrong)));
   }
 
   @override
@@ -407,20 +407,14 @@ class _ContactLinksCard extends StatelessWidget {
             title: tr.phone,
             value: _has(item.phone) ? item.phone! : tr.not_provided,
             enabled: _has(item.phone),
-            onTap: () => _launch(
-              context,
-              () => launchPhoneCall(item.phone!),
-            ),
+            onTap: () => _launch(context, () => launchPhoneCall(item.phone!)),
           ),
           _ContactRow(
             icon: Icons.email,
             title: tr.email,
             value: _has(item.email) ? item.email! : tr.not_provided,
             enabled: _has(item.email),
-            onTap: () => _launch(
-              context,
-              () => launchEmail(item.email!),
-            ),
+            onTap: () => _launch(context, () => launchEmail(item.email!)),
           ),
           if (socialItems.isNotEmpty) ...[
             SizedBox(height: 1.2.h),
