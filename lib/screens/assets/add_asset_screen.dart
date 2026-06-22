@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/features/assets/data/models/amenity_item.dart';
@@ -518,6 +519,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                         controller: _priceCtrl,
                         hint: tr.price_label,
                         icon: Icons.monetization_on_outlined,
+                        showCurrencySuffix: true,
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
@@ -556,6 +558,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                           controller: _dayPriceCtrl,
                           hint: tr.day_price,
                           icon: Icons.payments_outlined,
+                          showCurrencySuffix: true,
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
@@ -583,6 +586,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                         controller: _rentPriceCtrl,
                         hint: _rentPriceHint(),
                         icon: Icons.price_change_outlined,
+                        showCurrencySuffix: true,
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
@@ -758,6 +762,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
     List<TextInputFormatter>? inputFormatters,
+    bool showCurrencySuffix = false,
   }) {
     return TextFormField(
       controller: controller,
@@ -780,6 +785,24 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
         ),
         prefixIcon: icon != null
             ? Icon(icon, color: AppColors.grayBrandColor, size: 20)
+            : null,
+        suffixIcon: showCurrencySuffix
+            ? Padding(
+                padding: EdgeInsets.only(right: 3.w),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  widthFactor: 1,
+                  child: Text(
+                    kAppCurrency,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 10.5.sp,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.goldBrandColor,
+                    ),
+                  ),
+                ),
+              )
             : null,
         filled: true,
         fillColor: AppColors.grayBrandColor.withAlpha(10),

@@ -1,3 +1,4 @@
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/configuration/app_images.dart';
 import 'package:dar_plus_app/models/property_item.dart';
@@ -217,23 +218,26 @@ class PropertyDetailsScreen extends StatelessWidget {
                     Text(
                       (() {
                         if (item.listingType == ListingType.sale) {
-                          final m = RegExp(r'\d+').firstMatch(item.price);
-                          return m != null
-                              ? '${m.group(0)} ${tr.currency_jod}'
+                          final digits = extractPriceDigits(item.price);
+                          return digits != null
+                              ? formatPrice(digits)
                               : item.price;
                         }
                         if (item.rentPrice != null) {
-                          final priceStr = item.rentPrice!.toStringAsFixed(2);
                           final suffix = item.rentType == 'daily'
                               ? tr.per_day
                               : item.rentType == 'yearly'
                               ? tr.per_year
                               : tr.per_month;
-                          return '$priceStr ${tr.currency_jod}$suffix';
+                          return formatPrice(
+                            item.rentPrice!,
+                            decimals: 2,
+                            suffix: suffix,
+                          );
                         }
-                        final m = RegExp(r'\d+').firstMatch(item.price);
-                        return m != null
-                            ? '${m.group(0)} ${tr.currency_jod}${tr.per_night}'
+                        final digits = extractPriceDigits(item.price);
+                        return digits != null
+                            ? formatPrice(digits, suffix: tr.per_night)
                             : item.price;
                       })(),
                       style: appTextStyle(

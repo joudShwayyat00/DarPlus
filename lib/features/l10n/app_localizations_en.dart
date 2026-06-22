@@ -1232,6 +1232,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get select_location => 'Select Location';
 
   @override
+  String get view_on_map => 'View on Map';
+
+  @override
+  String get open_in_google_maps => 'Open in Google Maps';
+
+  @override
+  String get tap_to_view_map => 'Tap to explore the location';
+
+  @override
   String get contact_section => 'Contact';
 
   @override

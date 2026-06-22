@@ -1,3 +1,4 @@
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/booking/data/models/booking_response.dart';
 import 'package:dar_plus_app/features/booking/presentation/providers/booking_providers.dart';
@@ -388,10 +389,10 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                           ? '--'
                           : bookingState.whenOrNull(
                                   data: (d) => d != null
-                                      ? '${d.finalPrice} ${tr.currency_jod}'
+                                      ? formatPrice(d.finalPrice)
                                       : null,
                                 ) ??
-                                '$total ${tr.currency_jod}',
+                                formatPrice(total),
                       style: appTextStyle(
                         context,
                         fontSize: 13.sp,
@@ -715,7 +716,7 @@ class _HeroSummary extends StatelessWidget {
                 Row(
                   children: [
                     _Pill(
-                      text: item.price,
+                      text: formatPrice(item.rentPrice ?? extractPriceDigits(item.price) ?? item.price),
                       bg: Colors.grey.shade100,
                       textColor: Colors.black.withAlpha(220),
                     ),
@@ -1181,7 +1182,7 @@ class _PriceCard extends StatelessWidget {
               label: tr.price_per_period,
               value: pricePerPeriod == 0
                   ? '--'
-                  : '$pricePerPeriod ${tr.currency_jod}${_periodLabel(context)}',
+                  : '$pricePerPeriod $kAppCurrency${_periodLabel(context)}',
             ),
             SizedBox(height: 1.h),
             _PriceRow(
@@ -1191,7 +1192,7 @@ class _PriceCard extends StatelessWidget {
             Divider(color: Colors.black.withAlpha(18), height: 2.4.h),
             _PriceRow(
               label: tr.total_label,
-              value: enabled ? '$total ${tr.currency_jod}' : '--',
+              value: enabled ? formatPrice(total) : '--',
               bold: true,
             ),
           ],
@@ -1528,7 +1529,7 @@ class _BookingSummaryCard extends StatelessWidget {
         children: [
           _PriceRow(
             label: tr.total_label,
-            value: '${data.finalPrice} ${tr.currency_jod}',
+            value: formatPrice(data.finalPrice),
             bold: true,
           ),
           SizedBox(height: 0.6.h),

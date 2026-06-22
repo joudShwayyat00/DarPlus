@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/booking/data/models/my_booking_item.dart';
 import 'package:dar_plus_app/features/booking/domain/booking_status_filter.dart';
@@ -367,7 +368,6 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
 
   Widget _buildBookingCard(MyBookingItem booking) {
     final asset = booking.asset;
-    final currencySymbol = booking.currencySymbol;
     final canRate = booking.status.toLowerCase() == 'approved';
     final durationChips = _durationChips(booking);
 
@@ -554,7 +554,7 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
                             ),
                           ),
                           Text(
-                            '$currencySymbol ${booking.finalPrice}',
+                            formatPrice(booking.finalPrice),
                             style: appTextStyle(
                               context,
                               fontSize: 13.sp,

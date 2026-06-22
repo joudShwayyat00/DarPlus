@@ -1,3 +1,4 @@
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/features/packages/data/models/package_item.dart';
@@ -264,7 +265,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
                               ),
                             ),
                             TextSpan(
-                              text: ' ${tr.currency_jod}',
+                              text: ' $kAppCurrency',
                               style: appTextStyle(
                                 context,
                                 fontSize: 10.sp,

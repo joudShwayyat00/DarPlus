@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_amenity.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_attribute.dart';
@@ -6,6 +7,7 @@ import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_owner.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/screens/asset_details/widgets/asset_location_map_card.dart';
 import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/booking_navigation.dart';
@@ -116,6 +118,10 @@ class _AssetDetailsBody extends StatelessWidget {
                     ),
                   SizedBox(height: 1.2.h),
                   _InfoCard(asset: asset),
+                  if (asset.latitude != null && asset.longitude != null) ...[
+                    SizedBox(height: 2.h),
+                    AssetLocationMapCard(asset: asset),
+                  ],
                   if (!asset.isForSale && asset.rentType != null) ...[
                     SizedBox(height: 2.h),
                     _RentInfoCard(asset: asset),
@@ -474,7 +480,7 @@ class _RentInfoCard extends StatelessWidget {
                     icon: Icons.payments_outlined,
                     label: tr.rent_price,
                     value: asset.rentPrice != null
-                        ? '${asset.rentPrice!.toStringAsFixed(2)} ${tr.currency_jod}'
+                        ? formatPrice(asset.rentPrice!, decimals: 2)
                         : '-',
                   ),
                 ),
@@ -823,17 +829,16 @@ class _BottomBar extends ConsumerWidget {
                   Text(
                     () {
                       if (asset.isForSale) {
-                        return '${asset.price} ${tr.currency_jod}';
+                        return formatPrice(asset.price);
                       }
                       final price =
                           asset.rentPrice ?? double.tryParse(asset.price) ?? 0;
-                      final priceStr = price.toStringAsFixed(2);
                       final suffix = asset.rentType == 'daily'
                           ? tr.per_day
                           : asset.rentType == 'yearly'
                           ? tr.per_year
                           : tr.per_month;
-                      return '$priceStr ${tr.currency_jod}$suffix';
+                      return formatPrice(price, decimals: 2, suffix: suffix);
                     }(),
                     style: appTextStyle(
                       context,

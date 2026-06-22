@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_owner.dart';
@@ -667,7 +668,7 @@ class _OwnerAssetCard extends StatelessWidget {
                     ),
                     SizedBox(height: 0.4.h),
                     Text(
-                      '${asset.price} ${tr.currency_jod}',
+                      formatPrice(asset.price),
                       style: appTextStyle(
                         context,
                         fontSize: 9.sp,

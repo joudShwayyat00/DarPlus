@@ -2426,6 +2426,24 @@ abstract class AppLocalizations {
   /// **'Select Location'**
   String get select_location;
 
+  /// No description provided for @view_on_map.
+  ///
+  /// In en, this message translates to:
+  /// **'View on Map'**
+  String get view_on_map;
+
+  /// No description provided for @open_in_google_maps.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Google Maps'**
+  String get open_in_google_maps;
+
+  /// No description provided for @tap_to_view_map.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to explore the location'**
+  String get tap_to_view_map;
+
   /// No description provided for @contact_section.
   ///
   /// In en, this message translates to:

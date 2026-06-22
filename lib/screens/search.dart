@@ -1,3 +1,4 @@
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
@@ -704,7 +705,7 @@ class _AssetResultTile extends StatelessWidget {
                   ),
                   SizedBox(height: 0.4.h),
                   Text(
-                    '${asset.price} ${tr.currency_jod}',
+                    formatPrice(asset.price),
                     style: appTextStyle(
                       context,
                       fontSize: 10.5.sp,

@@ -634,7 +634,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nightly_price => 'سعر الليلة';
 
   @override
-  String get currency_jod => 'دينار';
+  String get currency_jod => 'JOD';
 
   @override
   String get per_night => ' / الليلة';
@@ -1221,6 +1221,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get select_location => 'اختر الموقع';
+
+  @override
+  String get view_on_map => 'عرض على الخريطة';
+
+  @override
+  String get open_in_google_maps => 'فتح في خرائط Google';
+
+  @override
+  String get tap_to_view_map => 'اضغط لاستكشاف الموقع';
 
   @override
   String get contact_section => 'التواصل';

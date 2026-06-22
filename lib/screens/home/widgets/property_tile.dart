@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/models/property_item.dart';
@@ -184,9 +185,9 @@ class _PriceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final match = RegExp(r'\d+').firstMatch(price);
-    final displayPrice = match != null
-        ? '${match.group(0)} ${tr.currency_jod}${tr.per_night}'
+    final digits = extractPriceDigits(price);
+    final displayPrice = digits != null
+        ? formatPrice(digits, suffix: tr.per_night)
         : price;
 
     return Container(
