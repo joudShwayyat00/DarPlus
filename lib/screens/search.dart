@@ -28,7 +28,8 @@ class SearchScreen extends ConsumerStatefulWidget {
 }
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
-  static const int _searchPreviewCount = 5;
+  static const int _recentPreviewCount = 3;
+  static const int _popularPreviewCount = 5;
 
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
@@ -396,17 +397,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  List<T> _previewItems<T>(List<T> items, bool showAll) {
-    if (showAll || items.length <= _searchPreviewCount) return items;
-    return items.take(_searchPreviewCount).toList();
+  List<T> _previewItems<T>(List<T> items, bool showAll, int previewCount) {
+    if (showAll || items.length <= previewCount) return items;
+    return items.take(previewCount).toList();
   }
 
   Widget? _buildShowMoreButton({
     required int totalCount,
+    required int previewCount,
     required bool showAll,
     required VoidCallback onTap,
   }) {
-    if (totalCount <= _searchPreviewCount) return null;
+    if (totalCount <= previewCount) return null;
 
     return Padding(
       padding: EdgeInsets.only(top: 0.8.h),
@@ -442,9 +444,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         // Hide section when API returns empty
         if (items.isEmpty) return const SizedBox.shrink();
 
-        final visibleItems = _previewItems(items, _showAllRecent);
+        final visibleItems =
+            _previewItems(items, _showAllRecent, _recentPreviewCount);
         final showMoreButton = _buildShowMoreButton(
           totalCount: items.length,
+          previewCount: _recentPreviewCount,
           showAll: _showAllRecent,
           onTap: () => setState(() => _showAllRecent = !_showAllRecent),
         );
@@ -504,9 +508,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       data: (items) {
         if (items.isEmpty) return const SizedBox.shrink();
 
-        final visibleItems = _previewItems(items, _showAllPopular);
+        final visibleItems =
+            _previewItems(items, _showAllPopular, _popularPreviewCount);
         final showMoreButton = _buildShowMoreButton(
           totalCount: items.length,
+          previewCount: _popularPreviewCount,
           showAll: _showAllPopular,
           onTap: () => setState(() => _showAllPopular = !_showAllPopular),
         );
