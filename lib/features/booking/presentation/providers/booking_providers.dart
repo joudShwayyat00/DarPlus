@@ -68,6 +68,12 @@ class BookingController extends _$BookingController {
       );
       return response.data;
     });
+
+    if (state.hasValue && state.value != null) {
+      for (final status in BookingStatusFilter.values) {
+        ref.invalidate(myBookingsControllerProvider(status));
+      }
+    }
   }
 
   void reset() => state = const AsyncData(null);

@@ -43,7 +43,7 @@ CategoryRepository categoryRepository(Ref ref) {
 class HomeSliderController extends _$HomeSliderController {
   @override
   FutureOr<List<SliderItem>> build() async {
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     final repository = ref.read(homeRepositoryProvider);
     return await repository.getSliders(lang);
   }
@@ -51,7 +51,7 @@ class HomeSliderController extends _$HomeSliderController {
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       final repository = ref.read(homeRepositoryProvider);
       return await repository.getSliders(lang);
     });
@@ -62,7 +62,7 @@ class HomeSliderController extends _$HomeSliderController {
 class HomeCategoryController extends _$HomeCategoryController {
   @override
   FutureOr<List<CategoryItem>> build() async {
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     final repository = ref.read(categoryRepositoryProvider);
     return await repository.getCategories(lang);
   }

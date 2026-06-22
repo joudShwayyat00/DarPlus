@@ -127,7 +127,7 @@ final class AssetsControllerProvider
   AssetsController create() => AssetsController();
 }
 
-String _$assetsControllerHash() => r'552b27d95c99cfd826501b53e2dc9e0680d237a4';
+String _$assetsControllerHash() => r'e1479b58f22043bc61b1b086172860e4429a034d';
 
 abstract class _$AssetsController extends $AsyncNotifier<List<AssetItem>> {
   FutureOr<List<AssetItem>> build();
@@ -244,7 +244,7 @@ final class AssetDetailControllerProvider
 }
 
 String _$assetDetailControllerHash() =>
-    r'd31d58d8a31591f92be3d2904a4eb4dc66701e35';
+    r'a76f6aaa534256c5bf9191ab7a74d06d5f6185c2';
 
 /// Family provider — one instance per [assetId].
 /// Usage: ref.watch(assetDetailControllerProvider(assetId))
@@ -341,7 +341,7 @@ final class AmenitiesProvider
   }
 }
 
-String _$amenitiesHash() => r'378cae8d0fd4d6a35cc412ed163ffc28d5262e21';
+String _$amenitiesHash() => r'253082d58b1a644be047c35616f07f35334e15d6';
 
 @ProviderFor(AddAssetController)
 const addAssetControllerProvider = AddAssetControllerProvider._();
@@ -530,7 +530,7 @@ final class MyAssetsControllerProvider
 }
 
 String _$myAssetsControllerHash() =>
-    r'c797c38417e7b69d1593186432eb23e9ba51cc23';
+    r'aaf680524728f08ec8428426d6ded8407664133c';
 
 abstract class _$MyAssetsController extends $AsyncNotifier<List<AssetItem>> {
   FutureOr<List<AssetItem>> build();
@@ -594,7 +594,7 @@ final class FilteredAssetsControllerProvider
 }
 
 String _$filteredAssetsControllerHash() =>
-    r'2e9768d0b801b06ae2c1f744126420beb3b36706';
+    r'2cafcd2bb13e2147b3a3d33c1fb698b3d910a470';
 
 final class FilteredAssetsControllerFamily extends $Family
     with

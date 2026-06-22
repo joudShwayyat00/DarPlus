@@ -86,7 +86,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
       _selectedPlanIndex = 0;
     }
 
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.read(apiLanguageCodeProvider);
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 5.w),

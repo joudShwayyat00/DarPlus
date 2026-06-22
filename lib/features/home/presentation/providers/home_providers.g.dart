@@ -219,7 +219,7 @@ final class HomeSliderControllerProvider
 }
 
 String _$homeSliderControllerHash() =>
-    r'4f69005066022f0d852c6d718da4378c2c62efe7';
+    r'40b0c2d4181766ddde75a9399cb322ec788932d3';
 
 abstract class _$HomeSliderController extends $AsyncNotifier<List<SliderItem>> {
   FutureOr<List<SliderItem>> build();
@@ -266,7 +266,7 @@ final class HomeCategoryControllerProvider
 }
 
 String _$homeCategoryControllerHash() =>
-    r'bfa23ac9653b5a7549c7171c1b6f2bff10a66257';
+    r'a7e884f18bca031effcbbeb563fa200047cdee0d';
 
 abstract class _$HomeCategoryController
     extends $AsyncNotifier<List<CategoryItem>> {

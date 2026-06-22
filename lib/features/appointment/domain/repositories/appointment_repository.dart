@@ -1,4 +1,5 @@
 import '../../data/models/appointment_response.dart';
+import '../../data/models/my_appointment_item.dart';
 
 abstract class AppointmentRepository {
   Future<AppointmentResponse> addAppointment({
@@ -10,4 +11,6 @@ abstract class AppointmentRepository {
     required String time,
     String? note,
   });
+
+  Future<List<MyAppointmentItem>> getMyAppointments();
 }

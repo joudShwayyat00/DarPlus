@@ -9,6 +9,7 @@ import 'package:dar_plus_app/screens/profile/contact_us_screen.dart';
 import 'package:dar_plus_app/screens/profile/edit_profile_screen.dart';
 import 'package:dar_plus_app/screens/profile/update_password_screen.dart';
 import 'package:dar_plus_app/screens/profile/get_help_screen.dart';
+import 'package:dar_plus_app/screens/profile/my_appointments_screen.dart';
 import 'package:dar_plus_app/screens/profile/my_reservations_screen.dart';
 import 'package:dar_plus_app/screens/profile/notifications_screen.dart';
 import 'package:dar_plus_app/screens/profile/privacy_policy_screen.dart';
@@ -114,7 +115,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     .watch(profileControllerProvider)
                                     .value
                                     ?.isOwner ==
-                                true)
+                                true) ...[
                           _MenuItem(
                             icon: Icons.apartment_rounded,
                             title: tr.my_assets,
@@ -127,6 +128,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               );
                             },
                           ),
+                          _MenuItem(
+                            icon: Icons.event_available_rounded,
+                            title: tr.my_appointments,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MyAppointmentsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _MenuItem(
+                            icon: Icons.card_membership_rounded,
+                            title: tr.subscriptions,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SubscriptionsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                         if (isLoggedIn)
                           _MenuItem(
                             icon: Icons.calendar_month_rounded,
@@ -141,19 +169,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               );
                             },
                           ),
-                        _MenuItem(
-                          icon: Icons.card_membership_rounded,
-                          title: tr.subscriptions,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const SubscriptionsScreen(),
-                              ),
-                            );
-                          },
-                        ),
                         _MenuItem(
                           icon: Icons.notifications_outlined,
                           title: tr.notifications,
@@ -186,7 +201,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           icon: Icons.language_rounded,
                           title: tr.change_language,
                           trailing: Text(
-                            tr.english,
+                            ref.watch(apiLanguageCodeProvider) == 'ar'
+                                ? 'العربية'
+                                : tr.english,
                             style: appTextStyle(
                               context,
                               fontSize: 10.5.sp,
@@ -722,6 +739,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _showLanguageBottomSheet(BuildContext context) {
+    final currentLang = ref.read(apiLanguageCodeProvider);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -758,7 +776,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             SizedBox(height: 2.h),
             _LanguageOption(
               title: tr.english,
-              isSelected: true,
+              isSelected: currentLang == 'en',
               onTap: () {
                 ref.read(localeProvider.notifier).setLocale(const Locale('en'));
                 Navigator.pop(context);
@@ -767,7 +785,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             SizedBox(height: 1.h),
             _LanguageOption(
               title: "العربية",
-              isSelected: false,
+              isSelected: currentLang == 'ar',
               onTap: () {
                 ref.read(localeProvider.notifier).setLocale(const Locale('ar'));
                 Navigator.pop(context);

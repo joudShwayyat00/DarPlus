@@ -130,7 +130,7 @@ final class PackagesControllerProvider
 }
 
 String _$packagesControllerHash() =>
-    r'bd2691452c3ac9d0c3fec37570616404fc3b4076';
+    r'efa8fbf211ac1b2b99306b7c01677aff29143a89';
 
 abstract class _$PackagesController extends $AsyncNotifier<List<PackageItem>> {
   FutureOr<List<PackageItem>> build();

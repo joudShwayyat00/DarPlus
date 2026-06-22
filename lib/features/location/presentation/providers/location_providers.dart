@@ -20,7 +20,7 @@ LocationServiceClient locationServiceClient(Ref ref) {
 /// All countries — cached for the session.
 @riverpod
 Future<List<CountryItem>> countries(Ref ref) async {
-  final lang = ref.read(localeProvider).languageCode;
+  final lang = ref.watch(apiLanguageCodeProvider);
   final client = ref.read(locationServiceClientProvider);
   final response = await client.getCountries(lang);
   return response.result;
@@ -29,7 +29,7 @@ Future<List<CountryItem>> countries(Ref ref) async {
 /// Cities for a specific [countryId] — fetched on demand.
 @riverpod
 Future<List<CityItem>> cities(Ref ref, int countryId) async {
-  final lang = ref.read(localeProvider).languageCode;
+  final lang = ref.watch(apiLanguageCodeProvider);
   final client = ref.read(locationServiceClientProvider);
   final response = await client.getCities(countryId, lang);
   return response.items;
@@ -38,7 +38,7 @@ Future<List<CityItem>> cities(Ref ref, int countryId) async {
 /// Regions for a specific [cityId] — fetched on demand.
 @riverpod
 Future<List<RegionItem>> regions(Ref ref, int cityId) async {
-  final lang = ref.read(localeProvider).languageCode;
+  final lang = ref.watch(apiLanguageCodeProvider);
   final client = ref.read(locationServiceClientProvider);
   final response = await client.getRegions(cityId, lang);
   return response.items;

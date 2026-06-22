@@ -818,6 +818,66 @@ abstract class AppLocalizations {
   /// **'My Bookings'**
   String get my_bookings;
 
+  /// No description provided for @my_appointments.
+  ///
+  /// In en, this message translates to:
+  /// **'My Appointments'**
+  String get my_appointments;
+
+  /// No description provided for @my_appointments_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing requests on your properties'**
+  String get my_appointments_subtitle;
+
+  /// No description provided for @no_appointments_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No appointments found'**
+  String get no_appointments_found;
+
+  /// No description provided for @no_appointments_for_status.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any {status} appointments yet'**
+  String no_appointments_for_status(String status);
+
+  /// No description provided for @owner_required_appointments.
+  ///
+  /// In en, this message translates to:
+  /// **'This section is available for property owners only.'**
+  String get owner_required_appointments;
+
+  /// No description provided for @requested_by.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested by'**
+  String get requested_by;
+
+  /// No description provided for @view_property.
+  ///
+  /// In en, this message translates to:
+  /// **'View Property'**
+  String get view_property;
+
+  /// No description provided for @appointment_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get appointment_date;
+
+  /// No description provided for @appointment_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get appointment_time;
+
+  /// No description provided for @scheduled_visit.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled visit'**
+  String get scheduled_visit;
+
   /// No description provided for @upcoming.
   ///
   /// In en, this message translates to:

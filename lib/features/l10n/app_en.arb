@@ -127,6 +127,23 @@
   "premium": "Premium",
   "elite": "Elite",
   "my_bookings": "My Bookings",
+  "my_appointments": "My Appointments",
+  "my_appointments_subtitle": "Viewing requests on your properties",
+  "no_appointments_found": "No appointments found",
+  "no_appointments_for_status": "You don't have any {status} appointments yet",
+  "@no_appointments_for_status": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "owner_required_appointments": "This section is available for property owners only.",
+  "requested_by": "Requested by",
+  "view_property": "View Property",
+  "appointment_date": "Date",
+  "appointment_time": "Time",
+  "scheduled_visit": "Scheduled visit",
   "upcoming": "Upcoming",
   "past": "Past",
   "no_upcoming_reservations": "No upcoming reservations",

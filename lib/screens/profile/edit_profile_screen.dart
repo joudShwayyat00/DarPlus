@@ -296,7 +296,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         ),
                       ),
 
-                      SizedBox(height: 2.5.h),
+                      SizedBox(height: 1.5.h),
 
                       _buildLabel(context, tr.email),
                       SizedBox(height: 1.h),

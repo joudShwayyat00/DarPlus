@@ -375,6 +375,39 @@ class AppLocalizationsAr extends AppLocalizations {
   String get my_bookings => 'حجوزاتي';
 
   @override
+  String get my_appointments => 'مواعيدي';
+
+  @override
+  String get my_appointments_subtitle => 'طلبات المعاينة على عقاراتك';
+
+  @override
+  String get no_appointments_found => 'لا توجد مواعيد';
+
+  @override
+  String no_appointments_for_status(String status) {
+    return 'لا توجد مواعيد $status حتى الآن';
+  }
+
+  @override
+  String get owner_required_appointments =>
+      'هذا القسم متاح لمالكي العقارات فقط.';
+
+  @override
+  String get requested_by => 'طلب من';
+
+  @override
+  String get view_property => 'عرض العقار';
+
+  @override
+  String get appointment_date => 'التاريخ';
+
+  @override
+  String get appointment_time => 'الوقت';
+
+  @override
+  String get scheduled_visit => 'زيارة مجدولة';
+
+  @override
   String get upcoming => 'القادمة';
 
   @override

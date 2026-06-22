@@ -28,7 +28,7 @@ ContentRepository contentRepository(Ref ref) {
 class TermsController extends _$TermsController {
   @override
   FutureOr<List<ContentPageItem>> build() async {
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     return await ref.read(contentRepositoryProvider).getTerms(lang);
   }
 }
@@ -37,7 +37,7 @@ class TermsController extends _$TermsController {
 class PrivacyPolicyController extends _$PrivacyPolicyController {
   @override
   FutureOr<List<ContentPageItem>> build() async {
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     return await ref.read(contentRepositoryProvider).getPrivacyPolicy(lang);
   }
 }
@@ -46,7 +46,7 @@ class PrivacyPolicyController extends _$PrivacyPolicyController {
 class AboutUsController extends _$AboutUsController {
   @override
   FutureOr<AboutUsItem> build() async {
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     return await ref.read(contentRepositoryProvider).getAboutUs(lang);
   }
 }

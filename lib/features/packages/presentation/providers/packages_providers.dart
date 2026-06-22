@@ -23,7 +23,7 @@ PackagesRepository packagesRepository(Ref ref) {
 class PackagesController extends _$PackagesController {
   @override
   FutureOr<List<PackageItem>> build() async {
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     return ref.read(packagesRepositoryProvider).getPackages(lang);
   }
 }

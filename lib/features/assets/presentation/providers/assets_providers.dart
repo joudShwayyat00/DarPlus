@@ -37,7 +37,7 @@ class AssetsController extends _$AssetsController {
   @override
   FutureOr<List<AssetItem>> build() async {
     _currentPage = 1;
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     final result = await ref
         .read(assetsRepositoryProvider)
         .getAssets(lang, categoryId: _currentCategoryId, page: 1);
@@ -51,7 +51,7 @@ class AssetsController extends _$AssetsController {
     _hasMore = false;
     state = const AsyncLoading();
     final next = await AsyncValue.guard(() async {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       final result = await ref
           .read(assetsRepositoryProvider)
           .getAssets(lang, categoryId: categoryId, page: 1);
@@ -66,7 +66,7 @@ class AssetsController extends _$AssetsController {
     _hasMore = false;
     state = const AsyncLoading();
     final next = await AsyncValue.guard(() async {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       final result = await ref
           .read(assetsRepositoryProvider)
           .getAssets(lang, categoryId: _currentCategoryId, page: 1);
@@ -86,7 +86,7 @@ class AssetsController extends _$AssetsController {
     if (current == null) return;
     _isLoadingMore = true;
     try {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       final result = await ref
           .read(assetsRepositoryProvider)
           .getAssets(
@@ -127,7 +127,7 @@ class TopRatedAssetsController extends _$TopRatedAssetsController {
 class AssetDetailController extends _$AssetDetailController {
   @override
   FutureOr<AssetItem> build(int assetId) async {
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     final repository = ref.read(assetsRepositoryProvider);
     return await repository.getAssetDetail(id: assetId, lang: lang);
   }
@@ -135,7 +135,7 @@ class AssetDetailController extends _$AssetDetailController {
   Future<void> refresh() async {
     state = const AsyncLoading();
     final next = await AsyncValue.guard(() async {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       final repository = ref.read(assetsRepositoryProvider);
       return await repository.getAssetDetail(id: assetId, lang: lang);
     });
@@ -145,7 +145,7 @@ class AssetDetailController extends _$AssetDetailController {
 
 @riverpod
 Future<List<AmenityItem>> amenities(Ref ref) async {
-  final lang = ref.read(localeProvider).languageCode;
+  final lang = ref.watch(apiLanguageCodeProvider);
   final client = ref.read(assetsServiceClientProvider);
   final response = await client.getAmenities(lang);
   return response.data;
@@ -315,7 +315,7 @@ class MyAssetsController extends _$MyAssetsController {
   FutureOr<List<AssetItem>> build() async {
     if (!ref.read(isLoggedInProvider)) return [];
     _currentPage = 1;
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     final result = await ref
         .read(assetsRepositoryProvider)
         .getMyAssets(lang, categoryId: _currentCategoryId, page: 1);
@@ -333,7 +333,7 @@ class MyAssetsController extends _$MyAssetsController {
     _hasMore = false;
     state = const AsyncLoading();
     final next = await AsyncValue.guard(() async {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       final result = await ref
           .read(assetsRepositoryProvider)
           .getMyAssets(lang, categoryId: categoryId, page: 1);
@@ -352,7 +352,7 @@ class MyAssetsController extends _$MyAssetsController {
     _hasMore = false;
     state = const AsyncLoading();
     final next = await AsyncValue.guard(() async {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       final result = await ref
           .read(assetsRepositoryProvider)
           .getMyAssets(lang, categoryId: _currentCategoryId, page: 1);
@@ -373,7 +373,7 @@ class MyAssetsController extends _$MyAssetsController {
     if (current == null) return;
     _isLoadingMore = true;
     try {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       final result = await ref
           .read(assetsRepositoryProvider)
           .getMyAssets(
@@ -410,7 +410,7 @@ class FilteredAssetsController extends _$FilteredAssetsController {
   }
 
   Future<List<AssetItem>> _fetchPage(FilterData filter, int page) async {
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     final result = await ref.read(assetsRepositoryProvider).filterAssets(
           lang,
           cityId: filter.cityId,

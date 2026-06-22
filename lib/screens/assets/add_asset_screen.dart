@@ -84,7 +84,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   Future<void> _loadAssetForEdit() async {
     setState(() => _isLoadingAsset = true);
     try {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       final asset = await ref
           .read(assetsRepositoryProvider)
           .getAssetDetail(id: widget.assetId!, lang: lang);

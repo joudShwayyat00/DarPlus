@@ -152,3 +152,108 @@ abstract class _$AppointmentController
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(MyAppointmentsController)
+const myAppointmentsControllerProvider = MyAppointmentsControllerFamily._();
+
+final class MyAppointmentsControllerProvider
+    extends
+        $AsyncNotifierProvider<
+          MyAppointmentsController,
+          List<MyAppointmentItem>
+        > {
+  const MyAppointmentsControllerProvider._({
+    required MyAppointmentsControllerFamily super.from,
+    required AppointmentStatusFilter super.argument,
+  }) : super(
+         retry: null,
+         name: r'myAppointmentsControllerProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$myAppointmentsControllerHash();
+
+  @override
+  String toString() {
+    return r'myAppointmentsControllerProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  MyAppointmentsController create() => MyAppointmentsController();
+
+  @override
+  bool operator ==(Object other) {
+    return other is MyAppointmentsControllerProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$myAppointmentsControllerHash() =>
+    r'5e3635ec86989203ea582c1f655a349f64b56826';
+
+final class MyAppointmentsControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MyAppointmentsController,
+          AsyncValue<List<MyAppointmentItem>>,
+          List<MyAppointmentItem>,
+          FutureOr<List<MyAppointmentItem>>,
+          AppointmentStatusFilter
+        > {
+  const MyAppointmentsControllerFamily._()
+    : super(
+        retry: null,
+        name: r'myAppointmentsControllerProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  MyAppointmentsControllerProvider call(AppointmentStatusFilter status) =>
+      MyAppointmentsControllerProvider._(argument: status, from: this);
+
+  @override
+  String toString() => r'myAppointmentsControllerProvider';
+}
+
+abstract class _$MyAppointmentsController
+    extends $AsyncNotifier<List<MyAppointmentItem>> {
+  late final _$args = ref.$arg as AppointmentStatusFilter;
+  AppointmentStatusFilter get status => _$args;
+
+  FutureOr<List<MyAppointmentItem>> build(AppointmentStatusFilter status);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref =
+        this.ref
+            as $Ref<
+              AsyncValue<List<MyAppointmentItem>>,
+              List<MyAppointmentItem>
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<List<MyAppointmentItem>>,
+                List<MyAppointmentItem>
+              >,
+              AsyncValue<List<MyAppointmentItem>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

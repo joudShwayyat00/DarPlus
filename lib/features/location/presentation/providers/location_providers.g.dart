@@ -101,7 +101,7 @@ final class CountriesProvider
   }
 }
 
-String _$countriesHash() => r'9fa27c85676ce385f190dcbedd0692e749837a28';
+String _$countriesHash() => r'3b2dc860760b6d2ae98e9b04cbcfc72c77e77f70';
 
 /// Cities for a specific [countryId] — fetched on demand.
 
@@ -163,7 +163,7 @@ final class CitiesProvider
   }
 }
 
-String _$citiesHash() => r'e5e03fafb4074b936aba669e89c1bb792c5d1332';
+String _$citiesHash() => r'dcce60bdc73edfdc94248f8090855e598abca0af';
 
 /// Cities for a specific [countryId] — fetched on demand.
 
@@ -247,7 +247,7 @@ final class RegionsProvider
   }
 }
 
-String _$regionsHash() => r'91eaffda3eca26d8a8769575e6b32e880075ad54';
+String _$regionsHash() => r'48f1de54e09b11622edd89eee35bd77e67614e94';
 
 /// Regions for a specific [cityId] — fetched on demand.
 

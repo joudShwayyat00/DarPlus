@@ -1,9 +1,12 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/network/dio_factory.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../data/data_sources/appointment_service_client.dart';
 import '../../data/models/appointment_response.dart';
+import '../../data/models/my_appointment_item.dart';
 import '../../data/repositories/appointment_repository_impl.dart';
+import '../../domain/appointment_status_filter.dart';
 import '../../domain/repositories/appointment_repository.dart';
 
 part 'appointment_providers.g.dart';
@@ -52,4 +55,50 @@ class AppointmentController extends _$AppointmentController {
   }
 
   void reset() => state = const AsyncData(null);
+}
+
+@riverpod
+class MyAppointmentsController extends _$MyAppointmentsController {
+  List<MyAppointmentItem> _allAppointments = [];
+
+  @override
+  FutureOr<List<MyAppointmentItem>> build(
+    AppointmentStatusFilter status,
+  ) async {
+    if (!ref.read(isLoggedInProvider)) return [];
+    final user = ref.read(profileControllerProvider).value;
+    if (user?.isOwner != true) return [];
+
+    _allAppointments =
+        await ref.read(appointmentRepositoryProvider).getMyAppointments();
+    return _filterByStatus(_allAppointments, status);
+  }
+
+  List<MyAppointmentItem> _filterByStatus(
+    List<MyAppointmentItem> items,
+    AppointmentStatusFilter status,
+  ) {
+    return items
+        .where((item) => item.status.toLowerCase() == status.apiValue)
+        .toList();
+  }
+
+  Future<void> refresh() async {
+    if (!ref.read(isLoggedInProvider)) {
+      state = const AsyncData([]);
+      return;
+    }
+    final user = ref.read(profileControllerProvider).value;
+    if (user?.isOwner != true) {
+      state = const AsyncData([]);
+      return;
+    }
+
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      _allAppointments =
+          await ref.read(appointmentRepositoryProvider).getMyAppointments();
+      return _filterByStatus(_allAppointments, status);
+    });
+  }
 }

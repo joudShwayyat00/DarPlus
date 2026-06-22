@@ -127,6 +127,23 @@
   "premium": "مميز",
   "elite": "النخبة",
   "my_bookings": "حجوزاتي",
+  "my_appointments": "مواعيدي",
+  "my_appointments_subtitle": "طلبات المعاينة على عقاراتك",
+  "no_appointments_found": "لا توجد مواعيد",
+  "no_appointments_for_status": "لا توجد مواعيد {status} حتى الآن",
+  "@no_appointments_for_status": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "owner_required_appointments": "هذا القسم متاح لمالكي العقارات فقط.",
+  "requested_by": "طلب من",
+  "view_property": "عرض العقار",
+  "appointment_date": "التاريخ",
+  "appointment_time": "الوقت",
+  "scheduled_visit": "زيارة مجدولة",
   "upcoming": "القادمة",
   "past": "السابقة",
   "no_upcoming_reservations": "لا توجد حجوزات قادمة",

@@ -128,7 +128,7 @@ final class TermsControllerProvider
   TermsController create() => TermsController();
 }
 
-String _$termsControllerHash() => r'760193b5e6de4453864464970c8c80adab4f3bfa';
+String _$termsControllerHash() => r'c118b237f7e529adf098765da1e61481034fea12';
 
 abstract class _$TermsController extends $AsyncNotifier<List<ContentPageItem>> {
   FutureOr<List<ContentPageItem>> build();
@@ -180,7 +180,7 @@ final class PrivacyPolicyControllerProvider
 }
 
 String _$privacyPolicyControllerHash() =>
-    r'5d290462e2d2949d379e818ef501bb594ac4f6e8';
+    r'a27264e176f7d29405d14eed9effd987c27eeaad';
 
 abstract class _$PrivacyPolicyController
     extends $AsyncNotifier<List<ContentPageItem>> {
@@ -231,7 +231,7 @@ final class AboutUsControllerProvider
   AboutUsController create() => AboutUsController();
 }
 
-String _$aboutUsControllerHash() => r'ea0b866cf55c05d77058e140428923b2ae177eaa';
+String _$aboutUsControllerHash() => r'c600937d802e131d9fb329eac6c2a504933fe5ac';
 
 abstract class _$AboutUsController extends $AsyncNotifier<AboutUsItem> {
   FutureOr<AboutUsItem> build();

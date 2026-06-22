@@ -379,6 +379,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get my_bookings => 'My Bookings';
 
   @override
+  String get my_appointments => 'My Appointments';
+
+  @override
+  String get my_appointments_subtitle => 'Viewing requests on your properties';
+
+  @override
+  String get no_appointments_found => 'No appointments found';
+
+  @override
+  String no_appointments_for_status(String status) {
+    return 'You don\'t have any $status appointments yet';
+  }
+
+  @override
+  String get owner_required_appointments =>
+      'This section is available for property owners only.';
+
+  @override
+  String get requested_by => 'Requested by';
+
+  @override
+  String get view_property => 'View Property';
+
+  @override
+  String get appointment_date => 'Date';
+
+  @override
+  String get appointment_time => 'Time';
+
+  @override
+  String get scheduled_visit => 'Scheduled visit';
+
+  @override
   String get upcoming => 'Upcoming';
 
   @override

@@ -27,7 +27,7 @@ class NotificationsController extends _$NotificationsController {
   @override
   FutureOr<List<NotificationItem>> build() async {
     if (!ref.read(isLoggedInProvider)) return [];
-    final lang = ref.read(localeProvider).languageCode;
+    final lang = ref.watch(apiLanguageCodeProvider);
     return ref.read(notificationsRepositoryProvider).getNotifications(lang);
   }
 
@@ -38,7 +38,7 @@ class NotificationsController extends _$NotificationsController {
     }
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final lang = ref.read(localeProvider).languageCode;
+      final lang = ref.read(apiLanguageCodeProvider);
       return ref.read(notificationsRepositoryProvider).getNotifications(lang);
     });
   }

@@ -39,6 +39,8 @@ class ApiConstants {
   static const String myBookings = "api/my_bookings";
   // Add appointment endpoint
   static const String addAppointment = "api/appointments/add";
+  // My appointments (owner, requires auth)
+  static const String myAppointments = "api/my_appointments";
   // Terms & conditions
   static const String termsAndConditions = "api/terms_and_conditions";
   // Privacy policy
