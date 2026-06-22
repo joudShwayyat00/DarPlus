@@ -6,9 +6,9 @@ import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_owner.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/booking_navigation.dart';
-import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:dar_plus_app/utils/widgets/appointment_sheet.dart';
@@ -148,10 +148,6 @@ class _AssetDetailsBody extends StatelessWidget {
                     SizedBox(height: 1.h),
                     _AmenitiesGrid(amenities: asset.amenities!),
                   ],
-                  SizedBox(height: 2.2.h),
-                  _SectionTitle(title: tr.contact_and_social),
-                  SizedBox(height: 1.h),
-                  _ContactCard(asset: asset),
                   SizedBox(height: 10.h),
                 ],
               ),
@@ -410,24 +406,21 @@ class _RentInfoCard extends StatelessWidget {
       _ => asset.monthsCount,
     };
     final countLabel = switch (rentType) {
-      'yearly' => 'Years',
-      'daily' => 'Days',
-      _ => 'Months',
+      'yearly' => tr.max_years,
+      'daily' => tr.max_days,
+      _ => tr.max_months,
     };
 
-    String rentTypeLabel;
-    IconData rentTypeIcon;
-    switch (rentType) {
-      case 'daily':
-        rentTypeLabel = 'Daily';
-        rentTypeIcon = Icons.today_rounded;
-      case 'yearly':
-        rentTypeLabel = 'Yearly';
-        rentTypeIcon = Icons.calendar_today_rounded;
-      default:
-        rentTypeLabel = 'Monthly';
-        rentTypeIcon = Icons.calendar_month_rounded;
-    }
+    final rentTypeLabel = switch (rentType) {
+      'daily' => tr.daily,
+      'yearly' => tr.yearly,
+      _ => tr.monthly,
+    };
+    final rentTypeIcon = switch (rentType) {
+      'daily' => Icons.today_rounded,
+      'yearly' => Icons.calendar_today_rounded,
+      _ => Icons.calendar_month_rounded,
+    };
 
     return Container(
       padding: EdgeInsets.all(4.w),
@@ -447,7 +440,7 @@ class _RentInfoCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Rent Details',
+            tr.rent_details,
             style: appTextStyle(
               context,
               fontSize: 12.sp,
@@ -463,7 +456,7 @@ class _RentInfoCard extends StatelessWidget {
                 Expanded(
                   child: _RentDetailTile(
                     icon: rentTypeIcon,
-                    label: 'Rent Type',
+                    label: tr.rent_type,
                     value: rentTypeLabel,
                   ),
                 ),
@@ -479,7 +472,7 @@ class _RentInfoCard extends StatelessWidget {
                 Expanded(
                   child: _RentDetailTile(
                     icon: Icons.payments_outlined,
-                    label: 'Rent Price',
+                    label: tr.rent_price,
                     value: asset.rentPrice != null
                         ? '${asset.rentPrice!.toStringAsFixed(2)} ${tr.currency_jod}'
                         : '-',
@@ -559,7 +552,19 @@ class _OwnerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          AppNavigator.of(context).push(
+            OwnerProfileScreen(
+              ownerId: owner.id,
+              initialOwner: owner,
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
       padding: EdgeInsets.all(3.5.w),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -610,16 +615,6 @@ class _OwnerCard extends StatelessWidget {
                     color: Colors.black.withAlpha(230),
                   ),
                 ),
-                SizedBox(height: 0.3.h),
-                Text(
-                  owner.email,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black.withAlpha(140),
-                  ),
-                ),
               ],
             ),
           ),
@@ -639,7 +634,14 @@ class _OwnerCard extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(width: 1.w),
+          Icon(
+            Icons.chevron_right_rounded,
+            color: Colors.black.withAlpha(80),
+          ),
         ],
+      ),
+        ),
       ),
     );
   }
@@ -773,138 +775,6 @@ class _AmenityTile extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ─── Contact Card ─────────────────────────────────────────────────────────────
-
-class _ContactCard extends StatelessWidget {
-  final AssetItem asset;
-
-  const _ContactCard({required this.asset});
-
-  bool _has(String? v) => v != null && v.trim().isNotEmpty;
-
-  Future<void> _launch(
-    BuildContext context,
-    Future<bool> Function() action,
-  ) async {
-    final ok = await action();
-    if (!context.mounted || ok) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(tr.something_went_wrong)),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final phone = _has(asset.phone) ? asset.phone! : asset.owner.phoneNumber;
-    final email = _has(asset.email) ? asset.email! : asset.owner.email;
-
-    return Container(
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-            color: Colors.black.withAlpha(8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _ContactRow(
-            icon: Icons.phone_rounded,
-            label: tr.phone,
-            value: phone,
-            onTap: () => _launch(
-              context,
-              () => launchPhoneCall(phone),
-            ),
-          ),
-          Divider(height: 2.h, color: Colors.black.withAlpha(12)),
-          _ContactRow(
-            icon: Icons.email_outlined,
-            label: tr.email,
-            value: email,
-            onTap: () => _launch(
-              context,
-              () => launchEmail(email),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ContactRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final VoidCallback onTap;
-
-  const _ContactRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.4.h),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(2.4.w),
-              decoration: BoxDecoration(
-                color: AppColors.goldBrandColor.withAlpha(18),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, size: 18, color: AppColors.goldBrandColor),
-            ),
-            SizedBox(width: 3.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 9.5.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black.withAlpha(130),
-                    ),
-                  ),
-                  Text(
-                    value,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 11.5.sp,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black.withAlpha(225),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: Colors.black.withAlpha(80),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -2174,6 +2174,36 @@ abstract class AppLocalizations {
   /// **'Owner'**
   String get owner;
 
+  /// No description provided for @role_agent.
+  ///
+  /// In en, this message translates to:
+  /// **'Real Estate Agent'**
+  String get role_agent;
+
+  /// No description provided for @owner_status_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get owner_status_active;
+
+  /// No description provided for @owner_status_verified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get owner_status_verified;
+
+  /// No description provided for @owner_status_blocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get owner_status_blocked;
+
+  /// No description provided for @owner_status_inactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get owner_status_inactive;
+
   /// No description provided for @no_results_found.
   ///
   /// In en, this message translates to:
@@ -2293,6 +2323,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rent Price'**
   String get rent_price;
+
+  /// No description provided for @rent_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent Details'**
+  String get rent_details;
+
+  /// No description provided for @rent_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent Type'**
+  String get rent_type;
+
+  /// No description provided for @max_months.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Months'**
+  String get max_months;
+
+  /// No description provided for @max_days.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Days'**
+  String get max_days;
+
+  /// No description provided for @max_years.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Years'**
+  String get max_years;
 
   /// No description provided for @rent_price_per_day.
   ///

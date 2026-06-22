@@ -7,7 +7,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/screens/home/widgets/owner_avatar.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
-import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
+import 'package:dar_plus_app/utils/helpers/owner_labels.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:dar_plus_app/utils/widgets/rate_owner_dialog.dart';
@@ -81,10 +81,12 @@ class _OwnerProfileBody extends StatelessWidget {
     required this.isRefreshing,
   });
 
-  String get _statusLabel {
-    if (profile.status.isEmpty) return profile.role;
-    return profile.status[0].toUpperCase() + profile.status.substring(1);
-  }
+  String get _statusLabel => localizedOwnerStatusOrRole(
+        status: profile.status,
+        role: profile.role,
+      );
+
+  String get _roleLabel => localizedOwnerRole(profile.role);
 
   @override
   Widget build(BuildContext context) {
@@ -109,13 +111,10 @@ class _OwnerProfileBody extends StatelessWidget {
                   ],
                   _ProfileCard(
                     profile: profile,
+                    roleLabel: _roleLabel,
                     statusLabel: _statusLabel,
                     propertiesCount: assets.length,
                   ),
-                  SizedBox(height: 2.h),
-                  _SectionTitle(title: tr.contact_and_social),
-                  SizedBox(height: 1.h),
-                  _ContactCard(profile: profile),
                   SizedBox(height: 2.2.h),
                   Row(
                     children: [
@@ -202,11 +201,13 @@ class _OwnerProfileBody extends StatelessWidget {
 
 class _ProfileCard extends StatelessWidget {
   final AssetOwner profile;
+  final String roleLabel;
   final String statusLabel;
   final int propertiesCount;
 
   const _ProfileCard({
     required this.profile,
+    required this.roleLabel,
     required this.statusLabel,
     required this.propertiesCount,
   });
@@ -251,7 +252,7 @@ class _ProfileCard extends StatelessWidget {
                 ),
                 SizedBox(height: 0.4.h),
                 Text(
-                  profile.role,
+                  roleLabel,
                   style: appTextStyle(
                     context,
                     fontSize: 11.sp,
@@ -415,132 +416,6 @@ class _SectionTitle extends StatelessWidget {
         fontSize: 13.sp,
         fontWeight: FontWeight.w900,
         color: Colors.black.withAlpha(240),
-      ),
-    );
-  }
-}
-
-class _ContactCard extends StatelessWidget {
-  final AssetOwner profile;
-
-  const _ContactCard({required this.profile});
-
-  Future<void> _launch(
-    BuildContext context,
-    Future<bool> Function() action,
-  ) async {
-    final ok = await action();
-    if (!context.mounted || ok) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(tr.something_went_wrong)),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-            color: Colors.black.withAlpha(8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _ContactRow(
-            icon: Icons.phone_rounded,
-            label: tr.phone,
-            value: profile.phoneNumber,
-            onTap: () => _launch(
-              context,
-              () => launchPhoneCall(profile.phoneNumber),
-            ),
-          ),
-          Divider(height: 2.h, color: Colors.black.withAlpha(12)),
-          _ContactRow(
-            icon: Icons.email_outlined,
-            label: tr.email,
-            value: profile.email,
-            onTap: () => _launch(
-              context,
-              () => launchEmail(profile.email),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ContactRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final VoidCallback onTap;
-
-  const _ContactRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 0.4.h),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(2.4.w),
-              decoration: BoxDecoration(
-                color: AppColors.goldBrandColor.withAlpha(18),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, size: 18, color: AppColors.goldBrandColor),
-            ),
-            SizedBox(width: 3.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 9.5.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black.withAlpha(110),
-                    ),
-                  ),
-                  SizedBox(height: 0.2.h),
-                  Text(
-                    value,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black.withAlpha(210),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: Colors.black.withAlpha(80),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -1097,6 +1097,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get owner => 'المالك';
 
   @override
+  String get role_agent => 'وكيل عقارات';
+
+  @override
+  String get owner_status_active => 'نشط';
+
+  @override
+  String get owner_status_verified => 'موثق';
+
+  @override
+  String get owner_status_blocked => 'محظور';
+
+  @override
+  String get owner_status_inactive => 'غير نشط';
+
+  @override
   String get no_results_found => 'لا توجد نتائج';
 
   @override
@@ -1155,6 +1170,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rent_price => 'سعر الإيجار';
+
+  @override
+  String get rent_details => 'تفاصيل الإيجار';
+
+  @override
+  String get rent_type => 'نوع الإيجار';
+
+  @override
+  String get max_months => 'الحد الأقصى للأشهر';
+
+  @override
+  String get max_days => 'الحد الأقصى للأيام';
+
+  @override
+  String get max_years => 'الحد الأقصى للسنوات';
 
   @override
   String get rent_price_per_day => 'سعر الإيجار لليوم';

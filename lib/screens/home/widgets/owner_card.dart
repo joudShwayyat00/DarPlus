@@ -1,6 +1,7 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_owner.dart';
 import 'package:dar_plus_app/screens/home/widgets/owner_avatar.dart';
+import 'package:dar_plus_app/utils/helpers/owner_labels.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -11,10 +12,10 @@ class OwnerCard extends StatelessWidget {
 
   const OwnerCard({super.key, required this.owner, this.onTap});
 
-  String get _statusLabel {
-    if (owner.status.isEmpty) return owner.role;
-    return owner.status[0].toUpperCase() + owner.status.substring(1);
-  }
+  String get _statusLabel => localizedOwnerStatusOrRole(
+        status: owner.status,
+        role: owner.role,
+      );
 
   @override
   Widget build(BuildContext context) {

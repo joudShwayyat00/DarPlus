@@ -1106,6 +1106,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get owner => 'Owner';
 
   @override
+  String get role_agent => 'Real Estate Agent';
+
+  @override
+  String get owner_status_active => 'Active';
+
+  @override
+  String get owner_status_verified => 'Verified';
+
+  @override
+  String get owner_status_blocked => 'Blocked';
+
+  @override
+  String get owner_status_inactive => 'Inactive';
+
+  @override
   String get no_results_found => 'No results found';
 
   @override
@@ -1164,6 +1179,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rent_price => 'Rent Price';
+
+  @override
+  String get rent_details => 'Rent Details';
+
+  @override
+  String get rent_type => 'Rent Type';
+
+  @override
+  String get max_months => 'Max Months';
+
+  @override
+  String get max_days => 'Max Days';
+
+  @override
+  String get max_years => 'Max Years';
 
   @override
   String get rent_price_per_day => 'Rent price per day';
