@@ -102,3 +102,11 @@ class MyAppointmentsController extends _$MyAppointmentsController {
     });
   }
 }
+
+@riverpod
+Future<List<MyAppointmentItem>> ownerAllAppointments(Ref ref) async {
+  if (!ref.read(isLoggedInProvider)) return [];
+  final user = ref.read(profileControllerProvider).value;
+  if (user?.isOwner != true) return [];
+  return ref.read(appointmentRepositoryProvider).getMyAppointments();
+}

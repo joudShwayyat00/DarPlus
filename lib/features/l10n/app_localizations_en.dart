@@ -385,6 +385,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get my_appointments_subtitle => 'Viewing requests on your properties';
 
   @override
+  String get my_dashboard => 'My Dashboard';
+
+  @override
+  String get my_dashboard_subtitle => 'Manage your properties and business';
+
+  @override
+  String get owner_property_appointments => 'Property Appointments';
+
+  @override
+  String get owner_property_appointments_subtitle =>
+      'Viewing requests received on your listed properties';
+
+  @override
+  String get my_statistics => 'My Statistics';
+
+  @override
+  String get statistics_overview => 'Overview of your property performance';
+
+  @override
+  String get total_properties => 'Total Properties';
+
+  @override
+  String get total_appointment_requests => 'Appointment Requests';
+
+  @override
+  String get pending_requests => 'Pending Requests';
+
+  @override
+  String get for_sale_properties => 'For Sale';
+
+  @override
+  String get for_rent_properties => 'For Rent';
+
+  @override
+  String get quick_actions => 'Quick Actions';
+
+  @override
+  String get add_new_property => 'Add New Property';
+
+  @override
+  String get manage_properties => 'Manage your listings';
+
+  @override
+  String get view_incoming_requests => 'Incoming viewing requests';
+
+  @override
+  String get track_performance => 'Track your performance';
+
+  @override
+  String get manage_plan => 'Manage your subscription plan';
+
+  @override
   String get no_appointments_found => 'No appointments found';
 
   @override

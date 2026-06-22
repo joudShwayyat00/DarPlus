@@ -381,6 +381,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String get my_appointments_subtitle => 'طلبات المعاينة على عقاراتك';
 
   @override
+  String get my_dashboard => 'لوحة التحكم';
+
+  @override
+  String get my_dashboard_subtitle => 'إدارة عقاراتك وأعمالك';
+
+  @override
+  String get owner_property_appointments => 'مواعيد العقارات';
+
+  @override
+  String get owner_property_appointments_subtitle =>
+      'طلبات المعاينة الواردة على عقاراتك المعروضة';
+
+  @override
+  String get my_statistics => 'إحصائياتي';
+
+  @override
+  String get statistics_overview => 'نظرة عامة على أداء عقاراتك';
+
+  @override
+  String get total_properties => 'إجمالي العقارات';
+
+  @override
+  String get total_appointment_requests => 'طلبات المواعيد';
+
+  @override
+  String get pending_requests => 'طلبات قيد الانتظار';
+
+  @override
+  String get for_sale_properties => 'للبيع';
+
+  @override
+  String get for_rent_properties => 'للإيجار';
+
+  @override
+  String get quick_actions => 'إجراءات سريعة';
+
+  @override
+  String get add_new_property => 'إضافة عقار جديد';
+
+  @override
+  String get manage_properties => 'إدارة قوائمك';
+
+  @override
+  String get view_incoming_requests => 'طلبات المعاينة الواردة';
+
+  @override
+  String get track_performance => 'تتبع أدائك';
+
+  @override
+  String get manage_plan => 'إدارة خطة الاشتراك';
+
+  @override
   String get no_appointments_found => 'لا توجد مواعيد';
 
   @override

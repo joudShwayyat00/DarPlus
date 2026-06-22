@@ -257,3 +257,45 @@ abstract class _$MyAppointmentsController
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(ownerAllAppointments)
+const ownerAllAppointmentsProvider = OwnerAllAppointmentsProvider._();
+
+final class OwnerAllAppointmentsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<MyAppointmentItem>>,
+          List<MyAppointmentItem>,
+          FutureOr<List<MyAppointmentItem>>
+        >
+    with
+        $FutureModifier<List<MyAppointmentItem>>,
+        $FutureProvider<List<MyAppointmentItem>> {
+  const OwnerAllAppointmentsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ownerAllAppointmentsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ownerAllAppointmentsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<MyAppointmentItem>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<MyAppointmentItem>> create(Ref ref) {
+    return ownerAllAppointments(ref);
+  }
+}
+
+String _$ownerAllAppointmentsHash() =>
+    r'e89ab14e2a2d05749d191e635bcd507454f817c7';

@@ -103,7 +103,7 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
           Padding(
             padding: EdgeInsets.fromLTRB(5.w, 0, 5.w, 1.2.h),
             child: Text(
-              tr.my_appointments_subtitle,
+              tr.owner_property_appointments_subtitle,
               style: appTextStyle(
                 context,
                 fontSize: 10.5.sp,
@@ -141,7 +141,7 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
           ),
         ),
         title: Text(
-          tr.my_appointments,
+          tr.owner_property_appointments,
           style: appTextStyle(
             context,
             fontSize: 14.sp,
@@ -176,7 +176,7 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
             ),
             SizedBox(height: 2.5.h),
             Text(
-              tr.my_appointments,
+              tr.owner_property_appointments,
               textAlign: TextAlign.center,
               style: appTextStyle(
                 context,

@@ -1,4 +1,5 @@
-import 'package:dar_plus_app/screens/assets/my_assets_screen.dart';
+import 'package:dar_plus_app/screens/profile/owner_dashboard_screen.dart';
+import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/screens/auth/login_screen.dart';
@@ -9,11 +10,8 @@ import 'package:dar_plus_app/screens/profile/contact_us_screen.dart';
 import 'package:dar_plus_app/screens/profile/edit_profile_screen.dart';
 import 'package:dar_plus_app/screens/profile/update_password_screen.dart';
 import 'package:dar_plus_app/screens/profile/get_help_screen.dart';
-import 'package:dar_plus_app/screens/profile/my_appointments_screen.dart';
-import 'package:dar_plus_app/screens/profile/my_reservations_screen.dart';
 import 'package:dar_plus_app/screens/profile/notifications_screen.dart';
 import 'package:dar_plus_app/screens/profile/privacy_policy_screen.dart';
-import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/screens/profile/terms_conditions_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -117,26 +115,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     ?.isOwner ==
                                 true) ...[
                           _MenuItem(
-                            icon: Icons.apartment_rounded,
-                            title: tr.my_assets,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const MyAssetsScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          _MenuItem(
-                            icon: Icons.event_available_rounded,
-                            title: tr.my_appointments,
+                            icon: Icons.dashboard_rounded,
+                            title: tr.my_dashboard,
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      const MyAppointmentsScreen(),
+                                      const OwnerDashboardScreen(),
                                 ),
                               );
                             },
@@ -155,20 +141,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             },
                           ),
                         ],
-                        if (isLoggedIn)
-                          _MenuItem(
-                            icon: Icons.calendar_month_rounded,
-                            title: tr.my_reservations,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const MyReservationsScreen(),
-                                ),
-                              );
-                            },
-                          ),
                         _MenuItem(
                           icon: Icons.notifications_outlined,
                           title: tr.notifications,

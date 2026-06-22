@@ -830,6 +830,108 @@ abstract class AppLocalizations {
   /// **'Viewing requests on your properties'**
   String get my_appointments_subtitle;
 
+  /// No description provided for @my_dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'My Dashboard'**
+  String get my_dashboard;
+
+  /// No description provided for @my_dashboard_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your properties and business'**
+  String get my_dashboard_subtitle;
+
+  /// No description provided for @owner_property_appointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Property Appointments'**
+  String get owner_property_appointments;
+
+  /// No description provided for @owner_property_appointments_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing requests received on your listed properties'**
+  String get owner_property_appointments_subtitle;
+
+  /// No description provided for @my_statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'My Statistics'**
+  String get my_statistics;
+
+  /// No description provided for @statistics_overview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview of your property performance'**
+  String get statistics_overview;
+
+  /// No description provided for @total_properties.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Properties'**
+  String get total_properties;
+
+  /// No description provided for @total_appointment_requests.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment Requests'**
+  String get total_appointment_requests;
+
+  /// No description provided for @pending_requests.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Requests'**
+  String get pending_requests;
+
+  /// No description provided for @for_sale_properties.
+  ///
+  /// In en, this message translates to:
+  /// **'For Sale'**
+  String get for_sale_properties;
+
+  /// No description provided for @for_rent_properties.
+  ///
+  /// In en, this message translates to:
+  /// **'For Rent'**
+  String get for_rent_properties;
+
+  /// No description provided for @quick_actions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get quick_actions;
+
+  /// No description provided for @add_new_property.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Property'**
+  String get add_new_property;
+
+  /// No description provided for @manage_properties.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your listings'**
+  String get manage_properties;
+
+  /// No description provided for @view_incoming_requests.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming viewing requests'**
+  String get view_incoming_requests;
+
+  /// No description provided for @track_performance.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your performance'**
+  String get track_performance;
+
+  /// No description provided for @manage_plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your subscription plan'**
+  String get manage_plan;
+
   /// No description provided for @no_appointments_found.
   ///
   /// In en, this message translates to:
