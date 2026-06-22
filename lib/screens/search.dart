@@ -28,6 +28,8 @@ class SearchScreen extends ConsumerStatefulWidget {
 }
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
+  static const int _searchPreviewCount = 5;
+
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   final PageController _topRatedController = PageController(
@@ -35,6 +37,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   );
   int _currentTopRatedIndex = 0;
   FilterData _activeFilter = FilterData.empty;
+  bool _showAllRecent = false;
+  bool _showAllPopular = false;
 
   // recent searches are fetched from the API; no local fallbacks kept here
 
@@ -392,6 +396,44 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
+  List<T> _previewItems<T>(List<T> items, bool showAll) {
+    if (showAll || items.length <= _searchPreviewCount) return items;
+    return items.take(_searchPreviewCount).toList();
+  }
+
+  Widget? _buildShowMoreButton({
+    required int totalCount,
+    required bool showAll,
+    required VoidCallback onTap,
+  }) {
+    if (totalCount <= _searchPreviewCount) return null;
+
+    return Padding(
+      padding: EdgeInsets.only(top: 0.8.h),
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: TextButton(
+          style: TextButton.styleFrom(
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            padding: EdgeInsets.symmetric(horizontal: 1.w, vertical: 0.4.h),
+            foregroundColor: AppColors.goldBrandColor,
+          ),
+          onPressed: onTap,
+          child: Text(
+            showAll ? tr.show_less : tr.show_more,
+            style: appTextStyle(
+              context,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.goldBrandColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildRecentSection() {
     final recentAsync = ref.watch(recentSearchControllerProvider);
 
@@ -400,13 +442,20 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         // Hide section when API returns empty
         if (items.isEmpty) return const SizedBox.shrink();
 
+        final visibleItems = _previewItems(items, _showAllRecent);
+        final showMoreButton = _buildShowMoreButton(
+          totalCount: items.length,
+          showAll: _showAllRecent,
+          onTap: () => setState(() => _showAllRecent = !_showAllRecent),
+        );
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionTitle(tr.recent_searches),
             SizedBox(height: 1.2.h),
             Column(
-              children: items.map((search) {
+              children: visibleItems.map((search) {
                 final display = search.toString();
                 return _RecentSearchTile(
                   text: display,
@@ -418,6 +467,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 );
               }).toList(),
             ),
+            if (showMoreButton != null) showMoreButton,
             SizedBox(height: 2.8.h),
           ],
         );
@@ -452,20 +502,34 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
     return popularAsync.when(
       data: (items) {
-        final list = items;
-        return Wrap(
-          spacing: 2.5.w,
-          runSpacing: 1.2.h,
-          children: list.map((search) {
-            final display = search;
-            return _SearchChip(
-              text: display,
-              onTap: () {
-                _searchController.text = display;
-                setState(() {});
-              },
-            );
-          }).toList(),
+        if (items.isEmpty) return const SizedBox.shrink();
+
+        final visibleItems = _previewItems(items, _showAllPopular);
+        final showMoreButton = _buildShowMoreButton(
+          totalCount: items.length,
+          showAll: _showAllPopular,
+          onTap: () => setState(() => _showAllPopular = !_showAllPopular),
+        );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              spacing: 2.5.w,
+              runSpacing: 1.2.h,
+              children: visibleItems.map((search) {
+                final display = search;
+                return _SearchChip(
+                  text: display,
+                  onTap: () {
+                    _searchController.text = display;
+                    setState(() {});
+                  },
+                );
+              }).toList(),
+            ),
+            if (showMoreButton != null) showMoreButton,
+          ],
         );
       },
       loading: () => Wrap(

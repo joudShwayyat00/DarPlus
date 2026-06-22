@@ -171,6 +171,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get see_all => 'See all';
 
   @override
+  String get show_more => 'Show more';
+
+  @override
+  String get show_less => 'Show less';
+
+  @override
   String get account => 'Account';
 
   @override

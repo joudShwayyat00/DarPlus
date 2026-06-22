@@ -410,6 +410,18 @@ abstract class AppLocalizations {
   /// **'See all'**
   String get see_all;
 
+  /// No description provided for @show_more.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get show_more;
+
+  /// No description provided for @show_less.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get show_less;
+
   /// No description provided for @account.
   ///
   /// In en, this message translates to:

@@ -169,6 +169,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get see_all => 'عرض الكل';
 
   @override
+  String get show_more => 'عرض المزيد';
+
+  @override
+  String get show_less => 'عرض أقل';
+
+  @override
   String get account => 'الحساب';
 
   @override
