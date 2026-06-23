@@ -58,6 +58,8 @@
   "top_rated": "Top Rated",
   "book_now": "Book Now",
   "request_appointment": "Request Appointment",
+  "your_own_property": "Your property",
+  "cannot_book_own_property": "You can't book or request appointments on your own property.",
   "see_all": "See all",
   "show_more": "Show more",
   "show_less": "Show less",

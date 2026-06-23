@@ -12,6 +12,7 @@ import 'package:dar_plus_app/screens/asset_details/widgets/asset_video_card.dart
 import 'package:dar_plus_app/utils/helpers/asset_video_helper.dart';
 import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/helpers/asset_ownership_helper.dart';
 import 'package:dar_plus_app/utils/helpers/booking_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
@@ -811,6 +812,13 @@ class _BottomBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isOwnAsset = isCurrentUserAssetOwner(context, asset.owner.id);
+    final actionLabel = isOwnAsset
+        ? tr.your_own_property
+        : asset.isForSale
+        ? tr.request_appointment
+        : tr.book_now;
+
     return SafeArea(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.6.h),
@@ -869,46 +877,59 @@ class _BottomBar extends ConsumerWidget {
             SizedBox(width: 4.w),
             // Action button
             GestureDetector(
-              onTap: () async {
-                if (asset.isForSale) {
-                  await showAppointmentSheet(
-                    context,
-                    assetId: asset.id,
-                    assetName: asset.name,
-                  );
-                } else {
-                  await openBookingFlow(context, asset.toPropertyItem());
-                }
-              },
+              onTap: isOwnAsset
+                  ? () => showOwnAssetActionBlockedMessage(context)
+                  : () async {
+                      if (asset.isForSale) {
+                        await showAppointmentSheet(
+                          context,
+                          assetId: asset.id,
+                          assetName: asset.name,
+                          assetOwnerId: asset.owner.id,
+                        );
+                      } else {
+                        await openBookingFlow(
+                          context,
+                          asset.toPropertyItem(),
+                          assetOwnerId: asset.owner.id,
+                        );
+                      }
+                    },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 1.6.h),
                 decoration: BoxDecoration(
-                  color: AppColors.goldBrandColor,
+                  color: isOwnAsset
+                      ? Colors.black.withAlpha(35)
+                      : AppColors.goldBrandColor,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.goldBrandColor.withAlpha(80),
-                      blurRadius: 14,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
+                  boxShadow: isOwnAsset
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: AppColors.goldBrandColor.withAlpha(80),
+                            blurRadius: 14,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.calendar_month_outlined,
+                      isOwnAsset
+                          ? Icons.home_work_outlined
+                          : Icons.calendar_month_outlined,
                       size: 18,
-                      color: Colors.white,
+                      color: Colors.white.withAlpha(isOwnAsset ? 220 : 255),
                     ),
                     SizedBox(width: 2.w),
                     Text(
-                      asset.isForSale ? tr.request_appointment : tr.book_now,
+                      actionLabel,
                       style: appTextStyle(
                         context,
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                        color: Colors.white.withAlpha(isOwnAsset ? 220 : 255),
                       ),
                     ),
                   ],

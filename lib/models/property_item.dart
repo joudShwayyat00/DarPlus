@@ -2,6 +2,7 @@ enum ListingType { rent, sale }
 
 class PropertyItem {
   final int? assetId; // API asset ID for booking
+  final int? ownerId;
   final String title;
   final String location;
   final String? country;
@@ -42,6 +43,7 @@ class PropertyItem {
 
   const PropertyItem({
     this.assetId,
+    this.ownerId,
     required this.title,
     required this.location,
     this.country,

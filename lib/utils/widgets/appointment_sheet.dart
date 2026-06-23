@@ -2,6 +2,7 @@ import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/appointment/data/models/appointment_response.dart';
 import 'package:dar_plus_app/features/appointment/presentation/providers/appointment_providers.dart';
 import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/utils/helpers/asset_ownership_helper.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/widgets/auth_required_sheet.dart';
@@ -14,7 +15,13 @@ Future<void> showAppointmentSheet(
   BuildContext context, {
   required int assetId,
   required String assetName,
+  int? assetOwnerId,
 }) async {
+  if (isCurrentUserAssetOwner(context, assetOwnerId)) {
+    showOwnAssetActionBlockedMessage(context);
+    return;
+  }
+
   if (!await requireAuth(
     context,
     message: tr.login_required_appointment,

@@ -3,6 +3,7 @@ import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/models/property_item.dart';
+import 'package:dar_plus_app/utils/helpers/asset_ownership_helper.dart';
 import 'package:dar_plus_app/utils/helpers/property_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -17,6 +18,13 @@ class PropertyTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isOwnAsset = isCurrentUserAssetOwner(context, item.ownerId);
+    final actionTitle = isOwnAsset
+        ? tr.your_own_property
+        : item.listingType == ListingType.sale
+        ? tr.request_appointment
+        : tr.book_now;
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -160,12 +168,16 @@ class PropertyTile extends StatelessWidget {
                   SizedBox(height: 1.6.h),
 
                   _LuxuryPrimaryButton(
-                    title: item.listingType == ListingType.sale
-                        ? tr.request_appointment
-                        : tr.book_now,
-                    onPressed:
-                        onBookNow ??
-                        () => openPropertyActionFlow(context, item),
+                    title: actionTitle,
+                    enabled: !isOwnAsset,
+                    onPressed: isOwnAsset
+                        ? () => showOwnAssetActionBlockedMessage(context)
+                        : onBookNow ??
+                            () => openPropertyActionFlow(
+                              context,
+                              item,
+                              assetOwnerId: item.ownerId,
+                            ),
                   ),
                 ],
               ),
@@ -239,8 +251,13 @@ class GlassBadge extends StatelessWidget {
 class _LuxuryPrimaryButton extends StatelessWidget {
   final String title;
   final VoidCallback onPressed;
+  final bool enabled;
 
-  const _LuxuryPrimaryButton({required this.title, required this.onPressed});
+  const _LuxuryPrimaryButton({
+    required this.title,
+    required this.onPressed,
+    this.enabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -248,9 +265,13 @@ class _LuxuryPrimaryButton extends StatelessWidget {
       height: 5.4.h,
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: enabled ? onPressed : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.goldBrandColor,
+          backgroundColor: enabled
+              ? AppColors.goldBrandColor
+              : Colors.black.withAlpha(35),
+          disabledBackgroundColor: Colors.black.withAlpha(35),
+          disabledForegroundColor: Colors.white.withAlpha(220),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -260,9 +281,11 @@ class _LuxuryPrimaryButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.calendar_month_outlined,
+              enabled
+                  ? Icons.calendar_month_outlined
+                  : Icons.home_work_outlined,
               size: 18,
-              color: Colors.white.withAlpha(245),
+              color: Colors.white.withAlpha(enabled ? 245 : 220),
             ),
             SizedBox(width: 2.w),
             Text(
@@ -271,7 +294,7 @@ class _LuxuryPrimaryButton extends StatelessWidget {
                 context,
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: Colors.white.withAlpha(enabled ? 255 : 220),
               ),
             ),
           ],

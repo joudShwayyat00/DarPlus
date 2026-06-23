@@ -404,6 +404,18 @@ abstract class AppLocalizations {
   /// **'Request Appointment'**
   String get request_appointment;
 
+  /// No description provided for @your_own_property.
+  ///
+  /// In en, this message translates to:
+  /// **'Your property'**
+  String get your_own_property;
+
+  /// No description provided for @cannot_book_own_property.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t book or request appointments on your own property.'**
+  String get cannot_book_own_property;
+
   /// No description provided for @see_all.
   ///
   /// In en, this message translates to:

@@ -56,6 +56,8 @@
   "top_rated": "الأعلى تقييماً",
   "book_now": "احجز الآن",
   "request_appointment": "طلب موعد",
+  "your_own_property": "عقارك",
+  "cannot_book_own_property": "لا يمكنك الحجز أو طلب موعد على عقارك الخاص.",
   "see_all": "عرض الكل",
   "show_more": "عرض المزيد",
   "show_less": "عرض أقل",

@@ -168,6 +168,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get request_appointment => 'Request Appointment';
 
   @override
+  String get your_own_property => 'Your property';
+
+  @override
+  String get cannot_book_own_property =>
+      'You can\'t book or request appointments on your own property.';
+
+  @override
   String get see_all => 'See all';
 
   @override

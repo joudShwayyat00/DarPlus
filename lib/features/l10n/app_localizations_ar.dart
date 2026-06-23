@@ -166,6 +166,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get request_appointment => 'طلب موعد';
 
   @override
+  String get your_own_property => 'عقارك';
+
+  @override
+  String get cannot_book_own_property =>
+      'لا يمكنك الحجز أو طلب موعد على عقارك الخاص.';
+
+  @override
   String get see_all => 'عرض الكل';
 
   @override
