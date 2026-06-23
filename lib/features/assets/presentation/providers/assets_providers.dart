@@ -419,13 +419,17 @@ class FilteredAssetsController extends _$FilteredAssetsController {
 
   Future<List<AssetItem>> _fetchPage(FilterData filter, int page) async {
     final lang = ref.watch(apiLanguageCodeProvider);
-    final result = await ref.read(assetsRepositoryProvider).filterAssets(
+    final result = await ref
+        .read(assetsRepositoryProvider)
+        .filterAssets(
           lang,
           cityId: filter.cityId,
           regionId: filter.regionId,
           location: filter.apiLocation,
           type: filter.apiType,
           categoryId: filter.apiCategoryId,
+          minPrice: filter.hasPriceRange ? filter.minPrice : null,
+          maxPrice: filter.hasPriceRange ? filter.maxPrice : null,
           page: page,
         );
     _hasMore = result.hasMore;

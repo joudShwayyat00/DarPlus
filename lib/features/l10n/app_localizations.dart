@@ -2300,6 +2300,48 @@ abstract class AppLocalizations {
   /// **'Rental Period'**
   String get filter_rental_period;
 
+  /// No description provided for @filter_price_range.
+  ///
+  /// In en, this message translates to:
+  /// **'Price range'**
+  String get filter_price_range;
+
+  /// No description provided for @filter_min_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Min price'**
+  String get filter_min_price;
+
+  /// No description provided for @filter_max_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Max price'**
+  String get filter_max_price;
+
+  /// No description provided for @filter_price_any.
+  ///
+  /// In en, this message translates to:
+  /// **'Any'**
+  String get filter_price_any;
+
+  /// No description provided for @filter_price_under_50k.
+  ///
+  /// In en, this message translates to:
+  /// **'Under 50K'**
+  String get filter_price_under_50k;
+
+  /// No description provided for @filter_price_50k_150k.
+  ///
+  /// In en, this message translates to:
+  /// **'50K - 150K'**
+  String get filter_price_50k_150k;
+
+  /// No description provided for @filter_price_150k_plus.
+  ///
+  /// In en, this message translates to:
+  /// **'150K+'**
+  String get filter_price_150k_plus;
+
   /// No description provided for @for_sale.
   ///
   /// In en, this message translates to:

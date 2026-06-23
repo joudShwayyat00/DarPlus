@@ -182,6 +182,8 @@ class _AssetsServiceClient implements AssetsServiceClient {
     int? ownerId,
     int? categoryId,
     String? rentType,
+    double? minPrice,
+    double? maxPrice,
     int? page,
   }) async {
     final _extra = <String, dynamic>{};
@@ -193,6 +195,8 @@ class _AssetsServiceClient implements AssetsServiceClient {
       r'owner_id': ownerId,
       r'category_id': categoryId,
       r'rent_type': rentType,
+      r'min_price': minPrice,
+      r'max_price': maxPrice,
       r'page': page,
     };
     queryParameters.removeWhere((k, v) => v == null);

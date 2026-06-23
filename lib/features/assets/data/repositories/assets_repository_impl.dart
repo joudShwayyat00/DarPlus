@@ -79,6 +79,8 @@ class AssetsRepositoryImpl implements AssetsRepository {
     int? ownerId,
     int? categoryId,
     String? rentType,
+    double? minPrice,
+    double? maxPrice,
     int page = 1,
   }) async {
     final response = await _serviceClient.filterAssets(
@@ -90,6 +92,8 @@ class AssetsRepositoryImpl implements AssetsRepository {
       ownerId: ownerId,
       categoryId: categoryId,
       rentType: rentType,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
       page: page,
     );
     return AssetsPage(

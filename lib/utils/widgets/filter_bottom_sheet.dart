@@ -1,4 +1,5 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
 import 'package:dar_plus_app/features/location/presentation/providers/location_providers.dart';
 import 'package:dar_plus_app/main.dart';
@@ -13,6 +14,9 @@ import 'package:sizer/sizer.dart';
 
 /// Holds all selected filter values.
 class FilterData {
+  static const double priceMin = 0;
+  static const double priceMax = 500000;
+
   final String? listingType; // 'buy' | 'rent' | 'both'
   final Set<String> assetTypes;
   final String? country;
@@ -22,6 +26,8 @@ class FilterData {
   final int? regionId;
   final DateTime? checkIn;
   final DateTime? checkOut;
+  final double? minPrice;
+  final double? maxPrice;
 
   const FilterData({
     this.listingType,
@@ -33,6 +39,8 @@ class FilterData {
     this.regionId,
     this.checkIn,
     this.checkOut,
+    this.minPrice,
+    this.maxPrice,
   });
 
   static const FilterData empty = FilterData();
@@ -46,7 +54,15 @@ class FilterData {
       cityId != null ||
       area != null ||
       regionId != null ||
-      checkIn != null;
+      checkIn != null ||
+      hasPriceRange;
+
+  bool get hasPriceRange {
+    if (listingType != 'buy' || minPrice == null || maxPrice == null) {
+      return false;
+    }
+    return minPrice! > priceMin || maxPrice! < priceMax;
+  }
 
   /// Returns how many distinct filter categories are active.
   int get activeCount {
@@ -55,15 +71,16 @@ class FilterData {
     if (assetTypes.isNotEmpty) n++;
     if (country != null || city != null || area != null) n++;
     if (checkIn != null) n++;
+    if (hasPriceRange) n++;
     return n;
   }
 
   /// Maps UI listing type to API `type` query param (`sale` | `rent`).
   String? get apiType => switch (listingType) {
-        'buy' => 'sale',
-        'rent' => 'rent',
-        _ => null,
-      };
+    'buy' => 'sale',
+    'rent' => 'rent',
+    _ => null,
+  };
 
   /// First selected category id for the API (single `category_id` param).
   int? get apiCategoryId {
@@ -117,6 +134,8 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   int? _selectedRegionId;
   DateTime? _checkIn;
   DateTime? _checkOut;
+  late double _priceRangeStart;
+  late double _priceRangeEnd;
 
   // Calendar display month
   late DateTime _displayMonth;
@@ -135,6 +154,8 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
     _selectedRegionId = f.regionId;
     _checkIn = f.checkIn;
     _checkOut = f.checkOut;
+    _priceRangeStart = f.minPrice ?? FilterData.priceMin;
+    _priceRangeEnd = f.maxPrice ?? FilterData.priceMax;
     final now = DateTime.now();
     _displayMonth = DateTime(now.year, now.month);
   }
@@ -144,11 +165,28 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
   bool get _showRentalPeriod =>
       _listingType == 'rent' || _listingType == 'both';
 
-  void _reset() {
-    Navigator.of(context).pop(FilterData.empty);
+  bool get _showPriceRange => _listingType == 'buy';
+
+  bool get _hasCustomPriceRange =>
+      _priceRangeStart > FilterData.priceMin ||
+      _priceRangeEnd < FilterData.priceMax;
+
+  void _resetPriceRange() {
+    _priceRangeStart = FilterData.priceMin;
+    _priceRangeEnd = FilterData.priceMax;
+  }
+
+  void _setListingType(String? type) {
+    setState(() {
+      _listingType = _listingType == type ? null : type;
+      if (_listingType != 'buy') {
+        _resetPriceRange();
+      }
+    });
   }
 
   void _apply() {
+    final isBuy = _listingType == 'buy';
     Navigator.of(context).pop(
       FilterData(
         listingType: _listingType,
@@ -160,8 +198,14 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
         regionId: _selectedRegionId,
         checkIn: _checkIn,
         checkOut: _checkOut,
+        minPrice: isBuy && _hasCustomPriceRange ? _priceRangeStart : null,
+        maxPrice: isBuy && _hasCustomPriceRange ? _priceRangeEnd : null,
       ),
     );
+  }
+
+  void _reset() {
+    Navigator.of(context).pop(FilterData.empty);
   }
 
   // ── Build ──────────────────────────────────────────────────────────────
@@ -191,7 +235,19 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                   _buildLookingToSection(),
                   _buildDivider(),
 
-                  // Owner type removed
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeOut,
+                    child: _showPriceRange
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildPriceRangeSection(),
+                              _buildDivider(),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
+                  ),
 
                   // ── Property Type ───────────────────────────────────
                   _buildPropertyTypeSection(),
@@ -314,25 +370,19 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
             _FilterChip(
               label: tr.buy,
               isSelected: _listingType == 'buy',
-              onTap: () => setState(
-                () => _listingType = _listingType == 'buy' ? null : 'buy',
-              ),
+              onTap: () => _setListingType('buy'),
             ),
             SizedBox(width: 2.5.w),
             _FilterChip(
               label: tr.rent,
               isSelected: _listingType == 'rent',
-              onTap: () => setState(
-                () => _listingType = _listingType == 'rent' ? null : 'rent',
-              ),
+              onTap: () => _setListingType('rent'),
             ),
             SizedBox(width: 2.5.w),
             _FilterChip(
               label: tr.both,
               isSelected: _listingType == 'both',
-              onTap: () => setState(
-                () => _listingType = _listingType == 'both' ? null : 'both',
-              ),
+              onTap: () => _setListingType('both'),
             ),
           ],
         ),
@@ -382,6 +432,125 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
             ),
           ),
           error: (_, __) => const SizedBox.shrink(),
+        ),
+      ],
+    );
+  }
+
+  // ── Price Range (sale only) ─────────────────────────────────────────────
+
+  Widget _buildPriceRangeSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionLabel(tr.filter_price_range),
+        Container(
+          padding: EdgeInsets.all(4.w),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.goldBrandColor.withAlpha(22),
+                AppColors.goldBrandColor.withAlpha(6),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.goldBrandColor.withAlpha(55)),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _PriceValueCard(
+                      label: tr.filter_min_price,
+                      value: formatPrice(_priceRangeStart.round()),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2.w),
+                    child: Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 18,
+                      color: AppColors.goldBrandColor.withAlpha(180),
+                    ),
+                  ),
+                  Expanded(
+                    child: _PriceValueCard(
+                      label: tr.filter_max_price,
+                      value: formatPrice(_priceRangeEnd.round()),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 1.5.h),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: AppColors.goldBrandColor,
+                  inactiveTrackColor: AppColors.goldBrandColor.withAlpha(35),
+                  thumbColor: AppColors.goldBrandColor,
+                  overlayColor: AppColors.goldBrandColor.withAlpha(30),
+                  rangeThumbShape:
+                      const RoundRangeSliderThumbShape(enabledThumbRadius: 10),
+                  trackHeight: 4,
+                ),
+                child: RangeSlider(
+                  values: RangeValues(_priceRangeStart, _priceRangeEnd),
+                  min: FilterData.priceMin,
+                  max: FilterData.priceMax,
+                  divisions: 100,
+                  onChanged: (values) {
+                    setState(() {
+                      _priceRangeStart = values.start;
+                      _priceRangeEnd = values.end;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(height: 0.8.h),
+              Wrap(
+                spacing: 2.w,
+                runSpacing: 1.h,
+                children: [
+                  _PricePresetChip(
+                    label: tr.filter_price_any,
+                    isSelected: !_hasCustomPriceRange,
+                    onTap: () => setState(_resetPriceRange),
+                  ),
+                  _PricePresetChip(
+                    label: tr.filter_price_under_50k,
+                    isSelected:
+                        _priceRangeStart == 0 && _priceRangeEnd == 50000,
+                    onTap: () => setState(() {
+                      _priceRangeStart = 0;
+                      _priceRangeEnd = 50000;
+                    }),
+                  ),
+                  _PricePresetChip(
+                    label: tr.filter_price_50k_150k,
+                    isSelected:
+                        _priceRangeStart == 50000 &&
+                        _priceRangeEnd == 150000,
+                    onTap: () => setState(() {
+                      _priceRangeStart = 50000;
+                      _priceRangeEnd = 150000;
+                    }),
+                  ),
+                  _PricePresetChip(
+                    label: tr.filter_price_150k_plus,
+                    isSelected:
+                        _priceRangeStart == 150000 &&
+                        _priceRangeEnd == FilterData.priceMax,
+                    onTap: () => setState(() {
+                      _priceRangeStart = 150000;
+                      _priceRangeEnd = FilterData.priceMax;
+                    }),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -586,6 +755,100 @@ class _FilterBottomSheetState extends ConsumerState<FilterBottomSheet> {
                   ),
                 ),
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PriceValueCard extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _PriceValueCard({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.2.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.black.withAlpha(10)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: appTextStyle(
+              context,
+              fontSize: 8.5.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.grayBrandColor,
+            ),
+          ),
+          SizedBox(height: 0.3.h),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: appTextStyle(
+              context,
+              fontSize: 10.5.sp,
+              fontWeight: FontWeight.w900,
+              color: AppColors.blackColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PricePresetChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _PricePresetChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.symmetric(horizontal: 3.2.w, vertical: 0.8.h),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppColors.goldBrandColor.withAlpha(28)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: isSelected
+                  ? AppColors.goldBrandColor
+                  : Colors.black.withAlpha(18),
+            ),
+          ),
+          child: Text(
+            label,
+            style: appTextStyle(
+              context,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
+              color: isSelected
+                  ? AppColors.goldBrandColor
+                  : AppColors.blackColor.withAlpha(180),
             ),
           ),
         ),

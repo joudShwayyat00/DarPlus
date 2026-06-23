@@ -1165,6 +1165,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filter_rental_period => 'فترة الإيجار';
 
   @override
+  String get filter_price_range => 'نطاق السعر';
+
+  @override
+  String get filter_min_price => 'أقل سعر';
+
+  @override
+  String get filter_max_price => 'أعلى سعر';
+
+  @override
+  String get filter_price_any => 'أي سعر';
+
+  @override
+  String get filter_price_under_50k => 'أقل من 50 ألف';
+
+  @override
+  String get filter_price_50k_150k => '50 - 150 ألف';
+
+  @override
+  String get filter_price_150k_plus => '150 ألف+';
+
+  @override
   String get for_sale => 'للبيع';
 
   @override

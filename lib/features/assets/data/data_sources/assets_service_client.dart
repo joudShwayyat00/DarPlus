@@ -49,6 +49,8 @@ abstract class AssetsServiceClient {
     @Query("owner_id") int? ownerId,
     @Query("category_id") int? categoryId,
     @Query("rent_type") String? rentType,
+    @Query("min_price") double? minPrice,
+    @Query("max_price") double? maxPrice,
     @Query("page") int? page,
   });
 }

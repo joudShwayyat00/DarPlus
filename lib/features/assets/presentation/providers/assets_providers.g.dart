@@ -594,7 +594,7 @@ final class FilteredAssetsControllerProvider
 }
 
 String _$filteredAssetsControllerHash() =>
-    r'2cafcd2bb13e2147b3a3d33c1fb698b3d910a470';
+    r'93ffa6c634cbb6bbf45f4e6ff99d31d02782eff0';
 
 final class FilteredAssetsControllerFamily extends $Family
     with

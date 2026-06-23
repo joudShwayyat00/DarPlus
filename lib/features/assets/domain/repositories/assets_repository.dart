@@ -22,6 +22,8 @@ abstract class AssetsRepository {
     int? ownerId,
     int? categoryId,
     String? rentType,
+    double? minPrice,
+    double? maxPrice,
     int page = 1,
   });
   Future<void> addAsset({

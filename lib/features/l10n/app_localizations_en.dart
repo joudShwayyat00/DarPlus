@@ -1175,6 +1175,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filter_rental_period => 'Rental Period';
 
   @override
+  String get filter_price_range => 'Price range';
+
+  @override
+  String get filter_min_price => 'Min price';
+
+  @override
+  String get filter_max_price => 'Max price';
+
+  @override
+  String get filter_price_any => 'Any';
+
+  @override
+  String get filter_price_under_50k => 'Under 50K';
+
+  @override
+  String get filter_price_50k_150k => '50K - 150K';
+
+  @override
+  String get filter_price_150k_plus => '150K+';
+
+  @override
   String get for_sale => 'For Sale';
 
   @override
