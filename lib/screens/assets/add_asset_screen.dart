@@ -57,6 +57,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   final _yearsCtrl = TextEditingController();
   final _daysCtrl = TextEditingController();
   final _dayPriceCtrl = TextEditingController();
+  final _checkInTimeCtrl = TextEditingController();
+  final _checkOutTimeCtrl = TextEditingController();
 
   // State
   int? _selectedCategoryId;
@@ -131,6 +133,12 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     }
     if (asset.dayPrice != null) {
       _dayPriceCtrl.text = asset.dayPrice!.toStringAsFixed(2);
+    }
+    if (asset.checkInTime != null && asset.checkInTime!.isNotEmpty) {
+      _checkInTimeCtrl.text = asset.checkInTime!;
+    }
+    if (asset.checkOutTime != null && asset.checkOutTime!.isNotEmpty) {
+      _checkOutTimeCtrl.text = asset.checkOutTime!;
     }
     if (asset.latitude != null) {
       _latCtrl.text = asset.latitude!.toString();
@@ -222,6 +230,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     _yearsCtrl.dispose();
     _daysCtrl.dispose();
     _dayPriceCtrl.dispose();
+    _checkInTimeCtrl.dispose();
+    _checkOutTimeCtrl.dispose();
     super.dispose();
   }
 
@@ -349,12 +359,15 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
               _daysCtrl.text.isNotEmpty
           ? int.tryParse(_daysCtrl.text.trim())
           : null,
-      dayPrice:
-          _type == 'rent' &&
-              _rentType == 'monthly' &&
-              _dayPriceCtrl.text.isNotEmpty
+      dayPrice: _dayPriceCtrl.text.isNotEmpty
           ? double.tryParse(_dayPriceCtrl.text.trim())
           : null,
+      checkInTime: _checkInTimeCtrl.text.trim().isEmpty
+          ? null
+          : _checkInTimeCtrl.text.trim(),
+      checkOutTime: _checkOutTimeCtrl.text.trim().isEmpty
+          ? null
+          : _checkOutTimeCtrl.text.trim(),
       rentPrice: _type == 'rent' ? rentPrice : null,
       latitude: lat,
       longitude: lng,
@@ -386,6 +399,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             daysCount: payload.daysCount,
             rentPrice: payload.rentPrice,
             dayPrice: payload.dayPrice,
+            checkInTime: payload.checkInTime,
+            checkOutTime: payload.checkOutTime,
             latitude: payload.latitude,
             longitude: payload.longitude,
             amenityIds: payload.amenityIds,
@@ -418,6 +433,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             daysCount: payload.daysCount,
             rentPrice: payload.rentPrice,
             dayPrice: payload.dayPrice,
+            checkInTime: payload.checkInTime,
+            checkOutTime: payload.checkOutTime,
             latitude: payload.latitude,
             longitude: payload.longitude,
             amenityIds: payload.amenityIds,
@@ -613,6 +630,26 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                         ],
                       ),
+                      SizedBox(height: 1.5.h),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildTimeField(
+                              controller: _checkInTimeCtrl,
+                              hint: tr.check_in_time,
+                              icon: Icons.login_rounded,
+                            ),
+                          ),
+                          SizedBox(width: 3.w),
+                          Expanded(
+                            child: _buildTimeField(
+                              controller: _checkOutTimeCtrl,
+                              hint: tr.check_out_time,
+                              icon: Icons.logout_rounded,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
 
                     SizedBox(height: 2.5.h),
@@ -771,6 +808,93 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   }
 
   // ── Text field ────────────────────────────────────────────────────────────
+
+  String _formatTimeOfDay(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
+  TimeOfDay? _parseTimeValue(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+
+    final parts = trimmed.split(':');
+    if (parts.length == 2) {
+      final hour = int.tryParse(parts[0]);
+      final minute = int.tryParse(parts[1]);
+      if (hour != null && minute != null) {
+        return TimeOfDay(hour: hour.clamp(0, 23), minute: minute.clamp(0, 59));
+      }
+    }
+
+    final hourOnly = int.tryParse(trimmed);
+    if (hourOnly != null) {
+      return TimeOfDay(hour: hourOnly.clamp(0, 23), minute: 0);
+    }
+    return null;
+  }
+
+  Future<void> _pickTime(TextEditingController controller) async {
+    final initial = _parseTimeValue(controller.text) ?? TimeOfDay.now();
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: initial,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColors.goldBrandColor,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked == null || !mounted) return;
+    setState(() => controller.text = _formatTimeOfDay(picked));
+  }
+
+  Widget _buildTimeField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+  }) {
+    return TextFormField(
+      controller: controller,
+      readOnly: true,
+      onTap: () => _pickTime(controller),
+      cursorColor: AppColors.goldBrandColor,
+      style: appTextStyle(
+        context,
+        fontSize: 11.sp,
+        color: AppColors.blackColor,
+      ),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: appTextStyle(
+          context,
+          fontSize: 10.8.sp,
+          color: AppColors.grayBrandColor.withAlpha(130),
+        ),
+        prefixIcon: Icon(icon, color: AppColors.grayBrandColor, size: 20),
+        suffixIcon: Icon(
+          Icons.access_time_rounded,
+          color: AppColors.goldBrandColor,
+          size: 20,
+        ),
+        filled: true,
+        fillColor: AppColors.grayBrandColor.withAlpha(10),
+        contentPadding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.6.h),
+        border: _inputBorder(),
+        focusedBorder: _inputBorder(color: AppColors.goldBrandColor),
+        enabledBorder: _inputBorder(),
+      ),
+    );
+  }
 
   Widget _buildTextField({
     required TextEditingController controller,

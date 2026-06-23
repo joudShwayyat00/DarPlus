@@ -1285,6 +1285,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get day_price => 'سعر اليوم';
 
   @override
+  String get check_in_time => 'وقت تسجيل الوصول';
+
+  @override
+  String get check_out_time => 'وقت تسجيل المغادرة';
+
+  @override
+  String get select_time => 'اختر الوقت';
+
+  @override
   String get months_count => 'عدد الأشهر';
 
   @override

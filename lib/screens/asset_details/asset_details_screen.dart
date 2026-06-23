@@ -504,6 +504,32 @@ class _RentInfoCard extends StatelessWidget {
               value: formatPrice(asset.dayPrice!, decimals: 2),
             ),
           ],
+          if (asset.checkInTime != null &&
+              asset.checkInTime!.trim().isNotEmpty) ...[
+            SizedBox(height: 1.2.h),
+            Row(
+              children: [
+                Expanded(
+                  child: _RentDetailTile(
+                    icon: Icons.login_rounded,
+                    label: tr.check_in_time,
+                    value: asset.checkInTime!,
+                  ),
+                ),
+                if (asset.checkOutTime != null &&
+                    asset.checkOutTime!.trim().isNotEmpty) ...[
+                  SizedBox(width: 3.w),
+                  Expanded(
+                    child: _RentDetailTile(
+                      icon: Icons.logout_rounded,
+                      label: tr.check_out_time,
+                      value: asset.checkOutTime!,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
         ],
       ),
     );

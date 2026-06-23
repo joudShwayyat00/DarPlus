@@ -376,7 +376,7 @@ final class AddAssetControllerProvider
 }
 
 String _$addAssetControllerHash() =>
-    r'0e107ddf65d5d314ff9f0add01960decd3306cfa';
+    r'bc44825c9ebd277686891d79d12f6f302557f855';
 
 abstract class _$AddAssetController extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();
@@ -430,7 +430,7 @@ final class UpdateAssetControllerProvider
 }
 
 String _$updateAssetControllerHash() =>
-    r'33d869dddcedf2ed738a860b2beee15eb7aced2d';
+    r'ea920509f4b7fddbc32dd04c3ccd2a530e18197a';
 
 abstract class _$UpdateAssetController extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();

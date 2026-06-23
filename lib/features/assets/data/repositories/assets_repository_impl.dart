@@ -118,6 +118,8 @@ class AssetsRepositoryImpl implements AssetsRepository {
     int? daysCount,
     double? rentPrice,
     double? dayPrice,
+    String? checkInTime,
+    String? checkOutTime,
     required double latitude,
     required double longitude,
     required List<int> amenityIds,
@@ -148,6 +150,10 @@ class AssetsRepositoryImpl implements AssetsRepository {
       if (daysCount != null) 'days_count': daysCount,
       if (rentPrice != null) 'rent_price': rentPrice,
       if (dayPrice != null) 'day_price': dayPrice,
+      if (checkInTime != null && checkInTime.isNotEmpty)
+        'check_in_time': checkInTime,
+      if (checkOutTime != null && checkOutTime.isNotEmpty)
+        'check_out_time': checkOutTime,
       'latitude': latitude,
       'longitude': longitude,
       'amenities_ids': jsonEncode(amenityIds),
@@ -183,6 +189,8 @@ class AssetsRepositoryImpl implements AssetsRepository {
     int? daysCount,
     double? rentPrice,
     double? dayPrice,
+    String? checkInTime,
+    String? checkOutTime,
     required double latitude,
     required double longitude,
     required List<int> amenityIds,
@@ -215,6 +223,10 @@ class AssetsRepositoryImpl implements AssetsRepository {
       if (daysCount != null) 'days_count': daysCount,
       if (rentPrice != null) 'rent_price': rentPrice,
       if (dayPrice != null) 'day_price': dayPrice,
+      if (checkInTime != null && checkInTime.isNotEmpty)
+        'check_in_time': checkInTime,
+      if (checkOutTime != null && checkOutTime.isNotEmpty)
+        'check_out_time': checkOutTime,
       'latitude': latitude,
       'longitude': longitude,
       'amenities_ids': jsonEncode(amenityIds),

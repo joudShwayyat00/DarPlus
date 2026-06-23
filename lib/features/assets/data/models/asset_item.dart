@@ -39,6 +39,10 @@ class AssetItem {
   final num? rentPrice;
   @JsonKey(name: 'day_price', fromJson: _nullableDoubleFromJson)
   final double? dayPrice;
+  @JsonKey(name: 'check_in_time')
+  final String? checkInTime;
+  @JsonKey(name: 'check_out_time')
+  final String? checkOutTime;
   final String? video;
   @JsonKey(fromJson: _nullableDoubleFromJson)
   final double? latitude;
@@ -81,6 +85,8 @@ class AssetItem {
     this.rentType,
     this.rentPrice,
     this.dayPrice,
+    this.checkInTime,
+    this.checkOutTime,
     this.video,
     this.latitude,
     this.longitude,

@@ -2540,6 +2540,24 @@ abstract class AppLocalizations {
   /// **'Day price'**
   String get day_price;
 
+  /// No description provided for @check_in_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in time'**
+  String get check_in_time;
+
+  /// No description provided for @check_out_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-out time'**
+  String get check_out_time;
+
+  /// No description provided for @select_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Select time'**
+  String get select_time;
+
   /// No description provided for @months_count.
   ///
   /// In en, this message translates to:

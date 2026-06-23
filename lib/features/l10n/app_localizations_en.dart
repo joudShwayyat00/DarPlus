@@ -1295,6 +1295,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get day_price => 'Day price';
 
   @override
+  String get check_in_time => 'Check-in time';
+
+  @override
+  String get check_out_time => 'Check-out time';
+
+  @override
+  String get select_time => 'Select time';
+
+  @override
   String get months_count => 'Months Count';
 
   @override
