@@ -7,6 +7,7 @@ import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/features/assets/data/models/amenity_item.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
+import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
 import 'package:dar_plus_app/features/location/data/models/city_item.dart';
 import 'package:dar_plus_app/features/location/data/models/country_item.dart';
@@ -14,6 +15,7 @@ import 'package:dar_plus_app/features/location/data/models/region_item.dart';
 import 'package:dar_plus_app/features/location/presentation/providers/location_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/select_location_screen.dart';
+import 'package:dar_plus_app/utils/helpers/asset_video_helper.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -71,6 +73,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   int? _selectedCityId;
   String? _regionName;
   int? _selectedRegionId;
+  bool _isProfileContactLoaded = false;
 
   bool get _isEditMode => widget.assetId != null;
 
@@ -106,7 +109,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     _locationCtrl.text = asset.location;
     _emailCtrl.text = asset.email ?? asset.owner.email;
     _phoneCtrl.text = asset.phone ?? asset.owner.phoneNumber;
-    _videoCtrl.text = asset.video ?? '';
+    _videoCtrl.text = asset.resolvedVideoUrl ?? '';
     _selectedCategoryId = asset.category.id;
     _type = asset.type;
     _rentType = asset.rentType ?? 'monthly';
@@ -127,7 +130,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       _daysCtrl.text = asset.daysCount.toString();
     }
     if (asset.dayPrice != null) {
-      _dayPriceCtrl.text = asset.dayPrice.toString();
+      _dayPriceCtrl.text = asset.dayPrice!.toStringAsFixed(2);
     }
     if (asset.latitude != null) {
       _latCtrl.text = asset.latitude!.toString();
@@ -448,6 +451,21 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isEditMode) {
+      ref.watch(profileControllerProvider).maybeWhen(
+        data: (user) {
+          if (user == null) return;
+          if (!_isProfileContactLoaded) {
+            _emailCtrl.text = user.email;
+            _phoneCtrl.text = user.phoneNumber;
+            _completePhone = user.phoneNumber;
+            _isProfileContactLoaded = true;
+          }
+        },
+        orElse: () {},
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: SafeArea(

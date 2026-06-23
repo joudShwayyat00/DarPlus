@@ -8,6 +8,8 @@ import 'package:dar_plus_app/features/assets/data/models/asset_owner.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/widgets/asset_location_map_card.dart';
+import 'package:dar_plus_app/screens/asset_details/widgets/asset_video_card.dart';
+import 'package:dar_plus_app/utils/helpers/asset_video_helper.dart';
 import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/booking_navigation.dart';
@@ -125,6 +127,12 @@ class _AssetDetailsBody extends StatelessWidget {
                   if (!asset.isForSale && asset.rentType != null) ...[
                     SizedBox(height: 2.h),
                     _RentInfoCard(asset: asset),
+                  ],
+                  if (asset.hasVideo) ...[
+                    SizedBox(height: 2.h),
+                    _SectionTitle(title: tr.watch_video),
+                    SizedBox(height: 1.h),
+                    AssetVideoCard(videoUrl: asset.resolvedVideoUrl!),
                   ],
                   SizedBox(height: 2.h),
                   _OwnerCard(owner: asset.owner),
@@ -487,6 +495,14 @@ class _RentInfoCard extends StatelessWidget {
               ],
             ),
           ),
+          if (rentType == 'monthly' && asset.dayPrice != null) ...[
+            SizedBox(height: 1.2.h),
+            _RentDetailTile(
+              icon: Icons.today_rounded,
+              label: tr.day_price,
+              value: formatPrice(asset.dayPrice!, decimals: 2),
+            ),
+          ],
         ],
       ),
     );

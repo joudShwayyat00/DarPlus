@@ -1303,7 +1303,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get media_section => 'الوسائط';
 
   @override
-  String get video_url_optional => 'رابط الفيديو (اختياري)';
+  String get video_url_optional => 'رابط يوتيوب (اختياري)';
+
+  @override
+  String get watch_video => 'مشاهدة الفيديو';
 
   @override
   String get publish_asset => 'نشر العقار';

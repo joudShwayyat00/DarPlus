@@ -1312,7 +1312,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get media_section => 'Media';
 
   @override
-  String get video_url_optional => 'Video URL (optional)';
+  String get video_url_optional => 'YouTube link (optional)';
+
+  @override
+  String get watch_video => 'Watch video';
 
   @override
   String get publish_asset => 'Publish Asset';

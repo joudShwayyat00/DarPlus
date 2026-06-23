@@ -2585,8 +2585,14 @@ abstract class AppLocalizations {
   /// No description provided for @video_url_optional.
   ///
   /// In en, this message translates to:
-  /// **'Video URL (optional)'**
+  /// **'YouTube link (optional)'**
   String get video_url_optional;
+
+  /// No description provided for @watch_video.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch video'**
+  String get watch_video;
 
   /// No description provided for @publish_asset.
   ///
