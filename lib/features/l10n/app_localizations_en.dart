@@ -1301,6 +1301,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get check_out_time => 'Check-out time';
 
   @override
+  String get check_in_out_times => 'Check-in & Check-out';
+
+  @override
   String get select_time => 'Select time';
 
   @override

@@ -5,6 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'asset_amenity.dart';
 import 'asset_attribute.dart';
 import 'asset_owner.dart';
+import '../../../../utils/helpers/asset_time_helper.dart';
 
 part 'asset_item.g.dart';
 
@@ -98,6 +99,13 @@ class AssetItem {
   });
 
   bool get isForSale => type == 'sale';
+
+  String? get displayCheckInTime => formatAssetTimeForDisplay(checkInTime);
+
+  String? get displayCheckOutTime => formatAssetTimeForDisplay(checkOutTime);
+
+  bool get hasCheckTimes =>
+      hasAssetCheckTimes(checkInTime: checkInTime, checkOutTime: checkOutTime);
 
   /// Owner rating, defaults to 0.0 if not available.
   double get rating => owner.rating ?? 0.0;

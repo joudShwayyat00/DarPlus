@@ -2552,6 +2552,12 @@ abstract class AppLocalizations {
   /// **'Check-out time'**
   String get check_out_time;
 
+  /// No description provided for @check_in_out_times.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in & Check-out'**
+  String get check_in_out_times;
+
   /// No description provided for @select_time.
   ///
   /// In en, this message translates to:

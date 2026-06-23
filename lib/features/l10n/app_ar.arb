@@ -445,6 +445,7 @@
   "day_price": "سعر اليوم",
   "check_in_time": "وقت تسجيل الوصول",
   "check_out_time": "وقت تسجيل المغادرة",
+  "check_in_out_times": "أوقات الوصول والمغادرة",
   "select_time": "اختر الوقت",
   "months_count": "عدد الأشهر",
   "years_count": "عدد السنوات",

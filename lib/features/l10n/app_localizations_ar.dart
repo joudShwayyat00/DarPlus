@@ -1291,6 +1291,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get check_out_time => 'وقت تسجيل المغادرة';
 
   @override
+  String get check_in_out_times => 'أوقات الوصول والمغادرة';
+
+  @override
   String get select_time => 'اختر الوقت';
 
   @override

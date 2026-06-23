@@ -129,6 +129,10 @@ class _AssetDetailsBody extends StatelessWidget {
                     SizedBox(height: 2.h),
                     _RentInfoCard(asset: asset),
                   ],
+                  if (asset.hasCheckTimes) ...[
+                    SizedBox(height: 2.h),
+                    _CheckInOutCard(asset: asset),
+                  ],
                   if (asset.hasVideo) ...[
                     SizedBox(height: 2.h),
                     _SectionTitle(title: tr.watch_video),
@@ -496,40 +500,70 @@ class _RentInfoCard extends StatelessWidget {
               ],
             ),
           ),
-          if (rentType == 'monthly' && asset.dayPrice != null) ...[
-            SizedBox(height: 1.2.h),
-            _RentDetailTile(
-              icon: Icons.today_rounded,
-              label: tr.day_price,
-              value: formatPrice(asset.dayPrice!, decimals: 2),
+        ],
+      ),
+    );
+  }
+}
+
+class _CheckInOutCard extends StatelessWidget {
+  final AssetItem asset;
+
+  const _CheckInOutCard({required this.asset});
+
+  @override
+  Widget build(BuildContext context) {
+    final checkIn = asset.displayCheckInTime;
+    final checkOut = asset.displayCheckOutTime;
+
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.goldBrandColor.withAlpha(60)),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+            color: Colors.black.withAlpha(8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            tr.check_in_out_times,
+            style: appTextStyle(
+              context,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.black.withAlpha(230),
             ),
-          ],
-          if (asset.checkInTime != null &&
-              asset.checkInTime!.trim().isNotEmpty) ...[
-            SizedBox(height: 1.2.h),
-            Row(
-              children: [
+          ),
+          SizedBox(height: 1.2.h),
+          Row(
+            children: [
+              if (checkIn != null)
                 Expanded(
                   child: _RentDetailTile(
                     icon: Icons.login_rounded,
                     label: tr.check_in_time,
-                    value: asset.checkInTime!,
+                    value: checkIn,
                   ),
                 ),
-                if (asset.checkOutTime != null &&
-                    asset.checkOutTime!.trim().isNotEmpty) ...[
-                  SizedBox(width: 3.w),
-                  Expanded(
-                    child: _RentDetailTile(
-                      icon: Icons.logout_rounded,
-                      label: tr.check_out_time,
-                      value: asset.checkOutTime!,
-                    ),
+              if (checkIn != null && checkOut != null) SizedBox(width: 3.w),
+              if (checkOut != null)
+                Expanded(
+                  child: _RentDetailTile(
+                    icon: Icons.logout_rounded,
+                    label: tr.check_out_time,
+                    value: checkOut,
                   ),
-                ],
-              ],
-            ),
-          ],
+                ),
+            ],
+          ),
         ],
       ),
     );

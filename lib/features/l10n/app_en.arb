@@ -445,6 +445,7 @@
   "day_price": "Day price",
   "check_in_time": "Check-in time",
   "check_out_time": "Check-out time",
+  "check_in_out_times": "Check-in & Check-out",
   "select_time": "Select time",
   "months_count": "Months Count",
   "years_count": "Years Count",

@@ -15,6 +15,7 @@ import 'package:dar_plus_app/features/location/data/models/region_item.dart';
 import 'package:dar_plus_app/features/location/presentation/providers/location_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/select_location_screen.dart';
+import 'package:dar_plus_app/utils/helpers/asset_time_helper.dart';
 import 'package:dar_plus_app/utils/helpers/asset_video_helper.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
@@ -135,10 +136,12 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       _dayPriceCtrl.text = asset.dayPrice!.toStringAsFixed(2);
     }
     if (asset.checkInTime != null && asset.checkInTime!.isNotEmpty) {
-      _checkInTimeCtrl.text = asset.checkInTime!;
+      _checkInTimeCtrl.text =
+          formatAssetTimeForDisplay(asset.checkInTime) ?? asset.checkInTime!;
     }
     if (asset.checkOutTime != null && asset.checkOutTime!.isNotEmpty) {
-      _checkOutTimeCtrl.text = asset.checkOutTime!;
+      _checkOutTimeCtrl.text =
+          formatAssetTimeForDisplay(asset.checkOutTime) ?? asset.checkOutTime!;
     }
     if (asset.latitude != null) {
       _latCtrl.text = asset.latitude!.toString();
@@ -630,27 +633,28 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                         ],
                       ),
-                      SizedBox(height: 1.5.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildTimeField(
-                              controller: _checkInTimeCtrl,
-                              hint: tr.check_in_time,
-                              icon: Icons.login_rounded,
-                            ),
-                          ),
-                          SizedBox(width: 3.w),
-                          Expanded(
-                            child: _buildTimeField(
-                              controller: _checkOutTimeCtrl,
-                              hint: tr.check_out_time,
-                              icon: Icons.logout_rounded,
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
+
+                    SizedBox(height: 1.5.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTimeField(
+                            controller: _checkInTimeCtrl,
+                            hint: tr.check_in_time,
+                            icon: Icons.login_rounded,
+                          ),
+                        ),
+                        SizedBox(width: 3.w),
+                        Expanded(
+                          child: _buildTimeField(
+                            controller: _checkOutTimeCtrl,
+                            hint: tr.check_out_time,
+                            icon: Icons.logout_rounded,
+                          ),
+                        ),
+                      ],
+                    ),
 
                     SizedBox(height: 2.5.h),
                     _sectionTitle(tr.location_section),
