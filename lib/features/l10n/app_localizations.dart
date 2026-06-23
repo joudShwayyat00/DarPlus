@@ -536,6 +536,30 @@ abstract class AppLocalizations {
   /// **'Subscriptions'**
   String get subscriptions;
 
+  /// No description provided for @subscription_expiring_soon.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription expiring soon'**
+  String get subscription_expiring_soon;
+
+  /// No description provided for @subscription_days_remaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days remaining'**
+  String subscription_days_remaining(int days);
+
+  /// No description provided for @subscription_renew_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew your plan to keep your listings active.'**
+  String get subscription_renew_message;
+
+  /// No description provided for @renew_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Renew now'**
+  String get renew_now;
+
   /// No description provided for @notifications.
   ///
   /// In en, this message translates to:

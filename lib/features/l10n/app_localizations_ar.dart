@@ -234,6 +234,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subscriptions => 'الاشتراكات';
 
   @override
+  String get subscription_expiring_soon => 'اشتراكك على وشك الانتهاء';
+
+  @override
+  String subscription_days_remaining(int days) {
+    return 'متبقي $days أيام';
+  }
+
+  @override
+  String get subscription_renew_message => 'جدد خطتك للحفاظ على ظهور عقاراتك.';
+
+  @override
+  String get renew_now => 'جدد الآن';
+
+  @override
   String get notifications => 'الإشعارات';
 
   @override

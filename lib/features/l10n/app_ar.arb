@@ -80,6 +80,17 @@
   "my_reservations": "حجوزاتي",
   "my_assets": "عقاراتي",
   "subscriptions": "الاشتراكات",
+  "subscription_expiring_soon": "اشتراكك على وشك الانتهاء",
+  "subscription_days_remaining": "متبقي {days} أيام",
+  "@subscription_days_remaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "subscription_renew_message": "جدد خطتك للحفاظ على ظهور عقاراتك.",
+  "renew_now": "جدد الآن",
   "notifications": "الإشعارات",
   "get_help": "الحصول على المساعدة",
   "contact_us": "اتصل بنا",

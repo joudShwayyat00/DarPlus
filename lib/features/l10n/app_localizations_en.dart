@@ -236,6 +236,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptions => 'Subscriptions';
 
   @override
+  String get subscription_expiring_soon => 'Subscription expiring soon';
+
+  @override
+  String subscription_days_remaining(int days) {
+    return '$days days remaining';
+  }
+
+  @override
+  String get subscription_renew_message =>
+      'Renew your plan to keep your listings active.';
+
+  @override
+  String get renew_now => 'Renew now';
+
+  @override
   String get notifications => 'Notifications';
 
   @override

@@ -80,6 +80,17 @@
   "my_reservations": "My Reservations",
   "my_assets": "My Assets",
   "subscriptions": "Subscriptions",
+  "subscription_expiring_soon": "Subscription expiring soon",
+  "subscription_days_remaining": "{days} days remaining",
+  "@subscription_days_remaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "subscription_renew_message": "Renew your plan to keep your listings active.",
+  "renew_now": "Renew now",
   "notifications": "Notifications",
   "get_help": "Get Help",
   "contact_us": "Contact Us",

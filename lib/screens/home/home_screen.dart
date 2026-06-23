@@ -1,3 +1,4 @@
+import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:dar_plus_app/features/assets/presentation/providers/assets_providers.dart';
 import 'package:dar_plus_app/features/owners/presentation/providers/owners_providers.dart';
 import 'package:dar_plus_app/screens/assets/assets_screen.dart';
@@ -11,6 +12,8 @@ import 'package:dar_plus_app/screens/home/widgets/home_slider.dart';
 import 'package:dar_plus_app/screens/home/widgets/owner_card.dart';
 import 'package:dar_plus_app/screens/home/widgets/property_tile.dart';
 import 'package:dar_plus_app/screens/home/widgets/section_header.dart';
+import 'package:dar_plus_app/screens/home/widgets/subscription_expiry_reminder.dart';
+import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/screens/owners/all_owners_screen.dart';
 import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
@@ -29,9 +32,13 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  /// UI mock — replace with subscription API days remaining.
+  static const int _mockSubscriptionDaysRemaining = 2;
+
   int _currentRecommendedIndex = 0;
   int? _selectedCategoryIndex;
   late _ListingType _listingType;
+  bool _subscriptionReminderDismissed = false;
 
   final PageController _recommendedController = PageController(
     viewportFraction: 0.92,
@@ -45,6 +52,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(profileControllerProvider).value;
+    final showSubscriptionReminder = user?.isOwner == true &&
+        !_subscriptionReminderDismissed &&
+        _mockSubscriptionDaysRemaining > 0 &&
+        _mockSubscriptionDaysRemaining <= 2;
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: SafeArea(
@@ -53,6 +66,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               SizedBox(height: 2.h),
               const HomeSlider(),
+              if (showSubscriptionReminder)
+                SubscriptionExpiryReminder(
+                  daysRemaining: _mockSubscriptionDaysRemaining,
+                  onRenew: () {
+                    AppNavigator.of(context).push(const SubscriptionsScreen());
+                  },
+                  onDismiss: () {
+                    setState(() => _subscriptionReminderDismissed = true);
+                  },
+                ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
                 child: Column(
