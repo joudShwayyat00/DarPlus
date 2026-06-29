@@ -26,31 +26,54 @@ class AssetCalendarData {
   @JsonKey(name: 'booked_dates', fromJson: _entriesFromJson)
   final List<CalendarDateEntry> bookedDates;
 
-  const AssetCalendarData({
+  AssetCalendarData({
     required this.blockedByOwner,
     required this.bookedDates,
-  });
+  })  : _bookedDateSet = bookedDates
+            .map((entry) => entry.normalizedDate)
+            .toSet(),
+        _blockedDateSet = blockedByOwner
+            .map((entry) => entry.normalizedDate)
+            .toSet(),
+        _unavailableDateSet = {
+          ...bookedDates.map((entry) => entry.normalizedDate),
+          ...blockedByOwner.map((entry) => entry.normalizedDate),
+        };
+
+  final Set<DateTime> _bookedDateSet;
+  final Set<DateTime> _blockedDateSet;
+  final Set<DateTime> _unavailableDateSet;
 
   factory AssetCalendarData.fromJson(Map<String, dynamic> json) =>
       _$AssetCalendarDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$AssetCalendarDataToJson(this);
 
-  Set<DateTime> get bookedDateSet =>
-      bookedDates.map((e) => e.normalizedDate).toSet();
+  Set<DateTime> get bookedDateSet => _bookedDateSet;
 
-  Set<DateTime> get blockedDateSet =>
-      blockedByOwner.map((e) => e.normalizedDate).toSet();
+  Set<DateTime> get blockedDateSet => _blockedDateSet;
 
-  Set<DateTime> get unavailableDateSet => {...bookedDateSet, ...blockedDateSet};
+  Set<DateTime> get unavailableDateSet => _unavailableDateSet;
 
-  bool isBooked(DateTime day) => bookedDateSet.contains(normalize(day));
+  bool isBooked(DateTime day) => _bookedDateSet.contains(normalize(day));
 
   bool isBlockedByOwner(DateTime day) =>
-      blockedDateSet.contains(normalize(day));
+      _blockedDateSet.contains(normalize(day));
 
   bool isUnavailable(DateTime day) =>
-      unavailableDateSet.contains(normalize(day));
+      _unavailableDateSet.contains(normalize(day));
+
+  /// First unavailable night on or after [checkIn]. Checkout must be on or
+  /// before this date when that night is blocked.
+  DateTime? firstUnavailableNightOnOrAfter(DateTime checkIn) {
+    var cursor = normalize(checkIn);
+    final limit = cursor.add(const Duration(days: 400));
+    while (cursor.isBefore(limit)) {
+      if (isUnavailable(cursor)) return cursor;
+      cursor = cursor.add(const Duration(days: 1));
+    }
+    return null;
+  }
 
   /// Returns true when any night in [checkIn, checkOut) is unavailable.
   bool rangeHasUnavailable(DateTime checkIn, DateTime checkOut) {

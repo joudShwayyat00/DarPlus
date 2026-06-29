@@ -154,7 +154,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
 
   AssetCalendarData _calendarOrEmpty(AsyncValue<AssetCalendarData>? async) {
     return async?.value ??
-        const AssetCalendarData(blockedByOwner: [], bookedDates: []);
+        AssetCalendarData(blockedByOwner: [], bookedDates: []);
   }
 
   void _onCalendarDaySelected(DateTime date, AssetCalendarData calendar) {
@@ -774,7 +774,7 @@ class _StayCard extends StatelessWidget {
     this.onClear,
   });
 
-  static const _emptyCalendar = AssetCalendarData(
+  static final _emptyCalendar = AssetCalendarData(
     blockedByOwner: [],
     bookedDates: [],
   );
