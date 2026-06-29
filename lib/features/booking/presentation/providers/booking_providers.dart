@@ -56,17 +56,19 @@ class BookingController extends _$BookingController {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard<BookingData?>(() async {
-      final response = await ref.read(bookingRepositoryProvider).bookAsset(
-        assetId: assetId,
-        checkIn: checkIn,
-        checkOut: checkOut,
-        nights: nights,
-        monthsCount: monthsCount,
-        yearsCount: yearsCount,
-        guests: guests,
-        paymentMethod: paymentMethod,
-        notes: notes,
-      );
+      final response = await ref
+          .read(bookingRepositoryProvider)
+          .bookAsset(
+            assetId: assetId,
+            checkIn: checkIn,
+            checkOut: checkOut,
+            nights: nights,
+            monthsCount: monthsCount,
+            yearsCount: yearsCount,
+            guests: guests,
+            paymentMethod: paymentMethod,
+            notes: notes,
+          );
       return response.data;
     });
 
@@ -103,11 +105,9 @@ class OwnerCalendarController extends _$OwnerCalendarController {
       final status = action == OwnerCalendarAction.block
           ? 'blocked'
           : 'available';
-      await ref.read(bookingRepositoryProvider).updateCalendarDates(
-        assetId: assetId,
-        dates: dates,
-        status: status,
-      );
+      await ref
+          .read(bookingRepositoryProvider)
+          .updateCalendarDates(assetId: assetId, dates: dates, status: status);
 
       if (!ref.mounted) return null;
 

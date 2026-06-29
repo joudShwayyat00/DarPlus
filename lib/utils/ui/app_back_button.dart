@@ -17,8 +17,12 @@ class AppBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: onPressed ?? () => AppNavigator.of(context).pop(),
-      icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
-      iconSize: 20,
+      icon: Icon(
+        Icons.arrow_back_ios_new_rounded,
+        color: Colors.black.withAlpha(200),
+        size: 18,
+      ),
+      iconSize: 18,
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
       style: IconButton.styleFrom(

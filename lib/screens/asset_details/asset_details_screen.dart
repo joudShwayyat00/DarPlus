@@ -61,7 +61,7 @@ class AssetDetailsScreen extends ConsumerWidget {
         children: [
           ShimmerPlaceholder(
             width: double.infinity,
-            height: 33.h,
+            height: 42.h,
             borderRadius: BorderRadius.zero,
           ),
           SizedBox(height: 2.h),
@@ -107,98 +107,88 @@ class _AssetDetailsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      body: Column(
-        children: [
-          _buildGalleryHeader(context),
-          if (isRefreshing)
-            LinearProgressIndicator(
-              color: AppColors.goldBrandColor,
-              backgroundColor: AppColors.goldBrandColor.withAlpha(30),
-              minHeight: 2,
-            ),
-          Expanded(
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 2.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _InfoCard(asset: asset),
-                        if (!asset.isForSale &&
-                            isCurrentUserAssetOwner(
-                              context,
-                              asset.owner.id,
-                            )) ...[
-                          SizedBox(height: 2.h),
-                          _ManageAvailabilityCard(asset: asset),
-                        ],
-                        SizedBox(height: 2.h),
-                        _PricingCard(asset: asset),
-                        if (asset.space != null || asset.rooms != null) ...[
-                          SizedBox(height: 2.h),
-                          _PropertySpecsCard(asset: asset),
-                        ],
-                        if (asset.latitude != null &&
-                            asset.longitude != null) ...[
-                          SizedBox(height: 2.h),
-                          AssetLocationMapCard(asset: asset),
-                        ],
-                        if (!asset.isForSale && asset.rentType != null) ...[
-                          SizedBox(height: 2.h),
-                          _RentInfoCard(asset: asset),
-                        ],
-                        if (asset.isForSale &&
-                            (asset.rentPrice != null ||
-                                asset.monthsCount != null)) ...[
-                          SizedBox(height: 2.h),
-                          _AdditionalPricingCard(asset: asset),
-                        ],
-                        if (asset.hasCheckTimes) ...[
-                          SizedBox(height: 2.h),
-                          _CheckInOutCard(asset: asset),
-                        ],
-                        if (asset.hasVideo) ...[
-                          SizedBox(height: 2.h),
-                          _SectionTitle(title: tr.watch_video),
-                          SizedBox(height: 1.h),
-                          AssetVideoCard(videoUrl: asset.resolvedVideoUrl!),
-                        ],
-                        SizedBox(height: 2.h),
-                        _OwnerCard(owner: asset.owner),
-                        if (_hasDescription) ...[
-                          SizedBox(height: 2.h),
-                          _SectionTitle(title: tr.overview),
-                          SizedBox(height: 1.h),
-                          Text(
-                            _strippedDescription,
-                            style: appTextStyle(
-                              context,
-                              fontSize: 11.5.sp,
-                              height: 1.55,
-                              color: Colors.black.withAlpha(175),
-                            ),
-                          ),
-                        ],
-                        if (_hasAttributes) ...[
-                          SizedBox(height: 2.2.h),
-                          _SectionTitle(title: tr.attributes),
-                          SizedBox(height: 1.h),
-                          _AttributesList(attributes: asset.attributes!),
-                        ],
-                        if (_hasAmenities) ...[
-                          SizedBox(height: 2.2.h),
-                          _SectionTitle(title: tr.amenities),
-                          SizedBox(height: 1.h),
-                          _AmenitiesGrid(amenities: asset.amenities!),
-                        ],
-                        SizedBox(height: 10.h),
-                      ],
+      body: CustomScrollView(
+        slivers: [
+          _buildAppBar(context),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 2.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (isRefreshing)
+                    LinearProgressIndicator(
+                      color: AppColors.goldBrandColor,
+                      backgroundColor: AppColors.goldBrandColor.withAlpha(30),
+                      minHeight: 2,
                     ),
-                  ),
-                ),
-              ],
+                  if (isRefreshing) SizedBox(height: 1.2.h),
+                  _InfoCard(asset: asset),
+                  if (!asset.isForSale &&
+                      isCurrentUserAssetOwner(context, asset.owner.id)) ...[
+                    SizedBox(height: 2.h),
+                    _ManageAvailabilityCard(asset: asset),
+                  ],
+                  SizedBox(height: 2.h),
+                  _PricingCard(asset: asset),
+                  if (asset.space != null || asset.rooms != null) ...[
+                    SizedBox(height: 2.h),
+                    _PropertySpecsCard(asset: asset),
+                  ],
+                  if (asset.latitude != null && asset.longitude != null) ...[
+                    SizedBox(height: 2.h),
+                    AssetLocationMapCard(asset: asset),
+                  ],
+                  if (!asset.isForSale && asset.rentType != null) ...[
+                    SizedBox(height: 2.h),
+                    _RentInfoCard(asset: asset),
+                  ],
+                  if (asset.isForSale &&
+                      (asset.rentPrice != null || asset.monthsCount != null)) ...[
+                    SizedBox(height: 2.h),
+                    _AdditionalPricingCard(asset: asset),
+                  ],
+                  if (asset.hasCheckTimes) ...[
+                    SizedBox(height: 2.h),
+                    _CheckInOutCard(asset: asset),
+                  ],
+                  if (asset.hasVideo) ...[
+                    SizedBox(height: 2.h),
+                    _SectionTitle(title: tr.watch_video),
+                    SizedBox(height: 1.h),
+                    AssetVideoCard(videoUrl: asset.resolvedVideoUrl!),
+                  ],
+                  SizedBox(height: 2.h),
+                  _OwnerCard(owner: asset.owner),
+                  if (_hasDescription) ...[
+                    SizedBox(height: 2.h),
+                    _SectionTitle(title: tr.overview),
+                    SizedBox(height: 1.h),
+                    Text(
+                      _strippedDescription,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 11.5.sp,
+                        height: 1.55,
+                        color: Colors.black.withAlpha(175),
+                      ),
+                    ),
+                  ],
+                  if (_hasAttributes) ...[
+                    SizedBox(height: 2.2.h),
+                    _SectionTitle(title: tr.attributes),
+                    SizedBox(height: 1.h),
+                    _AttributesList(attributes: asset.attributes!),
+                  ],
+                  if (_hasAmenities) ...[
+                    SizedBox(height: 2.2.h),
+                    _SectionTitle(title: tr.amenities),
+                    SizedBox(height: 1.h),
+                    _AmenitiesGrid(amenities: asset.amenities!),
+                  ],
+                  SizedBox(height: 10.h),
+                ],
+              ),
             ),
           ),
         ],
@@ -219,25 +209,28 @@ class _AssetDetailsBody extends StatelessWidget {
   String get _strippedDescription =>
       (asset.description ?? '').replaceAll(RegExp(r'<[^>]*>'), '').trim();
 
-  Widget _buildGalleryHeader(BuildContext context) {
-    final topPadding = MediaQuery.paddingOf(context).top;
+  SliverAppBar _buildAppBar(BuildContext context) {
+    final imageCount = asset.galleryImageUrls
+        .where((url) => url.trim().isNotEmpty)
+        .length;
+    final hasThumbnails = imageCount > 1;
 
-    return Stack(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(top: topPadding),
-          child: _AssetImageGallery(
-            imageUrls: asset.galleryImageUrls,
-            isForSale: asset.isForSale,
-            categoryName: asset.category.name,
-          ),
+    return SliverAppBar(
+      expandedHeight: hasThumbnails ? 42.h + 9.5.h : 42.h,
+      pinned: true,
+      backgroundColor: AppColors.whiteColor,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      leadingWidth: kAppBarBackLeadingWidth,
+      leading: const AppBarBackButton(),
+      flexibleSpace: FlexibleSpaceBar(
+        background: _AssetImageGallery(
+          imageUrls: asset.galleryImageUrls,
+          isForSale: asset.isForSale,
+          categoryName: asset.category.name,
         ),
-        Positioned(
-          top: topPadding + 8,
-          left: 2.w,
-          child: const AppBackButton(),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -279,7 +272,7 @@ class _AssetImageGalleryState extends State<_AssetImageGallery> {
 
     if (images.isEmpty) {
       return SizedBox(
-        height: 33.h,
+        height: 42.h,
         child: Container(color: Colors.grey.shade200),
       );
     }
@@ -288,7 +281,7 @@ class _AssetImageGalleryState extends State<_AssetImageGallery> {
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-          height: 33.h,
+          height: 42.h,
           child: Stack(
             fit: StackFit.expand,
             children: [
