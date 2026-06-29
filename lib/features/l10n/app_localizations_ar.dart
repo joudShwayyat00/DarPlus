@@ -1576,4 +1576,43 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get clear_dates => 'مسح التواريخ';
+
+  @override
+  String get manage_availability => 'إدارة التوفر';
+
+  @override
+  String get calendar_block_mode => 'حظر التواريخ';
+
+  @override
+  String get calendar_unblock_mode => 'إلغاء الحظر';
+
+  @override
+  String get calendar_block_hint => 'اضغط على التواريخ لحظرها عن الحجز';
+
+  @override
+  String get calendar_unblock_hint =>
+      'اضغط على التواريخ المحظورة لإتاحتها مجدداً';
+
+  @override
+  String get calendar_available => 'متاح';
+
+  @override
+  String get calendar_selected => 'محدد';
+
+  @override
+  String calendar_dates_selected(int count) {
+    return 'تم تحديد $count تواريخ';
+  }
+
+  @override
+  String get calendar_apply_block => 'حظر المحدد';
+
+  @override
+  String get calendar_apply_unblock => 'إلغاء حظر المحدد';
+
+  @override
+  String get calendar_updated_success => 'تم تحديث التقويم بنجاح';
+
+  @override
+  String get calendar_booked_locked => 'لا يمكن تغيير التواريخ المحجوزة';
 }

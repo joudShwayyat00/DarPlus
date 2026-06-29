@@ -200,7 +200,7 @@ final class MyAppointmentsControllerProvider
 }
 
 String _$myAppointmentsControllerHash() =>
-    r'5e3635ec86989203ea582c1f655a349f64b56826';
+    r'e71ea9d58481dc52af78e473e0518edf5b845788';
 
 final class MyAppointmentsControllerFamily extends $Family
     with
@@ -298,4 +298,4 @@ final class OwnerAllAppointmentsProvider
 }
 
 String _$ownerAllAppointmentsHash() =>
-    r'e89ab14e2a2d05749d191e635bcd507454f817c7';
+    r'fbc94e895fe48837057dd798d1e7baf669a30d74';

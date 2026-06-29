@@ -3103,6 +3103,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear dates'**
   String get clear_dates;
+
+  /// No description provided for @manage_availability.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage availability'**
+  String get manage_availability;
+
+  /// No description provided for @calendar_block_mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Block dates'**
+  String get calendar_block_mode;
+
+  /// No description provided for @calendar_unblock_mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock dates'**
+  String get calendar_unblock_mode;
+
+  /// No description provided for @calendar_block_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap dates to block them from bookings'**
+  String get calendar_block_hint;
+
+  /// No description provided for @calendar_unblock_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap blocked dates to make them available again'**
+  String get calendar_unblock_hint;
+
+  /// No description provided for @calendar_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get calendar_available;
+
+  /// No description provided for @calendar_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get calendar_selected;
+
+  /// No description provided for @calendar_dates_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} dates selected'**
+  String calendar_dates_selected(int count);
+
+  /// No description provided for @calendar_apply_block.
+  ///
+  /// In en, this message translates to:
+  /// **'Block selected'**
+  String get calendar_apply_block;
+
+  /// No description provided for @calendar_apply_unblock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock selected'**
+  String get calendar_apply_unblock;
+
+  /// No description provided for @calendar_updated_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar updated successfully'**
+  String get calendar_updated_success;
+
+  /// No description provided for @calendar_booked_locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked dates cannot be changed'**
+  String get calendar_booked_locked;
 }
 
 class _AppLocalizationsDelegate

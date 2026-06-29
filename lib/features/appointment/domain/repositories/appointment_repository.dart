@@ -12,5 +12,9 @@ abstract class AppointmentRepository {
     String? note,
   });
 
-  Future<List<MyAppointmentItem>> getMyAppointments();
+  Future<List<MyAppointmentItem>> getOwnerAppointments({
+    required String status,
+    int? assetId,
+    int page = 1,
+  });
 }

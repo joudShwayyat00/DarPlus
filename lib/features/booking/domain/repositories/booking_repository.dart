@@ -18,4 +18,10 @@ abstract class BookingRepository {
   Future<List<MyBookingItem>> getMyBookings({required String status});
 
   Future<AssetCalendarData> getAssetCalendar(int assetId);
+
+  Future<String> updateCalendarDates({
+    required int assetId,
+    required List<DateTime> dates,
+    required String status,
+  });
 }

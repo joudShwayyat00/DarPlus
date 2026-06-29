@@ -9,6 +9,7 @@ import 'package:dar_plus_app/features/assets/presentation/providers/assets_provi
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/widgets/asset_location_map_card.dart';
 import 'package:dar_plus_app/screens/asset_details/widgets/asset_video_card.dart';
+import 'package:dar_plus_app/screens/assets/owner_calendar_screen.dart';
 import 'package:dar_plus_app/utils/helpers/asset_video_helper.dart';
 import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
@@ -121,6 +122,11 @@ class _AssetDetailsBody extends StatelessWidget {
                     ),
                   SizedBox(height: 1.2.h),
                   _InfoCard(asset: asset),
+                  if (!asset.isForSale &&
+                      isCurrentUserAssetOwner(context, asset.owner.id)) ...[
+                    SizedBox(height: 2.h),
+                    _ManageAvailabilityCard(asset: asset),
+                  ],
                   SizedBox(height: 2.h),
                   _PricingCard(asset: asset),
                   if (asset.space != null || asset.rooms != null) ...[
@@ -1144,6 +1150,85 @@ class _AmenityTile extends StatelessWidget {
   }
 }
 
+// ─── Owner availability ───────────────────────────────────────────────────────
+
+class _ManageAvailabilityCard extends StatelessWidget {
+  final AssetItem asset;
+
+  const _ManageAvailabilityCard({required this.asset});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.goldBrandColor.withAlpha(18),
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => OwnerCalendarScreen(asset: asset),
+          ),
+        ),
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.8.h),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.goldBrandColor.withAlpha(70)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.goldBrandColor.withAlpha(35),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.calendar_month_rounded,
+                  color: AppColors.goldBrandColor,
+                ),
+              ),
+              SizedBox(width: 3.5.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      tr.manage_availability,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 11.5.sp,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.black.withAlpha(230),
+                      ),
+                    ),
+                    SizedBox(height: 0.3.h),
+                    Text(
+                      tr.calendar_block_hint,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 9.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black.withAlpha(130),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.goldBrandColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ─── Bottom Bar ───────────────────────────────────────────────────────────────
 
 class _BottomBar extends ConsumerWidget {
@@ -1154,7 +1239,10 @@ class _BottomBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isOwnAsset = isCurrentUserAssetOwner(context, asset.owner.id);
-    final actionLabel = isOwnAsset
+    final isOwnRentAsset = isOwnAsset && !asset.isForSale;
+    final actionLabel = isOwnRentAsset
+        ? tr.manage_availability
+        : isOwnAsset
         ? tr.your_own_property
         : asset.isForSale
         ? tr.request_appointment
@@ -1218,7 +1306,13 @@ class _BottomBar extends ConsumerWidget {
             SizedBox(width: 4.w),
             // Action button
             GestureDetector(
-              onTap: isOwnAsset
+              onTap: isOwnRentAsset
+                  ? () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => OwnerCalendarScreen(asset: asset),
+                      ),
+                    )
+                  : isOwnAsset
                   ? () => showOwnAssetActionBlockedMessage(context)
                   : () async {
                       if (asset.isForSale) {
@@ -1239,11 +1333,11 @@ class _BottomBar extends ConsumerWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 1.6.h),
                 decoration: BoxDecoration(
-                  color: isOwnAsset
+                  color: isOwnAsset && !isOwnRentAsset
                       ? Colors.black.withAlpha(35)
                       : AppColors.goldBrandColor,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: isOwnAsset
+                  boxShadow: isOwnAsset && !isOwnRentAsset
                       ? null
                       : [
                           BoxShadow(
@@ -1257,11 +1351,15 @@ class _BottomBar extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      isOwnAsset
+                      isOwnRentAsset
+                          ? Icons.calendar_month_outlined
+                          : isOwnAsset
                           ? Icons.home_work_outlined
                           : Icons.calendar_month_outlined,
                       size: 18,
-                      color: Colors.white.withAlpha(isOwnAsset ? 220 : 255),
+                      color: Colors.white.withAlpha(
+                        isOwnAsset && !isOwnRentAsset ? 220 : 255,
+                      ),
                     ),
                     SizedBox(width: 2.w),
                     Text(
@@ -1270,7 +1368,9 @@ class _BottomBar extends ConsumerWidget {
                         context,
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white.withAlpha(isOwnAsset ? 220 : 255),
+                        color: Colors.white.withAlpha(
+                          isOwnAsset && !isOwnRentAsset ? 220 : 255,
+                        ),
                       ),
                     ),
                   ],

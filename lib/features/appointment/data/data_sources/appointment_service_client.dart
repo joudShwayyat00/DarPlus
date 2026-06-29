@@ -3,7 +3,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/network/api_constants.dart';
 import '../models/appointment_response.dart';
-import '../models/my_appointments_response.dart';
+import '../models/owner_appointments_response.dart';
 
 part 'appointment_service_client.g.dart';
 
@@ -24,6 +24,10 @@ abstract class AppointmentServiceClient {
     @Part(name: 'note') String? note,
   });
 
-  @GET(ApiConstants.myAppointments)
-  Future<MyAppointmentsResponse> getMyAppointments();
+  @GET(ApiConstants.ownerAppointments)
+  Future<OwnerAppointmentsResponse> getOwnerAppointments({
+    @Query('status') required String status,
+    @Query('asset_id') int? assetId,
+    @Query('page') int? page,
+  });
 }

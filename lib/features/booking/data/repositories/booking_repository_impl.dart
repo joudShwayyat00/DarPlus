@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 
+import '../../../../core/network/api_constants.dart';
+import '../../../../core/network/dio_factory.dart';
 import '../../domain/repositories/booking_repository.dart';
+import '../models/calendar_block_response.dart';
 import '../data_sources/booking_service_client.dart';
 import '../models/asset_calendar.dart';
 import '../models/booking_response.dart';
@@ -67,6 +70,52 @@ class BookingRepositoryImpl implements BookingRepository {
       final message = data is Map
           ? (data['message'] as String? ?? 'Failed to load calendar')
           : 'Failed to load calendar';
+      throw Exception(message);
+    }
+  }
+
+  @override
+  Future<String> updateCalendarDates({
+    required int assetId,
+    required List<DateTime> dates,
+    required String status,
+  }) async {
+    if (dates.isEmpty) {
+      throw Exception('Select at least one date');
+    }
+
+    final formData = FormData();
+    formData.fields.add(MapEntry('asset_id', assetId.toString()));
+    formData.fields.add(MapEntry('status', status));
+    for (var i = 0; i < dates.length; i++) {
+      final day = dates[i];
+      final formatted =
+          '${day.year.toString().padLeft(4, '0')}-'
+          '${day.month.toString().padLeft(2, '0')}-'
+          '${day.day.toString().padLeft(2, '0')}';
+      formData.fields.add(MapEntry('dates[$i]', formatted));
+    }
+
+    try {
+      final response = await DioFactory.getDio().post<Map<String, dynamic>>(
+        ApiConstants.calendarBlock,
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      final data = response.data;
+      if (data == null) {
+        throw Exception('Failed to update calendar');
+      }
+      final parsed = CalendarBlockResponse.fromJson(data);
+      if (!parsed.status) {
+        throw Exception(parsed.message);
+      }
+      return parsed.message;
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final message = data is Map
+          ? (data['message'] as String? ?? 'Failed to update calendar')
+          : 'Failed to update calendar';
       throw Exception(message);
     }
   }

@@ -537,5 +537,24 @@
   "calendar_select_checkout": "اختر تاريخ المغادرة",
   "date_not_available": "هذا التاريخ غير متاح",
   "date_range_not_available": "التواريخ المحددة تتضمن أيامًا غير متاحة",
-  "clear_dates": "مسح التواريخ"
+  "clear_dates": "مسح التواريخ",
+  "manage_availability": "إدارة التوفر",
+  "calendar_block_mode": "حظر التواريخ",
+  "calendar_unblock_mode": "إلغاء الحظر",
+  "calendar_block_hint": "اضغط على التواريخ لحظرها عن الحجز",
+  "calendar_unblock_hint": "اضغط على التواريخ المحظورة لإتاحتها مجدداً",
+  "calendar_available": "متاح",
+  "calendar_selected": "محدد",
+  "calendar_dates_selected": "تم تحديد {count} تواريخ",
+  "@calendar_dates_selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "calendar_apply_block": "حظر المحدد",
+  "calendar_apply_unblock": "إلغاء حظر المحدد",
+  "calendar_updated_success": "تم تحديث التقويم بنجاح",
+  "calendar_booked_locked": "لا يمكن تغيير التواريخ المحجوزة"
 }

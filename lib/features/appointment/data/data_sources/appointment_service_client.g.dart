@@ -72,25 +72,34 @@ class _AppointmentServiceClient implements AppointmentServiceClient {
   }
 
   @override
-  Future<MyAppointmentsResponse> getMyAppointments() async {
+  Future<OwnerAppointmentsResponse> getOwnerAppointments({
+    required String status,
+    int? assetId,
+    int? page,
+  }) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'status': status,
+      r'asset_id': assetId,
+      r'page': page,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<MyAppointmentsResponse>(
+    final _options = _setStreamType<OwnerAppointmentsResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/my_appointments',
+            'api/owner/appointments',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late MyAppointmentsResponse _value;
+    late OwnerAppointmentsResponse _value;
     try {
-      _value = MyAppointmentsResponse.fromJson(_result.data!);
+      _value = OwnerAppointmentsResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;

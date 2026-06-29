@@ -40,10 +40,18 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
   }
 
   @override
-  Future<List<MyAppointmentItem>> getMyAppointments() async {
+  Future<List<MyAppointmentItem>> getOwnerAppointments({
+    required String status,
+    int? assetId,
+    int page = 1,
+  }) async {
     try {
-      final response = await _serviceClient.getMyAppointments();
-      return response.data;
+      final response = await _serviceClient.getOwnerAppointments(
+        status: status,
+        assetId: assetId,
+        page: page,
+      );
+      return response.data.data;
     } on DioException catch (e) {
       final data = e.response?.data;
       final message = data is Map

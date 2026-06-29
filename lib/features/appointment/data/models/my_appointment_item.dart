@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'appointment_asset_summary.dart';
+
 part 'my_appointment_item.g.dart';
 
 @JsonSerializable()
@@ -20,6 +22,7 @@ class MyAppointmentItem {
   final String? createdAt;
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
+  final AppointmentAssetSummary? asset;
 
   const MyAppointmentItem({
     required this.id,
@@ -34,6 +37,7 @@ class MyAppointmentItem {
     required this.status,
     this.createdAt,
     this.updatedAt,
+    this.asset,
   });
 
   factory MyAppointmentItem.fromJson(Map<String, dynamic> json) =>

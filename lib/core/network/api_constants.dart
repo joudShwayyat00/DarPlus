@@ -37,12 +37,16 @@ class ApiConstants {
   static const String bookAsset = "api/assets/book";
   // Asset availability calendar ({assetId})
   static const String assetCalendar = "api/calendar";
+  // Block / unblock calendar dates (owner, multipart)
+  static const String calendarBlock = "api/calendar/block";
   // My bookings (requires auth, filter by status)
   static const String myBookings = "api/my_bookings";
   // Add appointment endpoint
   static const String addAppointment = "api/appointments/add";
   // My appointments (owner, requires auth)
   static const String myAppointments = "api/my_appointments";
+  // Owner appointments with status filter (requires auth)
+  static const String ownerAppointments = "api/owner/appointments";
   // Terms & conditions
   static const String termsAndConditions = "api/terms_and_conditions";
   // Privacy policy

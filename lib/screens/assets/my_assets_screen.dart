@@ -6,6 +6,7 @@ import 'package:dar_plus_app/features/assets/presentation/providers/assets_provi
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
+import 'package:dar_plus_app/screens/assets/owner_calendar_screen.dart';
 import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
 import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
@@ -46,6 +47,15 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
         _scrollController.position.maxScrollExtent - 300) {
       ref.read(myAssetsControllerProvider.notifier).loadMore();
     }
+  }
+
+  Future<void> _openCalendar(AssetItem asset) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => OwnerCalendarScreen(asset: asset),
+      ),
+    );
   }
 
   Future<void> _openEditAsset(AssetItem asset) async {
@@ -324,7 +334,7 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.62,
+                    childAspectRatio: 0.57,
                     mainAxisSpacing: 2.h,
                     crossAxisSpacing: 3.w,
                   ),
@@ -338,6 +348,9 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
                           initialAsset: asset,
                         ),
                       ),
+                      onCalendar: asset.isForSale
+                          ? null
+                          : () => _openCalendar(asset),
                       onEdit: () => _openEditAsset(asset),
                       onDelete: () => _confirmDeleteAsset(asset),
                     );
@@ -380,7 +393,7 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
         padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 3.h),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 0.62,
+          childAspectRatio: 0.57,
           mainAxisSpacing: 2.h,
           crossAxisSpacing: 3.w,
         ),
@@ -626,12 +639,14 @@ class _DeleteAssetDialog extends StatelessWidget {
 class _MyAssetGridCard extends StatelessWidget {
   final AssetItem asset;
   final VoidCallback onTap;
+  final VoidCallback? onCalendar;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _MyAssetGridCard({
     required this.asset,
     required this.onTap,
+    this.onCalendar,
     required this.onEdit,
     required this.onDelete,
   });
@@ -737,7 +752,6 @@ class _MyAssetGridCard extends StatelessWidget {
                   padding: EdgeInsets.all(2.5.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         asset.name,
@@ -750,6 +764,7 @@ class _MyAssetGridCard extends StatelessWidget {
                           color: Colors.black.withAlpha(230),
                         ),
                       ),
+                      SizedBox(height: 0.25.h),
                       Row(
                         children: [
                           Icon(
@@ -773,6 +788,7 @@ class _MyAssetGridCard extends StatelessWidget {
                           ),
                         ],
                       ),
+                      SizedBox(height: 0.25.h),
                       Text(
                         formatPrice(asset.price),
                         maxLines: 1,
@@ -784,24 +800,38 @@ class _MyAssetGridCard extends StatelessWidget {
                           color: AppColors.goldBrandColor,
                         ),
                       ),
-                      SizedBox(height: 0.6.h),
+                      const Spacer(),
                       Row(
                         children: [
+                          if (onCalendar != null) ...[
+                            Expanded(
+                              child: _AssetActionButton(
+                                icon: Icons.calendar_month_outlined,
+                                label: tr.calendar_availability,
+                                color: const Color(0xFF2E6B8A),
+                                onTap: onCalendar!,
+                                compact: true,
+                              ),
+                            ),
+                            SizedBox(width: 1.2.w),
+                          ],
                           Expanded(
                             child: _AssetActionButton(
                               icon: Icons.edit_outlined,
                               label: tr.edit,
                               color: AppColors.goldBrandColor,
                               onTap: onEdit,
+                              compact: true,
                             ),
                           ),
-                          SizedBox(width: 1.5.w),
+                          SizedBox(width: 1.2.w),
                           Expanded(
                             child: _AssetActionButton(
                               icon: Icons.delete_outline_rounded,
                               label: tr.delete,
                               color: Colors.red.shade500,
                               onTap: onDelete,
+                              compact: true,
                             ),
                           ),
                         ],
@@ -823,44 +853,54 @@ class _AssetActionButton extends StatelessWidget {
   final String label;
   final Color color;
   final VoidCallback onTap;
+  final bool compact;
 
   const _AssetActionButton({
     required this.icon,
     required this.label,
     required this.color,
     required this.onTap,
+    this.compact = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 0.55.h),
-        decoration: BoxDecoration(
-          color: color.withAlpha(18),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color.withAlpha(50)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 13, color: color),
-            SizedBox(width: 1.w),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: appTextStyle(
-                  context,
-                  fontSize: 8.sp,
-                  fontWeight: FontWeight.w700,
-                  color: color,
+    return Tooltip(
+      message: label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: compact ? 0.45.h : 0.55.h,
+            horizontal: compact ? 0.5.w : 0,
+          ),
+          decoration: BoxDecoration(
+            color: color.withAlpha(18),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: color.withAlpha(50)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: compact ? 14 : 13, color: color),
+              if (!compact) ...[
+                SizedBox(width: 1.w),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 8.sp,
+                      fontWeight: FontWeight.w700,
+                      color: color,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+              ],
+            ],
+          ),
         ),
       ),
     );

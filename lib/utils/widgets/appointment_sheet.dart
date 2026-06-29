@@ -1,6 +1,8 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/appointment/data/models/appointment_response.dart';
 import 'package:dar_plus_app/features/appointment/presentation/providers/appointment_providers.dart';
+import 'package:dar_plus_app/features/auth/data/models/user_model.dart';
+import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/helpers/asset_ownership_helper.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
@@ -63,6 +65,22 @@ class _AppointmentSheetState extends ConsumerState<AppointmentSheet> {
   DateTime? _date;
   TimeOfDay? _time;
   String _completePhoneNumber = '';
+  bool _isProfileLoaded = false;
+
+  void _prefillFromProfile(UserModel user) {
+    if (_isProfileLoaded) return;
+
+    _nameCtrl.text = user.name;
+    _emailCtrl.text = user.email;
+
+    final phone = user.phoneNumber.trim();
+    if (phone.isNotEmpty) {
+      _phoneCtrl.text = phone;
+      _completePhoneNumber = phone.startsWith('+') ? phone : phone;
+    }
+
+    _isProfileLoaded = true;
+  }
 
   @override
   void dispose() {
@@ -272,6 +290,13 @@ class _AppointmentSheetState extends ConsumerState<AppointmentSheet> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(appointmentControllerProvider).isLoading;
+
+    ref.watch(profileControllerProvider).maybeWhen(
+      data: (user) {
+        if (user != null) _prefillFromProfile(user);
+      },
+      orElse: () {},
+    );
 
     return Container(
       decoration: const BoxDecoration(

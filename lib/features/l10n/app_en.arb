@@ -537,5 +537,24 @@
   "calendar_select_checkout": "Select check-out date",
   "date_not_available": "This date is not available",
   "date_range_not_available": "Selected dates include unavailable days",
-  "clear_dates": "Clear dates"
+  "clear_dates": "Clear dates",
+  "manage_availability": "Manage availability",
+  "calendar_block_mode": "Block dates",
+  "calendar_unblock_mode": "Unblock dates",
+  "calendar_block_hint": "Tap dates to block them from bookings",
+  "calendar_unblock_hint": "Tap blocked dates to make them available again",
+  "calendar_available": "Available",
+  "calendar_selected": "Selected",
+  "calendar_dates_selected": "{count} dates selected",
+  "@calendar_dates_selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "calendar_apply_block": "Block selected",
+  "calendar_apply_unblock": "Unblock selected",
+  "calendar_updated_success": "Calendar updated successfully",
+  "calendar_booked_locked": "Booked dates cannot be changed"
 }

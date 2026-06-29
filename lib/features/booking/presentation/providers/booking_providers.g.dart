@@ -226,6 +226,52 @@ final class AssetCalendarFamily extends $Family
   String toString() => r'assetCalendarProvider';
 }
 
+@ProviderFor(OwnerCalendarController)
+const ownerCalendarControllerProvider = OwnerCalendarControllerProvider._();
+
+final class OwnerCalendarControllerProvider
+    extends $AsyncNotifierProvider<OwnerCalendarController, void> {
+  const OwnerCalendarControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ownerCalendarControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ownerCalendarControllerHash();
+
+  @$internal
+  @override
+  OwnerCalendarController create() => OwnerCalendarController();
+}
+
+String _$ownerCalendarControllerHash() =>
+    r'a0a833e75d147bf72b5fdd798b6ad81265e5bf2a';
+
+abstract class _$OwnerCalendarController extends $AsyncNotifier<void> {
+  FutureOr<void> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build();
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}
+
 @ProviderFor(MyBookingsController)
 const myBookingsControllerProvider = MyBookingsControllerFamily._();
 

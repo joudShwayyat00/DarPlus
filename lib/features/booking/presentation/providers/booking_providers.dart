@@ -85,6 +85,45 @@ Future<AssetCalendarData> assetCalendar(Ref ref, int assetId) async {
   return ref.read(bookingRepositoryProvider).getAssetCalendar(assetId);
 }
 
+enum OwnerCalendarAction { block, unblock }
+
+@riverpod
+class OwnerCalendarController extends _$OwnerCalendarController {
+  @override
+  FutureOr<void> build() {}
+
+  Future<String?> submit({
+    required int assetId,
+    required List<DateTime> dates,
+    required OwnerCalendarAction action,
+  }) async {
+    if (dates.isEmpty) return null;
+
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final status = action == OwnerCalendarAction.block
+          ? 'blocked'
+          : 'available';
+      await ref.read(bookingRepositoryProvider).updateCalendarDates(
+        assetId: assetId,
+        dates: dates,
+        status: status,
+      );
+    });
+
+    if (state.hasError) {
+      final err = state.error;
+      if (err is Exception) {
+        return err.toString().replaceFirst('Exception: ', '');
+      }
+      return err.toString();
+    }
+
+    ref.invalidate(assetCalendarProvider(assetId));
+    return null;
+  }
+}
+
 @riverpod
 class MyBookingsController extends _$MyBookingsController {
   @override

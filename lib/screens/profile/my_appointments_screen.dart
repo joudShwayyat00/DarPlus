@@ -1,4 +1,5 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/features/appointment/data/models/my_appointment_item.dart';
 import 'package:dar_plus_app/features/appointment/domain/appointment_status_filter.dart';
 import 'package:dar_plus_app/features/appointment/presentation/providers/appointment_providers.dart';
@@ -7,6 +8,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
+import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/widgets/login_required_view.dart';
 import 'package:flutter/material.dart';
@@ -445,7 +447,7 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
   }
 }
 
-class _AppointmentCard extends StatelessWidget {
+class _AppointmentCard extends ConsumerWidget {
   final MyAppointmentItem appointment;
   final String Function(String) formatDate;
   final String Function(String) formatTime;
@@ -457,8 +459,10 @@ class _AppointmentCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final statusColor = _statusColor(appointment.status);
+    final asset = appointment.asset;
+    final lang = ref.watch(apiLanguageCodeProvider);
 
     return Container(
       margin: EdgeInsets.only(bottom: 2.h),
@@ -477,43 +481,146 @@ class _AppointmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (asset != null)
+            GestureDetector(
+              onTap: () {
+                AppNavigator.of(context).push(
+                  AssetDetailsScreen(assetId: asset.id),
+                );
+              },
+              child: ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(22)),
+                child: Stack(
+                  children: [
+                    SizedBox(
+                      height: 15.h,
+                      width: double.infinity,
+                      child: asset.resolvedImageUrl.isNotEmpty
+                          ? AppNetImage(url: asset.resolvedImageUrl)
+                          : Container(
+                              color: Colors.grey.shade200,
+                              child: Icon(
+                                Icons.home_work_outlined,
+                                size: 42,
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                    ),
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withAlpha(150),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 1.2.h,
+                      right: 3.w,
+                      child: _StatusBadge(
+                        status: appointment.status,
+                        color: statusColor,
+                      ),
+                    ),
+                    Positioned(
+                      left: 4.w,
+                      right: 4.w,
+                      bottom: 1.4.h,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            asset.displayName(lang),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                          if (asset.location.trim().isNotEmpty) ...[
+                            SizedBox(height: 0.3.h),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.location_on_rounded,
+                                  size: 14,
+                                  color: Colors.white70,
+                                ),
+                                SizedBox(width: 1.w),
+                                Expanded(
+                                  child: Text(
+                                    asset.location,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: appTextStyle(
+                                      context,
+                                      fontSize: 9.5.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white.withAlpha(220),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           Container(
             width: double.infinity,
             padding: EdgeInsets.fromLTRB(4.5.w, 2.h, 4.5.w, 2.2.h),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.goldBrandColor.withAlpha(28),
-                  AppColors.goldBrandColor.withAlpha(8),
-                ],
-              ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(22)),
+              gradient: asset == null
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppColors.goldBrandColor.withAlpha(28),
+                        AppColors.goldBrandColor.withAlpha(8),
+                      ],
+                    )
+                  : null,
+              borderRadius: asset == null
+                  ? const BorderRadius.vertical(top: Radius.circular(22))
+                  : null,
             ),
             child: Row(
               children: [
-                Container(
-                  padding: EdgeInsets.all(3.5.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.goldBrandColor.withAlpha(40),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                if (asset == null)
+                  Container(
+                    padding: EdgeInsets.all(3.5.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.goldBrandColor.withAlpha(40),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.calendar_month_rounded,
+                      color: AppColors.goldBrandColor,
+                      size: 26,
+                    ),
                   ),
-                  child: Icon(
-                    Icons.calendar_month_rounded,
-                    color: AppColors.goldBrandColor,
-                    size: 26,
-                  ),
-                ),
-                SizedBox(width: 4.w),
+                if (asset == null) SizedBox(width: 4.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -549,10 +656,34 @@ class _AppointmentCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                _StatusBadge(status: appointment.status, color: statusColor),
+                if (asset == null)
+                  _StatusBadge(status: appointment.status, color: statusColor),
               ],
             ),
           ),
+          if (asset != null)
+            Padding(
+              padding: EdgeInsets.fromLTRB(4.5.w, 0, 4.5.w, 0.4.h),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.event_available_rounded,
+                    size: 18,
+                    color: AppColors.goldBrandColor,
+                  ),
+                  SizedBox(width: 2.w),
+                  Text(
+                    '${formatDate(appointment.date)} · ${formatTime(appointment.time)}',
+                    style: appTextStyle(
+                      context,
+                      fontSize: 10.5.sp,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black.withAlpha(200),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Padding(
             padding: EdgeInsets.fromLTRB(4.5.w, 2.h, 4.5.w, 2.2.h),
             child: Column(

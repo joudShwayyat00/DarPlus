@@ -20,6 +20,11 @@ MyAppointmentItem _$MyAppointmentItemFromJson(Map<String, dynamic> json) =>
       status: json['status'] as String,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
+      asset: json['asset'] == null
+          ? null
+          : AppointmentAssetSummary.fromJson(
+              json['asset'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$MyAppointmentItemToJson(MyAppointmentItem instance) =>
@@ -36,4 +41,5 @@ Map<String, dynamic> _$MyAppointmentItemToJson(MyAppointmentItem instance) =>
       'status': instance.status,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
+      'asset': instance.asset,
     };

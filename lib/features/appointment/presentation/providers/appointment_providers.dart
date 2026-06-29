@@ -59,8 +59,6 @@ class AppointmentController extends _$AppointmentController {
 
 @riverpod
 class MyAppointmentsController extends _$MyAppointmentsController {
-  List<MyAppointmentItem> _allAppointments = [];
-
   @override
   FutureOr<List<MyAppointmentItem>> build(
     AppointmentStatusFilter status,
@@ -69,18 +67,9 @@ class MyAppointmentsController extends _$MyAppointmentsController {
     final user = ref.read(profileControllerProvider).value;
     if (user?.isOwner != true) return [];
 
-    _allAppointments =
-        await ref.read(appointmentRepositoryProvider).getMyAppointments();
-    return _filterByStatus(_allAppointments, status);
-  }
-
-  List<MyAppointmentItem> _filterByStatus(
-    List<MyAppointmentItem> items,
-    AppointmentStatusFilter status,
-  ) {
-    return items
-        .where((item) => item.status.toLowerCase() == status.apiValue)
-        .toList();
+    return ref.read(appointmentRepositoryProvider).getOwnerAppointments(
+          status: status.apiValue,
+        );
   }
 
   Future<void> refresh() async {
@@ -96,9 +85,9 @@ class MyAppointmentsController extends _$MyAppointmentsController {
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      _allAppointments =
-          await ref.read(appointmentRepositoryProvider).getMyAppointments();
-      return _filterByStatus(_allAppointments, status);
+      return ref.read(appointmentRepositoryProvider).getOwnerAppointments(
+            status: status.apiValue,
+          );
     });
   }
 }
@@ -108,5 +97,7 @@ Future<List<MyAppointmentItem>> ownerAllAppointments(Ref ref) async {
   if (!ref.read(isLoggedInProvider)) return [];
   final user = ref.read(profileControllerProvider).value;
   if (user?.isOwner != true) return [];
-  return ref.read(appointmentRepositoryProvider).getMyAppointments();
+  return ref.read(appointmentRepositoryProvider).getOwnerAppointments(
+        status: AppointmentStatusFilter.pending.apiValue,
+      );
 }

@@ -1586,4 +1586,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clear_dates => 'Clear dates';
+
+  @override
+  String get manage_availability => 'Manage availability';
+
+  @override
+  String get calendar_block_mode => 'Block dates';
+
+  @override
+  String get calendar_unblock_mode => 'Unblock dates';
+
+  @override
+  String get calendar_block_hint => 'Tap dates to block them from bookings';
+
+  @override
+  String get calendar_unblock_hint =>
+      'Tap blocked dates to make them available again';
+
+  @override
+  String get calendar_available => 'Available';
+
+  @override
+  String get calendar_selected => 'Selected';
+
+  @override
+  String calendar_dates_selected(int count) {
+    return '$count dates selected';
+  }
+
+  @override
+  String get calendar_apply_block => 'Block selected';
+
+  @override
+  String get calendar_apply_unblock => 'Unblock selected';
+
+  @override
+  String get calendar_updated_success => 'Calendar updated successfully';
+
+  @override
+  String get calendar_booked_locked => 'Booked dates cannot be changed';
 }
