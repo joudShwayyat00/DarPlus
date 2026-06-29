@@ -5,6 +5,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/home/widgets/owner_avatar.dart';
 import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:flutter/material.dart';
@@ -73,28 +74,7 @@ class _Header extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(4.w, 1.h, 4.w, 1.5.h),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(8),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 18,
-                color: AppColors.blackColor,
-              ),
-            ),
-          ),
+          const AppBackButton(),
           SizedBox(width: 3.w),
           Expanded(
             child: Text(

@@ -7,6 +7,7 @@ import 'package:dar_plus_app/screens/home/widgets/property_tile.dart';
 import 'package:dar_plus_app/screens/home/widgets/section_header.dart';
 import 'package:dar_plus_app/utils/widgets/filter_bottom_sheet.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -106,22 +107,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         children: [
           Row(
             children: [
-              if (widget.showBackButton)
-                GestureDetector(
-                  onTap: () => AppNavigator.of(context).pop(),
-                  child: Container(
-                    padding: EdgeInsets.all(2.2.w),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 20,
-                      color: Colors.black.withAlpha(200),
-                    ),
-                  ),
-                ),
+              if (widget.showBackButton) const AppBackButton(),
               if (widget.showBackButton) SizedBox(width: 3.w),
               Text(
                 tr.search,

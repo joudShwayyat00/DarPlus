@@ -3175,6 +3175,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Booked dates cannot be changed'**
   String get calendar_booked_locked;
+
+  /// No description provided for @calendar_selected_dates.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected dates'**
+  String get calendar_selected_dates;
+
+  /// No description provided for @gallery_tap_to_zoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap image to view full screen'**
+  String get gallery_tap_to_zoom;
 }
 
 class _AppLocalizationsDelegate

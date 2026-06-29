@@ -8,6 +8,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/widgets/login_required_view.dart';
@@ -134,14 +135,8 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
         backgroundColor: const Color(0xFFF8F7F4),
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.black.withAlpha(200),
-            size: 20,
-          ),
-        ),
+        leadingWidth: kAppBarBackLeadingWidth,
+        leading: const AppBarBackButton(),
         title: Text(
           tr.owner_property_appointments,
           style: appTextStyle(

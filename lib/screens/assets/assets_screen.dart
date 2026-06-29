@@ -11,6 +11,7 @@ import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
 import 'package:dar_plus_app/screens/search.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/widgets/filter_bottom_sheet.dart';
 import 'package:flutter/material.dart';
@@ -105,10 +106,7 @@ class _AssetsScreenState extends ConsumerState<AssetsScreen> {
       ),
       child: Row(
         children: [
-          _IconButton(
-            icon: Icons.arrow_back_ios_new_rounded,
-            onTap: () => AppNavigator.of(context).pop(),
-          ),
+          const AppBackButton(),
           SizedBox(width: 3.w),
           Expanded(
             child: Builder(

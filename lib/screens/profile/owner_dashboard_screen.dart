@@ -8,6 +8,7 @@ import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
 import 'package:dar_plus_app/screens/assets/my_assets_screen.dart';
 import 'package:dar_plus_app/screens/profile/my_appointments_screen.dart';
 import 'package:dar_plus_app/screens/profile/owner_statistics_screen.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/widgets/login_required_view.dart';
 import 'package:flutter/material.dart';
@@ -177,14 +178,8 @@ class OwnerDashboardScreen extends ConsumerWidget {
         backgroundColor: const Color(0xFFF8F7F4),
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.black.withAlpha(200),
-            size: 20,
-          ),
-        ),
+        leadingWidth: kAppBarBackLeadingWidth,
+        leading: const AppBarBackButton(),
         title: Text(
           tr.my_dashboard,
           style: appTextStyle(

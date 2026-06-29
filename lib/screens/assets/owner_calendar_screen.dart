@@ -4,6 +4,7 @@ import 'package:dar_plus_app/features/booking/data/models/asset_calendar.dart';
 import 'package:dar_plus_app/features/booking/presentation/providers/booking_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/widgets/owner_availability_calendar.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -25,18 +26,28 @@ class OwnerCalendarScreen extends ConsumerStatefulWidget {
 
 class _OwnerCalendarScreenState extends ConsumerState<OwnerCalendarScreen> {
   OwnerCalendarAction _action = OwnerCalendarAction.block;
-  final Set<DateTime> _selectedDates = {};
+  Set<DateTime> _selectedDates = {};
 
   void _toggleDate(DateTime date) {
     final normalized = AssetCalendarData.normalize(date);
     setState(() {
-      if (_selectedDates.any((d) => AssetCalendarData.normalize(d) == normalized)) {
-        _selectedDates.removeWhere(
+      final updated = Set<DateTime>.from(_selectedDates);
+      if (updated.any((d) => AssetCalendarData.normalize(d) == normalized)) {
+        updated.removeWhere(
           (d) => AssetCalendarData.normalize(d) == normalized,
         );
       } else {
-        _selectedDates.add(normalized);
+        updated.add(normalized);
       }
+      _selectedDates = updated;
+    });
+  }
+
+  void _removeDate(DateTime date) {
+    final normalized = AssetCalendarData.normalize(date);
+    setState(() {
+      _selectedDates = Set<DateTime>.from(_selectedDates)
+        ..removeWhere((d) => AssetCalendarData.normalize(d) == normalized);
     });
   }
 
@@ -44,7 +55,7 @@ class _OwnerCalendarScreenState extends ConsumerState<OwnerCalendarScreen> {
     if (_action == action) return;
     setState(() {
       _action = action;
-      _selectedDates.clear();
+      _selectedDates = {};
     });
   }
 
@@ -67,32 +78,55 @@ class _OwnerCalendarScreenState extends ConsumerState<OwnerCalendarScreen> {
     }
 
     EasyLoading.showSuccess(tr.calendar_updated_success);
-    setState(() => _selectedDates.clear());
+    setState(() => _selectedDates = {});
+  }
+
+  List<DateTime> get _sortedSelectedDates {
+    final dates = _selectedDates.toList()
+      ..sort((a, b) => a.compareTo(b));
+    return dates;
+  }
+
+  String _formatSelectedDate(DateTime date) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(ownerCalendarControllerProvider);
     final calendarAsync = ref.watch(assetCalendarProvider(widget.asset.id));
+    final topPadding = MediaQuery.paddingOf(context).top;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F7F4),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          tr.manage_availability,
-          style: appTextStyle(
-            context,
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w800,
-            color: Colors.black.withAlpha(220),
-          ),
-        ),
-        iconTheme: IconThemeData(color: Colors.black.withAlpha(200)),
-      ),
+      backgroundColor: AppColors.whiteColor,
       body: Column(
         children: [
+          Container(
+            color: AppColors.whiteColor,
+            padding: EdgeInsets.fromLTRB(2.w, topPadding + 0.8.h, 5.w, 1.2.h),
+            child: Row(
+              children: [
+                const AppBackButton(),
+                Expanded(
+                  child: Text(
+                    tr.manage_availability,
+                    textAlign: TextAlign.center,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black.withAlpha(230),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 48),
+              ],
+            ),
+          ),
           Expanded(
             child: RefreshIndicator(
               color: AppColors.goldBrandColor,
@@ -101,7 +135,7 @@ class _OwnerCalendarScreenState extends ConsumerState<OwnerCalendarScreen> {
                 await ref.read(assetCalendarProvider(widget.asset.id).future);
               },
               child: ListView(
-                padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 2.h),
+                padding: EdgeInsets.fromLTRB(5.w, 0, 5.w, 2.h),
                 children: [
                   _AssetHeader(asset: widget.asset),
                   SizedBox(height: 2.h),
@@ -117,14 +151,10 @@ class _OwnerCalendarScreenState extends ConsumerState<OwnerCalendarScreen> {
                       selectedDates: _selectedDates,
                       onDayToggled: _toggleDate,
                     ),
-                    loading: () => Column(
-                      children: [
-                        ShimmerPlaceholder(
-                          width: double.infinity,
-                          height: 32.h,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ],
+                    loading: () => ShimmerPlaceholder(
+                      width: double.infinity,
+                      height: 36.h,
+                      borderRadius: BorderRadius.circular(18),
                     ),
                     error: (error, _) => _ErrorState(
                       message: error.toString(),
@@ -132,6 +162,16 @@ class _OwnerCalendarScreenState extends ConsumerState<OwnerCalendarScreen> {
                           ref.invalidate(assetCalendarProvider(widget.asset.id)),
                     ),
                   ),
+                  if (_selectedDates.isNotEmpty) ...[
+                    SizedBox(height: 2.h),
+                    _SelectedDatesCard(
+                      dates: _sortedSelectedDates,
+                      action: _action,
+                      formatDate: _formatSelectedDate,
+                      onRemove: _removeDate,
+                      onClear: () => setState(() => _selectedDates = {}),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -141,7 +181,7 @@ class _OwnerCalendarScreenState extends ConsumerState<OwnerCalendarScreen> {
             action: _action,
             onClear: _selectedDates.isEmpty
                 ? null
-                : () => setState(() => _selectedDates.clear()),
+                : () => setState(() => _selectedDates = {}),
             onApply: _selectedDates.isEmpty ? null : _applyChanges,
           ),
         ],
@@ -158,11 +198,18 @@ class _AssetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(3.w),
+      padding: EdgeInsets.all(3.5.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: Colors.black.withAlpha(10)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(8),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -223,6 +270,120 @@ class _AssetHeader extends StatelessWidget {
   }
 }
 
+class _SelectedDatesCard extends StatelessWidget {
+  final List<DateTime> dates;
+  final OwnerCalendarAction action;
+  final String Function(DateTime date) formatDate;
+  final ValueChanged<DateTime> onRemove;
+  final VoidCallback onClear;
+
+  const _SelectedDatesCard({
+    required this.dates,
+    required this.action,
+    required this.formatDate,
+    required this.onRemove,
+    required this.onClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final actionLabel = action == OwnerCalendarAction.block
+        ? tr.calendar_apply_block
+        : tr.calendar_apply_unblock;
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: AppColors.goldBrandColor.withAlpha(14),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.goldBrandColor.withAlpha(60)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  tr.calendar_selected_dates,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black.withAlpha(220),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: onClear,
+                child: Text(
+                  tr.clear_dates,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.goldBrandColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 0.6.h),
+          Text(
+            tr.calendar_dates_selected(dates.length),
+            style: appTextStyle(
+              context,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.black.withAlpha(130),
+            ),
+          ),
+          SizedBox(height: 1.h),
+          Wrap(
+            spacing: 2.w,
+            runSpacing: 1.h,
+            children: dates.map((date) {
+              return InputChip(
+                label: Text(
+                  formatDate(date),
+                  style: appTextStyle(
+                    context,
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.goldBrandColor,
+                  ),
+                ),
+                deleteIcon: const Icon(
+                  Icons.close_rounded,
+                  size: 16,
+                  color: AppColors.goldBrandColor,
+                ),
+                onDeleted: () => onRemove(date),
+                backgroundColor: Colors.white,
+                side: BorderSide(color: AppColors.goldBrandColor.withAlpha(90)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              );
+            }).toList(),
+          ),
+          SizedBox(height: 0.8.h),
+          Text(
+            actionLabel,
+            style: appTextStyle(
+              context,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.black.withAlpha(120),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ActionToggle extends StatelessWidget {
   final OwnerCalendarAction action;
   final ValueChanged<OwnerCalendarAction> onChanged;
@@ -238,8 +399,15 @@ class _ActionToggle extends StatelessWidget {
       padding: EdgeInsets.all(0.8.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: Colors.black.withAlpha(10)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(6),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -285,10 +453,10 @@ class _ToggleChip extends StatelessWidget {
       color: selected
           ? AppColors.goldBrandColor.withAlpha(30)
           : Colors.transparent,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 1.2.h),
           child: Row(
@@ -347,7 +515,7 @@ class _BottomBar extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(5.w, 1.5.h, 5.w, 2.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.whiteColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(12),

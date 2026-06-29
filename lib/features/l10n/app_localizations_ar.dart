@@ -1615,4 +1615,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get calendar_booked_locked => 'لا يمكن تغيير التواريخ المحجوزة';
+
+  @override
+  String get calendar_selected_dates => 'التواريخ المحددة';
+
+  @override
+  String get gallery_tap_to_zoom => 'اضغط على الصورة لعرضها بالحجم الكامل';
 }

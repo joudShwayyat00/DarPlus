@@ -556,5 +556,7 @@
   "calendar_apply_block": "حظر المحدد",
   "calendar_apply_unblock": "إلغاء حظر المحدد",
   "calendar_updated_success": "تم تحديث التقويم بنجاح",
-  "calendar_booked_locked": "لا يمكن تغيير التواريخ المحجوزة"
+  "calendar_booked_locked": "لا يمكن تغيير التواريخ المحجوزة",
+  "calendar_selected_dates": "التواريخ المحددة",
+  "gallery_tap_to_zoom": "اضغط على الصورة لعرضها بالحجم الكامل"
 }

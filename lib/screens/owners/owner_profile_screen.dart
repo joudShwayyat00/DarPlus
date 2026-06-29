@@ -9,6 +9,7 @@ import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/screens/home/widgets/owner_avatar.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/owner_labels.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:dar_plus_app/utils/widgets/rate_owner_dialog.dart';
@@ -181,10 +182,8 @@ class _OwnerProfileBody extends StatelessWidget {
       backgroundColor: AppColors.whiteColor,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      leading: IconButton(
-        onPressed: () => AppNavigator.of(context).pop(),
-        icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
-      ),
+      leadingWidth: kAppBarBackLeadingWidth,
+      leading: const AppBarBackButton(),
       title: Text(
         profile.name,
         maxLines: 1,

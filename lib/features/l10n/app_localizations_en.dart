@@ -1625,4 +1625,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calendar_booked_locked => 'Booked dates cannot be changed';
+
+  @override
+  String get calendar_selected_dates => 'Selected dates';
+
+  @override
+  String get gallery_tap_to_zoom => 'Tap image to view full screen';
 }

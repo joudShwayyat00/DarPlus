@@ -556,5 +556,7 @@
   "calendar_apply_block": "Block selected",
   "calendar_apply_unblock": "Unblock selected",
   "calendar_updated_success": "Calendar updated successfully",
-  "calendar_booked_locked": "Booked dates cannot be changed"
+  "calendar_booked_locked": "Booked dates cannot be changed",
+  "calendar_selected_dates": "Selected dates",
+  "gallery_tap_to_zoom": "Tap image to view full screen"
 }

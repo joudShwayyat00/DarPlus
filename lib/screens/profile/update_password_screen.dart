@@ -1,5 +1,6 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/configuration/app_images.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_input_field.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -79,13 +80,8 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
           ),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.black.withAlpha(200),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leadingWidth: kAppBarBackLeadingWidth,
+        leading: const AppBarBackButton(),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),

@@ -5,6 +5,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_input_field.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -82,14 +83,8 @@ class _GetHelpScreenState extends ConsumerState<GetHelpScreen> {
         backgroundColor: AppColors.whiteColor,
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.black.withAlpha(200),
-            size: 20,
-          ),
-        ),
+        leadingWidth: kAppBarBackLeadingWidth,
+        leading: const AppBarBackButton(),
         title: Text(
           tr.get_help,
           style: appTextStyle(

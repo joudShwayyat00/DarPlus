@@ -27,7 +27,6 @@ class OwnerAvailabilityCalendar extends StatefulWidget {
 
 class _OwnerAvailabilityCalendarState extends State<OwnerAvailabilityCalendar> {
   late DateTime _displayMonth;
-  late List<_OwnerDayCell?> _gridCells;
   late DateTime _today;
 
   static const _monthNames = [
@@ -76,21 +75,6 @@ class _OwnerAvailabilityCalendarState extends State<OwnerAvailabilityCalendar> {
     super.initState();
     _today = _normalize(DateTime.now());
     _displayMonth = DateTime(_today.year, _today.month);
-    _rebuildGrid();
-  }
-
-  @override
-  void didUpdateWidget(covariant OwnerAvailabilityCalendar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.calendar != widget.calendar ||
-        oldWidget.action != widget.action ||
-        oldWidget.selectedDates != widget.selectedDates) {
-      _rebuildGrid();
-    }
-  }
-
-  void _rebuildGrid() {
-    _gridCells = _buildMonthGrid();
   }
 
   bool _isPast(DateTime day) => _normalize(day).isBefore(_today);
@@ -143,12 +127,12 @@ class _OwnerAvailabilityCalendarState extends State<OwnerAvailabilityCalendar> {
         _displayMonth.year,
         _displayMonth.month + delta,
       );
-      _rebuildGrid();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final gridCells = _buildMonthGrid();
     final isArabic = Directionality.of(context) == TextDirection.rtl;
     final monthLabel = isArabic
         ? '${_monthNamesAr[_displayMonth.month - 1]} ${_displayMonth.year}'
@@ -161,83 +145,117 @@ class _OwnerAvailabilityCalendarState extends State<OwnerAvailabilityCalendar> {
         ? tr.calendar_block_hint
         : tr.calendar_unblock_hint;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: 3.w,
-          runSpacing: 0.6.h,
-          children: [
-            _LegendDot(color: Colors.white, border: Colors.black26, label: tr.calendar_available),
-            const _LegendDot(color: Color(0xFFE57373), labelKey: _LegendLabel.booked),
-            const _LegendDot(color: Colors.grey, labelKey: _LegendLabel.blocked),
-            _LegendDot(
-              color: AppColors.goldBrandColor.withAlpha(90),
-              border: AppColors.goldBrandColor,
-              label: tr.calendar_selected,
-            ),
-          ],
-        ),
-        SizedBox(height: 1.h),
-        Text(
-          hint,
-          style: appTextStyle(
-            context,
-            fontSize: 9.5.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.goldBrandColor,
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.black.withAlpha(10)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(8),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
           ),
-        ),
-        SizedBox(height: 1.2.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _NavButton(
-              icon: Icons.chevron_left_rounded,
-              onTap: isCurrentMonth ? null : () => _shiftMonth(-1),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            tr.calendar_availability,
+            style: appTextStyle(
+              context,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.black.withAlpha(230),
             ),
-            Text(
-              monthLabel,
-              style: appTextStyle(
-                context,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w900,
-                color: AppColors.blackColor,
+          ),
+          SizedBox(height: 1.h),
+          Wrap(
+            spacing: 3.w,
+            runSpacing: 0.6.h,
+            children: [
+              _LegendDot(
+                color: Colors.white,
+                border: Colors.black26,
+                label: tr.calendar_available,
               ),
+              const _LegendDot(
+                color: Color(0xFFE57373),
+                labelKey: _LegendLabel.booked,
+              ),
+              const _LegendDot(
+                color: Colors.grey,
+                labelKey: _LegendLabel.blocked,
+              ),
+              _LegendDot(
+                color: AppColors.goldBrandColor,
+                border: AppColors.goldBrandColor,
+                label: tr.calendar_selected,
+              ),
+            ],
+          ),
+          SizedBox(height: 1.h),
+          Text(
+            hint,
+            style: appTextStyle(
+              context,
+              fontSize: 9.5.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.goldBrandColor,
             ),
-            _NavButton(
-              icon: Icons.chevron_right_rounded,
-              onTap: () => _shiftMonth(1),
-            ),
-          ],
-        ),
-        SizedBox(height: 1.2.h),
-        Row(
-          children: weekDayLabels
-              .map(
-                (weekday) => Expanded(
-                  child: Center(
-                    child: Text(
-                      weekday,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 8.5.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.grayBrandColor,
+          ),
+          SizedBox(height: 1.2.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _NavButton(
+                icon: Icons.chevron_left_rounded,
+                onTap: isCurrentMonth ? null : () => _shiftMonth(-1),
+              ),
+              Text(
+                monthLabel,
+                style: appTextStyle(
+                  context,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.blackColor,
+                ),
+              ),
+              _NavButton(
+                icon: Icons.chevron_right_rounded,
+                onTap: () => _shiftMonth(1),
+              ),
+            ],
+          ),
+          SizedBox(height: 1.2.h),
+          Row(
+            children: weekDayLabels
+                .map(
+                  (weekday) => Expanded(
+                    child: Center(
+                      child: Text(
+                        weekday,
+                        style: appTextStyle(
+                          context,
+                          fontSize: 8.5.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.grayBrandColor,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-              .toList(),
-        ),
-        SizedBox(height: 0.6.h),
-        RepaintBoundary(
-          child: Column(
-            children: List.generate(_gridCells.length ~/ 7, (row) {
+                )
+                .toList(),
+          ),
+          SizedBox(height: 0.6.h),
+          Column(
+            children: List.generate(gridCells.length ~/ 7, (row) {
               return Row(
                 children: List.generate(7, (col) {
-                  final cell = _gridCells[row * 7 + col];
+                  final cell = gridCells[row * 7 + col];
                   if (cell == null) {
                     return const Expanded(child: SizedBox(height: 40));
                   }
@@ -253,8 +271,8 @@ class _OwnerAvailabilityCalendarState extends State<OwnerAvailabilityCalendar> {
               );
             }),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -382,10 +400,10 @@ class _DayCell extends StatelessWidget {
     var borderSide = BorderSide.none;
 
     if (data.isSelected) {
-      bg = AppColors.goldBrandColor.withAlpha(95);
+      bg = AppColors.goldBrandColor;
       textColor = Colors.white;
       weight = FontWeight.w900;
-      borderSide = const BorderSide(color: AppColors.goldBrandColor, width: 2);
+      borderSide = const BorderSide(color: Color(0xFFB45309), width: 2);
     } else if (data.isBooked) {
       bg = const Color(0xFFE57373).withAlpha(45);
       textColor = const Color(0xFFC62828);
@@ -404,8 +422,8 @@ class _DayCell extends StatelessWidget {
       padding: const EdgeInsets.all(2),
       child: Material(
         color: bg,
-        elevation: data.isSelected ? 2 : 0,
-        shadowColor: AppColors.goldBrandColor.withAlpha(120),
+        elevation: data.isSelected ? 3 : 0,
+        shadowColor: AppColors.goldBrandColor.withAlpha(140),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: borderSide,
@@ -414,7 +432,7 @@ class _DayCell extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(10),
           child: SizedBox(
-            height: 36,
+            height: 38,
             child: Center(
               child: Text(
                 '${data.day}',

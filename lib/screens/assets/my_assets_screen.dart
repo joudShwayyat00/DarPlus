@@ -10,6 +10,7 @@ import 'package:dar_plus_app/screens/assets/owner_calendar_screen.dart';
 import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
 import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -172,10 +173,7 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
       ),
       child: Row(
         children: [
-          _IconButton(
-            icon: Icons.arrow_back_ios_new_rounded,
-            onTap: () => AppNavigator.of(context).pop(),
-          ),
+          const AppBackButton(),
           SizedBox(width: 3.w),
           Expanded(
             child: Text(

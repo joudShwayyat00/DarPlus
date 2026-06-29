@@ -99,8 +99,7 @@ class OwnerCalendarController extends _$OwnerCalendarController {
   }) async {
     if (dates.isEmpty) return null;
 
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+    try {
       final status = action == OwnerCalendarAction.block
           ? 'blocked'
           : 'available';
@@ -109,18 +108,17 @@ class OwnerCalendarController extends _$OwnerCalendarController {
         dates: dates,
         status: status,
       );
-    });
 
-    if (state.hasError) {
-      final err = state.error;
-      if (err is Exception) {
-        return err.toString().replaceFirst('Exception: ', '');
+      if (!ref.mounted) return null;
+
+      ref.invalidate(assetCalendarProvider(assetId));
+      return null;
+    } catch (error) {
+      if (error is Exception) {
+        return error.toString().replaceFirst('Exception: ', '');
       }
-      return err.toString();
+      return error.toString();
     }
-
-    ref.invalidate(assetCalendarProvider(assetId));
-    return null;
   }
 }
 

@@ -36,10 +36,7 @@ Future<void> showAppointmentSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => AppointmentSheet(
-      assetId: assetId,
-      assetName: assetName,
-    ),
+    builder: (_) => AppointmentSheet(assetId: assetId, assetName: assetName),
   );
 }
 
@@ -183,7 +180,9 @@ class _AppointmentSheetState extends ConsumerState<AppointmentSheet> {
       return;
     }
 
-    await ref.read(appointmentControllerProvider.notifier).submit(
+    await ref
+        .read(appointmentControllerProvider.notifier)
+        .submit(
           assetId: widget.assetId,
           name: name,
           phone: phone,
@@ -291,12 +290,14 @@ class _AppointmentSheetState extends ConsumerState<AppointmentSheet> {
   Widget build(BuildContext context) {
     final isLoading = ref.watch(appointmentControllerProvider).isLoading;
 
-    ref.watch(profileControllerProvider).maybeWhen(
-      data: (user) {
-        if (user != null) _prefillFromProfile(user);
-      },
-      orElse: () {},
-    );
+    ref
+        .watch(profileControllerProvider)
+        .maybeWhen(
+          data: (user) {
+            if (user != null) _prefillFromProfile(user);
+          },
+          orElse: () {},
+        );
 
     return Container(
       decoration: const BoxDecoration(

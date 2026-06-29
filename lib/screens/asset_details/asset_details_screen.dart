@@ -15,6 +15,8 @@ import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/asset_ownership_helper.dart';
 import 'package:dar_plus_app/utils/helpers/booking_navigation.dart';
+import 'package:dar_plus_app/utils/widgets/full_screen_image_gallery.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:dar_plus_app/utils/widgets/appointment_sheet.dart';
@@ -105,88 +107,98 @@ class _AssetDetailsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      body: CustomScrollView(
-        slivers: [
-          _buildAppBar(context),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 2.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (isRefreshing)
-                    LinearProgressIndicator(
-                      color: AppColors.goldBrandColor,
-                      backgroundColor: AppColors.goldBrandColor.withAlpha(30),
-                      minHeight: 2,
+      body: Column(
+        children: [
+          _buildGalleryHeader(context),
+          if (isRefreshing)
+            LinearProgressIndicator(
+              color: AppColors.goldBrandColor,
+              backgroundColor: AppColors.goldBrandColor.withAlpha(30),
+              minHeight: 2,
+            ),
+          Expanded(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(5.w, 2.h, 5.w, 2.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _InfoCard(asset: asset),
+                        if (!asset.isForSale &&
+                            isCurrentUserAssetOwner(
+                              context,
+                              asset.owner.id,
+                            )) ...[
+                          SizedBox(height: 2.h),
+                          _ManageAvailabilityCard(asset: asset),
+                        ],
+                        SizedBox(height: 2.h),
+                        _PricingCard(asset: asset),
+                        if (asset.space != null || asset.rooms != null) ...[
+                          SizedBox(height: 2.h),
+                          _PropertySpecsCard(asset: asset),
+                        ],
+                        if (asset.latitude != null &&
+                            asset.longitude != null) ...[
+                          SizedBox(height: 2.h),
+                          AssetLocationMapCard(asset: asset),
+                        ],
+                        if (!asset.isForSale && asset.rentType != null) ...[
+                          SizedBox(height: 2.h),
+                          _RentInfoCard(asset: asset),
+                        ],
+                        if (asset.isForSale &&
+                            (asset.rentPrice != null ||
+                                asset.monthsCount != null)) ...[
+                          SizedBox(height: 2.h),
+                          _AdditionalPricingCard(asset: asset),
+                        ],
+                        if (asset.hasCheckTimes) ...[
+                          SizedBox(height: 2.h),
+                          _CheckInOutCard(asset: asset),
+                        ],
+                        if (asset.hasVideo) ...[
+                          SizedBox(height: 2.h),
+                          _SectionTitle(title: tr.watch_video),
+                          SizedBox(height: 1.h),
+                          AssetVideoCard(videoUrl: asset.resolvedVideoUrl!),
+                        ],
+                        SizedBox(height: 2.h),
+                        _OwnerCard(owner: asset.owner),
+                        if (_hasDescription) ...[
+                          SizedBox(height: 2.h),
+                          _SectionTitle(title: tr.overview),
+                          SizedBox(height: 1.h),
+                          Text(
+                            _strippedDescription,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 11.5.sp,
+                              height: 1.55,
+                              color: Colors.black.withAlpha(175),
+                            ),
+                          ),
+                        ],
+                        if (_hasAttributes) ...[
+                          SizedBox(height: 2.2.h),
+                          _SectionTitle(title: tr.attributes),
+                          SizedBox(height: 1.h),
+                          _AttributesList(attributes: asset.attributes!),
+                        ],
+                        if (_hasAmenities) ...[
+                          SizedBox(height: 2.2.h),
+                          _SectionTitle(title: tr.amenities),
+                          SizedBox(height: 1.h),
+                          _AmenitiesGrid(amenities: asset.amenities!),
+                        ],
+                        SizedBox(height: 10.h),
+                      ],
                     ),
-                  SizedBox(height: 1.2.h),
-                  _InfoCard(asset: asset),
-                  if (!asset.isForSale &&
-                      isCurrentUserAssetOwner(context, asset.owner.id)) ...[
-                    SizedBox(height: 2.h),
-                    _ManageAvailabilityCard(asset: asset),
-                  ],
-                  SizedBox(height: 2.h),
-                  _PricingCard(asset: asset),
-                  if (asset.space != null || asset.rooms != null) ...[
-                    SizedBox(height: 2.h),
-                    _PropertySpecsCard(asset: asset),
-                  ],
-                  if (asset.latitude != null && asset.longitude != null) ...[
-                    SizedBox(height: 2.h),
-                    AssetLocationMapCard(asset: asset),
-                  ],
-                  if (!asset.isForSale && asset.rentType != null) ...[
-                    SizedBox(height: 2.h),
-                    _RentInfoCard(asset: asset),
-                  ],
-                  if (asset.isForSale &&
-                      (asset.rentPrice != null || asset.monthsCount != null)) ...[
-                    SizedBox(height: 2.h),
-                    _AdditionalPricingCard(asset: asset),
-                  ],
-                  if (asset.hasCheckTimes) ...[
-                    SizedBox(height: 2.h),
-                    _CheckInOutCard(asset: asset),
-                  ],
-                  if (asset.hasVideo) ...[
-                    SizedBox(height: 2.h),
-                    _SectionTitle(title: tr.watch_video),
-                    SizedBox(height: 1.h),
-                    AssetVideoCard(videoUrl: asset.resolvedVideoUrl!),
-                  ],
-                  SizedBox(height: 2.h),
-                  _OwnerCard(owner: asset.owner),
-                  if (_hasDescription) ...[
-                    SizedBox(height: 2.h),
-                    _SectionTitle(title: tr.overview),
-                    SizedBox(height: 1.h),
-                    Text(
-                      _strippedDescription,
-                      style: appTextStyle(
-                        context,
-                        fontSize: 11.5.sp,
-                        height: 1.55,
-                        color: Colors.black.withAlpha(175),
-                      ),
-                    ),
-                  ],
-                  if (_hasAttributes) ...[
-                    SizedBox(height: 2.2.h),
-                    _SectionTitle(title: tr.attributes),
-                    SizedBox(height: 1.h),
-                    _AttributesList(attributes: asset.attributes!),
-                  ],
-                  if (_hasAmenities) ...[
-                    SizedBox(height: 2.2.h),
-                    _SectionTitle(title: tr.amenities),
-                    SizedBox(height: 1.h),
-                    _AmenitiesGrid(amenities: asset.amenities!),
-                  ],
-                  SizedBox(height: 10.h),
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -207,31 +219,25 @@ class _AssetDetailsBody extends StatelessWidget {
   String get _strippedDescription =>
       (asset.description ?? '').replaceAll(RegExp(r'<[^>]*>'), '').trim();
 
-  SliverAppBar _buildAppBar(BuildContext context) {
-    return SliverAppBar(
-      expandedHeight: 33.h,
-      pinned: true,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: Padding(
-        padding: EdgeInsets.only(left: 2.w),
-        child: IconButton(
-          onPressed: () => AppNavigator.of(context).pop(),
-          icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
-          iconSize: 20,
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white.withAlpha(235),
-            shape: const CircleBorder(),
+  Widget _buildGalleryHeader(BuildContext context) {
+    final topPadding = MediaQuery.paddingOf(context).top;
+
+    return Stack(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: topPadding),
+          child: _AssetImageGallery(
+            imageUrls: asset.galleryImageUrls,
+            isForSale: asset.isForSale,
+            categoryName: asset.category.name,
           ),
         ),
-      ),
-      flexibleSpace: FlexibleSpaceBar(
-        background: _AssetImageGallery(
-          imageUrls: asset.galleryImageUrls,
-          isForSale: asset.isForSale,
-          categoryName: asset.category.name,
+        Positioned(
+          top: topPadding + 8,
+          left: 2.w,
+          child: const AppBackButton(),
         ),
-      ),
+      ],
     );
   }
 }
@@ -269,112 +275,207 @@ class _AssetImageGalleryState extends State<_AssetImageGallery> {
 
   @override
   Widget build(BuildContext context) {
-    final images = widget.imageUrls.isEmpty ? [''] : widget.imageUrls;
+    final images = widget.imageUrls.where((url) => url.trim().isNotEmpty).toList();
 
-    return Stack(
-      fit: StackFit.expand,
+    if (images.isEmpty) {
+      return SizedBox(
+        height: 33.h,
+        child: Container(color: Colors.grey.shade200),
+      );
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        PageView.builder(
-          controller: _pageController,
-          itemCount: images.length,
-          onPageChanged: (index) => setState(() => _currentPage = index),
-          itemBuilder: (context, index) {
-            final url = images[index];
-            if (url.isEmpty) {
-              return Container(color: Colors.grey.shade200);
-            }
-            return CachedNetworkImage(
-              imageUrl: url,
-              fit: BoxFit.cover,
-              placeholder: (_, __) => Container(color: Colors.grey.shade200),
-              errorWidget: (_, __, ___) => Container(
-                color: Colors.grey.shade200,
-                child: Icon(
-                  Icons.image_not_supported_rounded,
-                  color: Colors.grey.shade400,
-                  size: 48,
+        SizedBox(
+          height: 33.h,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              NotificationListener<ScrollNotification>(
+                onNotification: (notification) =>
+                    notification.metrics.axis == Axis.horizontal,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: images.length,
+                  physics: const PageScrollPhysics(),
+                  onPageChanged: (index) => setState(() => _currentPage = index),
+                  itemBuilder: (context, index) {
+                    return CachedNetworkImage(
+                      imageUrl: images[index],
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      placeholder: (_, __) =>
+                          Container(color: Colors.grey.shade200),
+                      errorWidget: (_, __, ___) => Container(
+                        color: Colors.grey.shade200,
+                        child: Icon(
+                          Icons.image_not_supported_rounded,
+                          color: Colors.grey.shade400,
+                          size: 48,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-            );
-          },
-        ),
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withAlpha(15),
-                Colors.black.withAlpha(90),
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 16,
-          left: 16,
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 3.5.w,
-              vertical: 0.7.h,
-            ),
-            decoration: BoxDecoration(
-              color: widget.isForSale
-                  ? const Color(0xFF1B6B2F)
-                  : AppColors.goldBrandColor,
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              widget.isForSale ? tr.for_sale : tr.for_rent,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w800,
+              IgnorePointer(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withAlpha(15),
+                        Colors.black.withAlpha(90),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 16,
-          right: 16,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.6.h),
-            decoration: BoxDecoration(
-              color: Colors.white.withAlpha(220),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              widget.categoryName,
-              style: TextStyle(
-                color: Colors.black.withAlpha(220),
-                fontSize: 9.5.sp,
-                fontWeight: FontWeight.w800,
+              Positioned(
+                top: 12,
+                right: 12,
+                child: IconButton(
+                  onPressed: () => FullScreenImageGallery.open(
+                    context,
+                    imageUrls: images,
+                    initialIndex: _currentPage,
+                  ),
+                  icon: const Icon(
+                    Icons.zoom_out_map_rounded,
+                    color: Colors.white,
+                  ),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.black.withAlpha(120),
+                  ),
+                ),
               ),
-            ),
+              Positioned(
+                bottom: 16,
+                left: 16,
+                child: IgnorePointer(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 3.5.w,
+                      vertical: 0.7.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: widget.isForSale
+                          ? const Color(0xFF1B6B2F)
+                          : AppColors.goldBrandColor,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      widget.isForSale ? tr.for_sale : tr.for_rent,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 16,
+                right: 16,
+                child: IgnorePointer(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 3.w,
+                      vertical: 0.6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withAlpha(220),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      widget.categoryName,
+                      style: TextStyle(
+                        color: Colors.black.withAlpha(220),
+                        fontSize: 9.5.sp,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              if (images.length > 1)
+                Positioned(
+                  top: 12,
+                  left: 0,
+                  right: 0,
+                  child: IgnorePointer(
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 3.w,
+                          vertical: 0.5.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withAlpha(120),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          '${_currentPage + 1} / ${images.length}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
         if (images.length > 1)
-          Positioned(
-            bottom: 16,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(images.length, (index) {
-                final active = index == _currentPage;
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  width: active ? 18 : 7,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    color: active
-                        ? Colors.white
-                        : Colors.white.withAlpha(120),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                );
-              }),
+          Container(
+            width: double.infinity,
+            color: AppColors.whiteColor,
+            padding: EdgeInsets.fromLTRB(5.w, 1.h, 5.w, 1.2.h),
+            child: SizedBox(
+              height: 7.h,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: images.length,
+                separatorBuilder: (_, __) => SizedBox(width: 2.w),
+                itemBuilder: (context, index) {
+                  final active = index == _currentPage;
+                  return GestureDetector(
+                    onTap: () {
+                      _pageController.animateToPage(
+                        index,
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeOut,
+                      );
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 15.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: active
+                              ? AppColors.goldBrandColor
+                              : Colors.black.withAlpha(30),
+                          width: active ? 2 : 1,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: CachedNetworkImage(
+                          imageUrl: images[index],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ),
       ],

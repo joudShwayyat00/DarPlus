@@ -6,6 +6,7 @@ import 'package:dar_plus_app/features/booking/presentation/providers/booking_pro
 import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/screens/book_now/widgets/booking_calendar.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
 import 'package:flutter/material.dart';
@@ -254,22 +255,8 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
         elevation: 0,
-        leadingWidth: 52,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 3.w),
-          child: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
-            iconSize: 18.sp,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.grey.shade100,
-              shape: const CircleBorder(),
-              elevation: 0,
-            ),
-          ),
-        ),
+        leadingWidth: kAppBarBackLeadingWidth,
+        leading: const AppBarBackButton(),
         title: Text(
           tr.book_now,
           style: appTextStyle(

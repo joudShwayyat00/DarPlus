@@ -4,9 +4,9 @@ import 'package:dar_plus_app/configuration/app_images.dart';
 import 'package:dar_plus_app/models/property_item.dart';
 import 'package:dar_plus_app/utils/helpers/property_navigation.dart';
 import 'package:dar_plus_app/screens/property_details/widget/property_images_slider.dart';
-import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/helpers/external_link_launcher.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -35,20 +35,7 @@ class PropertyDetailsScreen extends StatelessWidget {
             elevation: 0,
             leading: Padding(
               padding: EdgeInsets.only(left: 1.8.w),
-              child: IconButton(
-                onPressed: () {
-                  AppNavigator.of(context).pop();
-                },
-                icon: const Icon(Icons.arrow_back_rounded, color: Colors.black),
-                iconSize: 18.sp,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.white.withAlpha(235),
-                  shape: const CircleBorder(),
-                  elevation: 0,
-                ),
-              ),
+              child: const AppBackButton(),
             ),
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(

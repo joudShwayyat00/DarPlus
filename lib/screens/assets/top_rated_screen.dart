@@ -5,6 +5,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/screens/home/widgets/property_tile.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:flutter/material.dart';
@@ -181,21 +182,7 @@ class _TopRatedHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => AppNavigator.of(context).pop(),
-            child: Container(
-              padding: EdgeInsets.all(2.2.w),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20,
-                color: Colors.black.withAlpha(200),
-              ),
-            ),
-          ),
+          const AppBackButton(),
           SizedBox(width: 3.w),
           Expanded(
             child: Text(

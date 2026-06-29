@@ -18,6 +18,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/select_location_screen.dart';
 import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/utils/helpers/asset_time_helper.dart';
+import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -873,21 +874,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       ),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.grayBrandColor.withAlpha(20),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 18,
-                color: AppColors.blackColor,
-              ),
-            ),
-          ),
+          const AppBackButton(),
           SizedBox(width: 3.w),
           Text(
             _isEditMode ? tr.edit_asset : tr.add_new_asset,
