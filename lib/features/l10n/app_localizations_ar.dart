@@ -245,6 +245,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subscription_renew_message => 'جدد خطتك للحفاظ على ظهور عقاراتك.';
 
   @override
+  String get subscription_required_title => 'الاشتراك مطلوب';
+
+  @override
   String get renew_now => 'جدد الآن';
 
   @override
@@ -1355,6 +1358,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get media_section => 'الوسائط';
+
+  @override
+  String get main_property_image => 'الصورة الرئيسية';
+
+  @override
+  String get gallery_images => 'صور المعرض';
+
+  @override
+  String get add_gallery_photos => 'إضافة صور للمعرض';
+
+  @override
+  String get property_space => 'المساحة (م²)';
+
+  @override
+  String get rooms => 'الغرف';
+
+  @override
+  String get property_details_section => 'تفاصيل العقار';
+
+  @override
+  String get property_unavailable => 'هذا العقار غير متاح حالياً';
+
+  @override
+  String get property_specs => 'مواصفات العقار';
 
   @override
   String get video_url_optional => 'رابط يوتيوب (اختياري)';

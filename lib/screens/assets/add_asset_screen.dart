@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dar_plus_app/core/network/asset_api_exception.dart';
 import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/controller/local_provider.dart';
@@ -15,8 +16,8 @@ import 'package:dar_plus_app/features/location/data/models/region_item.dart';
 import 'package:dar_plus_app/features/location/presentation/providers/location_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/select_location_screen.dart';
+import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/utils/helpers/asset_time_helper.dart';
-import 'package:dar_plus_app/utils/helpers/asset_video_helper.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_phone_field.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -60,6 +61,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   final _dayPriceCtrl = TextEditingController();
   final _checkInTimeCtrl = TextEditingController();
   final _checkOutTimeCtrl = TextEditingController();
+  final _spaceCtrl = TextEditingController();
+  final _roomsCtrl = TextEditingController();
 
   // State
   int? _selectedCategoryId;
@@ -67,6 +70,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
   String _rentType = 'monthly'; // 'monthly' | 'yearly'
   File? _imageFile;
   String? _existingImageUrl;
+  final List<File> _galleryFiles = [];
+  final List<String> _existingGalleryUrls = [];
   bool _isLoadingAsset = false;
   final Set<int> _selectedAmenityIds = {};
   String _completePhone = '';
@@ -112,16 +117,20 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     _locationCtrl.text = asset.location;
     _emailCtrl.text = asset.email ?? asset.owner.email;
     _phoneCtrl.text = asset.phone ?? asset.owner.phoneNumber;
-    _videoCtrl.text = asset.resolvedVideoUrl ?? '';
+    _completePhone = _phoneCtrl.text;
+    _videoCtrl.text = asset.video ?? '';
     _selectedCategoryId = asset.category.id;
     _type = asset.type;
     _rentType = asset.rentType ?? 'monthly';
     _existingImageUrl = asset.image;
 
     if (asset.isForSale) {
-      _priceCtrl.text = asset.price;
+      _priceCtrl.text = asset.displayPrice;
     } else {
-      _rentPriceCtrl.text = asset.rentPrice?.toString() ?? asset.price;
+      _rentPriceCtrl.text = asset.rentPrice?.toString() ?? asset.displayPrice;
+    }
+    if (asset.rentPrice != null) {
+      _rentPriceCtrl.text = asset.rentPrice.toString();
     }
     if (asset.monthsCount != null) {
       _monthsCtrl.text = asset.monthsCount.toString();
@@ -149,6 +158,15 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     if (asset.longitude != null) {
       _lngCtrl.text = asset.longitude!.toString();
     }
+    if (asset.space != null) {
+      _spaceCtrl.text = asset.space.toString();
+    }
+    if (asset.rooms != null) {
+      _roomsCtrl.text = asset.rooms.toString();
+    }
+    _existingGalleryUrls
+      ..clear()
+      ..addAll(asset.images?.map((item) => item.image) ?? const []);
 
     _selectedAmenityIds
       ..clear()
@@ -235,6 +253,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     _dayPriceCtrl.dispose();
     _checkInTimeCtrl.dispose();
     _checkOutTimeCtrl.dispose();
+    _spaceCtrl.dispose();
+    _roomsCtrl.dispose();
     super.dispose();
   }
 
@@ -247,6 +267,15 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       imageQuality: 85,
     );
     if (picked != null) setState(() => _imageFile = File(picked.path));
+  }
+
+  Future<void> _pickGalleryImages() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickMultiImage(imageQuality: 85);
+    if (picked.isEmpty) return;
+    setState(() {
+      _galleryFiles.addAll(picked.map((file) => File(file.path)));
+    });
   }
 
   // ── Map location picker ───────────────────────────────────────────────────
@@ -274,6 +303,38 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
 
   void _showSnack(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  void _showAssetError(Object? error) {
+    if (error is AssetApiException && error.isSubscriptionRequired) {
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(tr.subscription_required_title),
+          content: Text(error.message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(tr.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SubscriptionsScreen(),
+                  ),
+                );
+              },
+              child: Text(tr.renew_now),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    _showSnack(formatAssetApiError(error, fallback: tr.something_went_wrong));
   }
 
   // ── Submit ────────────────────────────────────────────────────────────────
@@ -326,6 +387,9 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
 
     final salePrice = double.tryParse(_priceCtrl.text.trim()) ?? 0;
     final rentPrice = double.tryParse(_rentPriceCtrl.text.trim());
+    final space = int.tryParse(_spaceCtrl.text.trim());
+    final rooms = int.tryParse(_roomsCtrl.text.trim());
+    final galleryImagePaths = _galleryFiles.map((file) => file.path).toList();
 
     EasyLoading.show();
     final payload = (
@@ -336,6 +400,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       categoryId: _selectedCategoryId!,
       price: _type == 'sale' ? salePrice : (rentPrice ?? 0),
       imagePath: _imageFile?.path,
+      galleryImagePaths: galleryImagePaths,
       video: _videoCtrl.text.trim().isEmpty ? null : _videoCtrl.text.trim(),
       location: _locationCtrl.text.trim(),
       email: _emailCtrl.text.trim(),
@@ -343,23 +408,14 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
           ? _completePhone
           : _phoneCtrl.text.trim(),
       type: _type,
-      rentType: _type == 'rent' ? _rentType : null,
-      monthsCount:
-          _type == 'rent' &&
-              _rentType == 'monthly' &&
-              _monthsCtrl.text.isNotEmpty
+      rentType: _rentType,
+      monthsCount: _monthsCtrl.text.isNotEmpty
           ? int.tryParse(_monthsCtrl.text.trim())
           : null,
-      yearsCount:
-          _type == 'rent' &&
-              _rentType == 'yearly' &&
-              _yearsCtrl.text.isNotEmpty
+      yearsCount: _yearsCtrl.text.isNotEmpty
           ? int.tryParse(_yearsCtrl.text.trim())
           : null,
-      daysCount:
-          _type == 'rent' &&
-              _rentType == 'daily' &&
-              _daysCtrl.text.isNotEmpty
+      daysCount: _daysCtrl.text.isNotEmpty
           ? int.tryParse(_daysCtrl.text.trim())
           : null,
       dayPrice: _dayPriceCtrl.text.isNotEmpty
@@ -371,7 +427,11 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       checkOutTime: _checkOutTimeCtrl.text.trim().isEmpty
           ? null
           : _checkOutTimeCtrl.text.trim(),
-      rentPrice: _type == 'rent' ? rentPrice : null,
+      space: space,
+      rooms: rooms,
+      rentPrice: _rentPriceCtrl.text.isNotEmpty
+          ? double.tryParse(_rentPriceCtrl.text.trim())
+          : null,
       latitude: lat,
       longitude: lng,
       amenityIds: _selectedAmenityIds.toList(),
@@ -391,6 +451,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             categoryId: payload.categoryId,
             price: payload.price,
             imagePath: payload.imagePath,
+            galleryImagePaths: payload.galleryImagePaths,
             video: payload.video,
             location: payload.location,
             email: payload.email,
@@ -404,6 +465,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             dayPrice: payload.dayPrice,
             checkInTime: payload.checkInTime,
             checkOutTime: payload.checkOutTime,
+            space: payload.space,
+            rooms: payload.rooms,
             latitude: payload.latitude,
             longitude: payload.longitude,
             amenityIds: payload.amenityIds,
@@ -425,6 +488,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             categoryId: payload.categoryId,
             price: payload.price,
             imagePath: payload.imagePath!,
+            galleryImagePaths: payload.galleryImagePaths,
             video: payload.video,
             location: payload.location,
             email: payload.email,
@@ -438,6 +502,8 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
             dayPrice: payload.dayPrice,
             checkInTime: payload.checkInTime,
             checkOutTime: payload.checkOutTime,
+            space: payload.space,
+            rooms: payload.rooms,
             latitude: payload.latitude,
             longitude: payload.longitude,
             amenityIds: payload.amenityIds,
@@ -463,7 +529,7 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
       final err = _isEditMode
           ? ref.read(updateAssetControllerProvider).error
           : ref.read(addAssetControllerProvider).error;
-      _showSnack(err?.toString() ?? tr.something_went_wrong);
+      _showAssetError(err);
     }
   }
 
@@ -548,6 +614,37 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     _buildCategoryDropdown(),
                     SizedBox(height: 1.5.h),
                     _buildTypeToggle(),
+
+                    SizedBox(height: 2.5.h),
+                    _sectionTitle(tr.property_details_section),
+                    SizedBox(height: 1.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTextField(
+                            controller: _spaceCtrl,
+                            hint: tr.property_space,
+                            icon: Icons.square_foot_rounded,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 3.w),
+                        Expanded(
+                          child: _buildTextField(
+                            controller: _roomsCtrl,
+                            hint: tr.rooms,
+                            icon: Icons.meeting_room_outlined,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
 
                     SizedBox(height: 2.5.h),
                     _sectionTitle(tr.pricing_section),
@@ -699,7 +796,29 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     SizedBox(height: 2.5.h),
                     _sectionTitle(tr.media_section),
                     SizedBox(height: 1.h),
+                    Text(
+                      tr.main_property_image,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 9.5.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.grayBrandColor,
+                      ),
+                    ),
+                    SizedBox(height: 0.8.h),
                     _buildImagePicker(),
+                    SizedBox(height: 1.5.h),
+                    Text(
+                      tr.gallery_images,
+                      style: appTextStyle(
+                        context,
+                        fontSize: 9.5.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.grayBrandColor,
+                      ),
+                    ),
+                    SizedBox(height: 0.8.h),
+                    _buildGalleryPicker(),
                     SizedBox(height: 1.5.h),
                     _buildTextField(
                       controller: _videoCtrl,
@@ -1444,6 +1563,138 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
                     ),
                   ],
                 ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGalleryPicker() {
+    final totalCount = _galleryFiles.length + _existingGalleryUrls.length;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 12.h,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              GestureDetector(
+                onTap: _pickGalleryImages,
+                child: Container(
+                  width: 24.w,
+                  margin: EdgeInsets.only(right: 2.5.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.goldBrandColor.withAlpha(18),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppColors.goldBrandColor.withAlpha(80),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.add_photo_alternate_outlined,
+                        color: AppColors.goldBrandColor,
+                      ),
+                      SizedBox(height: 0.6.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 2.w),
+                        child: Text(
+                          tr.add_gallery_photos,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: appTextStyle(
+                            context,
+                            fontSize: 8.5.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.goldBrandColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              ...List.generate(_existingGalleryUrls.length, (index) {
+                final url = _existingGalleryUrls[index];
+                return _galleryThumb(
+                  child: CachedNetworkImage(
+                    imageUrl: url,
+                    fit: BoxFit.cover,
+                  ),
+                  onRemove: () => setState(() {
+                    _existingGalleryUrls.removeAt(index);
+                  }),
+                );
+              }),
+              ...List.generate(_galleryFiles.length, (index) {
+                final file = _galleryFiles[index];
+                return _galleryThumb(
+                  child: Image.file(file, fit: BoxFit.cover),
+                  onRemove: () => setState(() {
+                    _galleryFiles.removeAt(index);
+                  }),
+                );
+              }),
+            ],
+          ),
+        ),
+        if (totalCount > 0)
+          Padding(
+            padding: EdgeInsets.only(top: 0.8.h),
+            child: Text(
+              '$totalCount ${tr.gallery_images.toLowerCase()}',
+              style: appTextStyle(
+                context,
+                fontSize: 9.sp,
+                color: AppColors.grayBrandColor,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _galleryThumb({
+    required Widget child,
+    required VoidCallback onRemove,
+  }) {
+    return Container(
+      width: 24.w,
+      margin: EdgeInsets.only(right: 2.5.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.black.withAlpha(18)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            child,
+            Positioned(
+              top: 6,
+              right: 6,
+              child: GestureDetector(
+                onTap: onRemove,
+                child: Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    size: 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

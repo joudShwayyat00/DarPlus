@@ -248,6 +248,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Renew your plan to keep your listings active.';
 
   @override
+  String get subscription_required_title => 'Subscription required';
+
+  @override
   String get renew_now => 'Renew now';
 
   @override
@@ -1365,6 +1368,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get media_section => 'Media';
+
+  @override
+  String get main_property_image => 'Main photo';
+
+  @override
+  String get gallery_images => 'Gallery photos';
+
+  @override
+  String get add_gallery_photos => 'Add gallery photos';
+
+  @override
+  String get property_space => 'Space (m²)';
+
+  @override
+  String get rooms => 'Rooms';
+
+  @override
+  String get property_details_section => 'Property details';
+
+  @override
+  String get property_unavailable => 'This listing is currently unavailable';
+
+  @override
+  String get property_specs => 'Property specs';
 
   @override
   String get video_url_optional => 'YouTube link (optional)';

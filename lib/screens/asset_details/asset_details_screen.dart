@@ -121,6 +121,12 @@ class _AssetDetailsBody extends StatelessWidget {
                     ),
                   SizedBox(height: 1.2.h),
                   _InfoCard(asset: asset),
+                  SizedBox(height: 2.h),
+                  _PricingCard(asset: asset),
+                  if (asset.space != null || asset.rooms != null) ...[
+                    SizedBox(height: 2.h),
+                    _PropertySpecsCard(asset: asset),
+                  ],
                   if (asset.latitude != null && asset.longitude != null) ...[
                     SizedBox(height: 2.h),
                     AssetLocationMapCard(asset: asset),
@@ -128,6 +134,11 @@ class _AssetDetailsBody extends StatelessWidget {
                   if (!asset.isForSale && asset.rentType != null) ...[
                     SizedBox(height: 2.h),
                     _RentInfoCard(asset: asset),
+                  ],
+                  if (asset.isForSale &&
+                      (asset.rentPrice != null || asset.monthsCount != null)) ...[
+                    SizedBox(height: 2.h),
+                    _AdditionalPricingCard(asset: asset),
                   ],
                   if (asset.hasCheckTimes) ...[
                     SizedBox(height: 2.h),
@@ -191,8 +202,6 @@ class _AssetDetailsBody extends StatelessWidget {
       (asset.description ?? '').replaceAll(RegExp(r'<[^>]*>'), '').trim();
 
   SliverAppBar _buildAppBar(BuildContext context) {
-    final isForSale = asset.isForSale;
-
     return SliverAppBar(
       expandedHeight: 33.h,
       pinned: true,
@@ -211,11 +220,65 @@ class _AssetDetailsBody extends StatelessWidget {
         ),
       ),
       flexibleSpace: FlexibleSpaceBar(
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            CachedNetworkImage(
-              imageUrl: asset.image,
+        background: _AssetImageGallery(
+          imageUrls: asset.galleryImageUrls,
+          isForSale: asset.isForSale,
+          categoryName: asset.category.name,
+        ),
+      ),
+    );
+  }
+}
+
+class _AssetImageGallery extends StatefulWidget {
+  final List<String> imageUrls;
+  final bool isForSale;
+  final String categoryName;
+
+  const _AssetImageGallery({
+    required this.imageUrls,
+    required this.isForSale,
+    required this.categoryName,
+  });
+
+  @override
+  State<_AssetImageGallery> createState() => _AssetImageGalleryState();
+}
+
+class _AssetImageGalleryState extends State<_AssetImageGallery> {
+  late final PageController _pageController;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final images = widget.imageUrls.isEmpty ? [''] : widget.imageUrls;
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        PageView.builder(
+          controller: _pageController,
+          itemCount: images.length,
+          onPageChanged: (index) => setState(() => _currentPage = index),
+          itemBuilder: (context, index) {
+            final url = images[index];
+            if (url.isEmpty) {
+              return Container(color: Colors.grey.shade200);
+            }
+            return CachedNetworkImage(
+              imageUrl: url,
               fit: BoxFit.cover,
               placeholder: (_, __) => Container(color: Colors.grey.shade200),
               errorWidget: (_, __, ___) => Container(
@@ -226,68 +289,89 @@ class _AssetDetailsBody extends StatelessWidget {
                   size: 48,
                 ),
               ),
-            ),
-            // Gradient overlay
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withAlpha(15),
-                    Colors.black.withAlpha(90),
-                  ],
-                ),
-              ),
-            ),
-            // Listing-type badge
-            Positioned(
-              bottom: 16,
-              left: 16,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 3.5.w,
-                  vertical: 0.7.h,
-                ),
-                decoration: BoxDecoration(
-                  color: isForSale
-                      ? const Color(0xFF1B6B2F)
-                      : AppColors.goldBrandColor,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  isForSale ? tr.for_sale : tr.for_rent,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ),
-            // Category badge
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.6.h),
-                decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(220),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  asset.category.name,
-                  style: TextStyle(
-                    color: Colors.black.withAlpha(220),
-                    fontSize: 9.5.sp,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ),
-          ],
+            );
+          },
         ),
-      ),
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withAlpha(15),
+                Colors.black.withAlpha(90),
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 16,
+          left: 16,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 3.5.w,
+              vertical: 0.7.h,
+            ),
+            decoration: BoxDecoration(
+              color: widget.isForSale
+                  ? const Color(0xFF1B6B2F)
+                  : AppColors.goldBrandColor,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              widget.isForSale ? tr.for_sale : tr.for_rent,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 16,
+          right: 16,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.6.h),
+            decoration: BoxDecoration(
+              color: Colors.white.withAlpha(220),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              widget.categoryName,
+              style: TextStyle(
+                color: Colors.black.withAlpha(220),
+                fontSize: 9.5.sp,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ),
+        if (images.length > 1)
+          Positioned(
+            bottom: 16,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(images.length, (index) {
+                final active = index == _currentPage;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  width: active ? 18 : 7,
+                  height: 7,
+                  decoration: BoxDecoration(
+                    color: active
+                        ? Colors.white
+                        : Colors.white.withAlpha(120),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                );
+              }),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -409,6 +493,195 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
+class _PricingCard extends StatelessWidget {
+  final AssetItem asset;
+
+  const _PricingCard({required this.asset});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.goldBrandColor.withAlpha(28),
+            AppColors.goldBrandColor.withAlpha(8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.goldBrandColor.withAlpha(70)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.goldBrandColor.withAlpha(30),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.sell_outlined,
+              color: AppColors.goldBrandColor,
+              size: 22,
+            ),
+          ),
+          SizedBox(width: 3.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  asset.isForSale ? tr.price_label : tr.rent_price,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black.withAlpha(140),
+                  ),
+                ),
+                SizedBox(height: 0.3.h),
+                Text(
+                  asset.isForSale
+                      ? formatPrice(asset.displayPrice, decimals: 2)
+                      : formatPrice(
+                          asset.rentPrice ?? asset.displayPrice,
+                          decimals: 2,
+                        ),
+                  style: appTextStyle(
+                    context,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black.withAlpha(240),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PropertySpecsCard extends StatelessWidget {
+  final AssetItem asset;
+
+  const _PropertySpecsCard({required this.asset});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.goldBrandColor.withAlpha(60)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            tr.property_specs,
+            style: appTextStyle(
+              context,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.black.withAlpha(230),
+            ),
+          ),
+          SizedBox(height: 1.2.h),
+          Row(
+            children: [
+              if (asset.space != null)
+                Expanded(
+                  child: _RentDetailTile(
+                    icon: Icons.square_foot_rounded,
+                    label: tr.property_space,
+                    value: asset.space.toString(),
+                  ),
+                ),
+              if (asset.space != null && asset.rooms != null)
+                SizedBox(width: 3.w),
+              if (asset.rooms != null)
+                Expanded(
+                  child: _RentDetailTile(
+                    icon: Icons.meeting_room_outlined,
+                    label: tr.rooms,
+                    value: asset.rooms.toString(),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AdditionalPricingCard extends StatelessWidget {
+  final AssetItem asset;
+
+  const _AdditionalPricingCard({required this.asset});
+
+  @override
+  Widget build(BuildContext context) {
+    final tiles = <Widget>[];
+
+    if (asset.rentPrice != null) {
+      tiles.add(
+        Expanded(
+          child: _RentDetailTile(
+            icon: Icons.price_change_outlined,
+            label: tr.rent_price,
+            value: formatPrice(asset.rentPrice!, decimals: 2),
+          ),
+        ),
+      );
+    }
+    if (asset.monthsCount != null) {
+      if (tiles.isNotEmpty) tiles.add(SizedBox(width: 3.w));
+      tiles.add(
+        Expanded(
+          child: _RentDetailTile(
+            icon: Icons.calendar_month_rounded,
+            label: tr.months_count,
+            value: asset.monthsCount.toString(),
+          ),
+        ),
+      );
+    }
+
+    if (tiles.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.goldBrandColor.withAlpha(60)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            tr.price_summary,
+            style: appTextStyle(
+              context,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.black.withAlpha(230),
+            ),
+          ),
+          SizedBox(height: 1.2.h),
+          IntrinsicHeight(child: Row(children: tiles)),
+        ],
+      ),
+    );
+  }
+}
+
 // ─── Rent Info Card ──────────────────────────────────────────────────────────
 
 class _RentInfoCard extends StatelessWidget {
@@ -500,6 +773,14 @@ class _RentInfoCard extends StatelessWidget {
               ],
             ),
           ),
+          if (rentType == 'daily' && asset.dayPrice != null) ...[
+            SizedBox(height: 1.2.h),
+            _RentDetailTile(
+              icon: Icons.payments_outlined,
+              label: tr.day_price,
+              value: formatPrice(asset.dayPrice!, decimals: 2),
+            ),
+          ],
         ],
       ),
     );

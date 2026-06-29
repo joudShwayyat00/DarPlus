@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_constants.dart';
+import '../../../../core/network/asset_api_exception.dart';
 import '../../../../core/network/dio_factory.dart';
 import '../../domain/repositories/assets_repository.dart';
 import '../data_sources/assets_service_client.dart';
@@ -111,6 +112,7 @@ class AssetsRepositoryImpl implements AssetsRepository {
     required int categoryId,
     required double price,
     required String imagePath,
+    List<String> galleryImagePaths = const [],
     String? video,
     required String location,
     required String email,
@@ -124,6 +126,8 @@ class AssetsRepositoryImpl implements AssetsRepository {
     double? dayPrice,
     String? checkInTime,
     String? checkOutTime,
+    int? space,
+    int? rooms,
     required double latitude,
     required double longitude,
     required List<int> amenityIds,
@@ -131,45 +135,40 @@ class AssetsRepositoryImpl implements AssetsRepository {
     required int cityId,
     required int regionId,
   }) async {
-    final dio = DioFactory.getDio();
-    final formData = FormData.fromMap({
-      'name_en': nameEn,
-      'name_ar': nameAr,
-      'description_en': descriptionEn,
-      'description_ar': descriptionAr,
-      'category_id': categoryId,
-      'price': price,
-      'image': await MultipartFile.fromFile(
-        imagePath,
-        filename: imagePath.split('/').last,
+    final formData = await _buildAssetFormData(
+      fields: _assetFormFields(
+        nameEn: nameEn,
+        nameAr: nameAr,
+        descriptionEn: descriptionEn,
+        descriptionAr: descriptionAr,
+        categoryId: categoryId,
+        price: price,
+        video: video,
+        location: location,
+        email: email,
+        phone: phone,
+        type: type,
+        rentType: rentType,
+        monthsCount: monthsCount,
+        yearsCount: yearsCount,
+        daysCount: daysCount,
+        rentPrice: rentPrice,
+        dayPrice: dayPrice,
+        checkInTime: checkInTime,
+        checkOutTime: checkOutTime,
+        space: space,
+        rooms: rooms,
+        latitude: latitude,
+        longitude: longitude,
+        amenityIds: amenityIds,
+        countryId: countryId,
+        cityId: cityId,
+        regionId: regionId,
       ),
-      if (video != null && video.isNotEmpty) 'video': video,
-      'location': location,
-      'email': email,
-      'phone': phone,
-      'type': type,
-      if (rentType != null) 'rent_type': rentType,
-      if (monthsCount != null) 'months_count': monthsCount,
-      if (yearsCount != null) 'years_count': yearsCount,
-      if (daysCount != null) 'days_count': daysCount,
-      if (rentPrice != null) 'rent_price': rentPrice,
-      if (dayPrice != null) 'day_price': dayPrice,
-      if (checkInTime != null && checkInTime.isNotEmpty)
-        'check_in_time': checkInTime,
-      if (checkOutTime != null && checkOutTime.isNotEmpty)
-        'check_out_time': checkOutTime,
-      'latitude': latitude,
-      'longitude': longitude,
-      'amenities_ids': jsonEncode(amenityIds),
-      'country_id': countryId,
-      'city_id': cityId,
-      'region_id': regionId,
-    });
-    await dio.post(
-      '${ApiConstants.baseUrl}${ApiConstants.addAsset}',
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
+      imagePath: imagePath,
+      galleryImagePaths: galleryImagePaths,
     );
+    await _postAssetFormData(ApiConstants.addAsset, formData);
   }
 
   @override
@@ -182,6 +181,7 @@ class AssetsRepositoryImpl implements AssetsRepository {
     required int categoryId,
     required double price,
     String? imagePath,
+    List<String> galleryImagePaths = const [],
     String? video,
     required String location,
     required String email,
@@ -195,6 +195,8 @@ class AssetsRepositoryImpl implements AssetsRepository {
     double? dayPrice,
     String? checkInTime,
     String? checkOutTime,
+    int? space,
+    int? rooms,
     required double latitude,
     required double longitude,
     required List<int> amenityIds,
@@ -202,20 +204,81 @@ class AssetsRepositoryImpl implements AssetsRepository {
     required int cityId,
     required int regionId,
   }) async {
-    final dio = DioFactory.getDio();
-    final formData = FormData.fromMap({
-      'asset_id': assetId,
+    final formData = await _buildAssetFormData(
+      fields: _assetFormFields(
+        assetId: assetId,
+        nameEn: nameEn,
+        nameAr: nameAr,
+        descriptionEn: descriptionEn,
+        descriptionAr: descriptionAr,
+        categoryId: categoryId,
+        price: price,
+        video: video,
+        location: location,
+        email: email,
+        phone: phone,
+        type: type,
+        rentType: rentType,
+        monthsCount: monthsCount,
+        yearsCount: yearsCount,
+        daysCount: daysCount,
+        rentPrice: rentPrice,
+        dayPrice: dayPrice,
+        checkInTime: checkInTime,
+        checkOutTime: checkOutTime,
+        space: space,
+        rooms: rooms,
+        latitude: latitude,
+        longitude: longitude,
+        amenityIds: amenityIds,
+        countryId: countryId,
+        cityId: cityId,
+        regionId: regionId,
+      ),
+      imagePath: imagePath,
+      galleryImagePaths: galleryImagePaths,
+    );
+    await _postAssetFormData(ApiConstants.updateAsset, formData);
+  }
+
+  Map<String, dynamic> _assetFormFields({
+    int? assetId,
+    required String nameEn,
+    required String nameAr,
+    required String descriptionEn,
+    required String descriptionAr,
+    required int categoryId,
+    required double price,
+    String? video,
+    required String location,
+    required String email,
+    required String phone,
+    required String type,
+    String? rentType,
+    int? monthsCount,
+    int? yearsCount,
+    int? daysCount,
+    double? rentPrice,
+    double? dayPrice,
+    String? checkInTime,
+    String? checkOutTime,
+    int? space,
+    int? rooms,
+    required double latitude,
+    required double longitude,
+    required List<int> amenityIds,
+    required int countryId,
+    required int cityId,
+    required int regionId,
+  }) {
+    return {
+      if (assetId != null) 'asset_id': assetId,
       'name_en': nameEn,
       'name_ar': nameAr,
       'description_en': descriptionEn,
       'description_ar': descriptionAr,
       'category_id': categoryId,
       'price': price,
-      if (imagePath != null)
-        'image': await MultipartFile.fromFile(
-          imagePath,
-          filename: imagePath.split('/').last,
-        ),
       if (video != null && video.isNotEmpty) 'video': video,
       'location': location,
       'email': email,
@@ -231,17 +294,85 @@ class AssetsRepositoryImpl implements AssetsRepository {
         'check_in_time': checkInTime,
       if (checkOutTime != null && checkOutTime.isNotEmpty)
         'check_out_time': checkOutTime,
+      if (space != null) 'space': space,
+      if (rooms != null) 'rooms': rooms,
       'latitude': latitude,
       'longitude': longitude,
       'amenities_ids': jsonEncode(amenityIds),
       'country_id': countryId,
       'city_id': cityId,
       'region_id': regionId,
-    });
-    await dio.post(
-      '${ApiConstants.baseUrl}${ApiConstants.updateAsset}',
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
+    };
+  }
+
+  Future<FormData> _buildAssetFormData({
+    required Map<String, dynamic> fields,
+    String? imagePath,
+    List<String> galleryImagePaths = const [],
+  }) async {
+    final formData = FormData.fromMap(fields);
+
+    if (imagePath != null) {
+      formData.files.add(
+        MapEntry(
+          'image',
+          await MultipartFile.fromFile(
+            imagePath,
+            filename: imagePath.split('/').last,
+          ),
+        ),
+      );
+    }
+
+    for (final path in galleryImagePaths) {
+      formData.files.add(
+        MapEntry(
+          'images[]',
+          await MultipartFile.fromFile(
+            path,
+            filename: path.split('/').last,
+          ),
+        ),
+      );
+    }
+
+    return formData;
+  }
+
+  Future<void> _postAssetFormData(String endpoint, FormData formData) async {
+    final dio = DioFactory.getDio();
+    try {
+      await dio.post(
+        '${ApiConstants.baseUrl}$endpoint',
+        data: formData,
+        options: Options(
+          contentType: 'multipart/form-data',
+          headers: {ApiHeaders.acceptHeader: 'application/vnd.api+json'},
+        ),
+      );
+    } on DioException catch (e) {
+      throw _mapAssetDioError(e);
+    }
+  }
+
+  AssetApiException _mapAssetDioError(DioException error) {
+    final statusCode = error.response?.statusCode;
+    final data = error.response?.data;
+    String message = 'Something went wrong';
+
+    if (data is Map) {
+      final apiMessage = data['message'];
+      if (apiMessage is String && apiMessage.isNotEmpty) {
+        message = apiMessage;
+      }
+    }
+
+    final isSubscriptionRequired = statusCode == 403 &&
+        message.toLowerCase().contains('subscription');
+
+    return AssetApiException(
+      message,
+      isSubscriptionRequired: isSubscriptionRequired,
     );
   }
 
@@ -249,10 +380,17 @@ class AssetsRepositoryImpl implements AssetsRepository {
   Future<void> deleteAsset({required int assetId}) async {
     final dio = DioFactory.getDio();
     final formData = FormData.fromMap({'asset_id': assetId});
-    await dio.post(
-      '${ApiConstants.baseUrl}${ApiConstants.deleteAsset}',
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
-    );
+    try {
+      await dio.post(
+        '${ApiConstants.baseUrl}${ApiConstants.deleteAsset}',
+        data: formData,
+        options: Options(
+          contentType: 'multipart/form-data',
+          headers: {ApiHeaders.acceptHeader: 'application/vnd.api+json'},
+        ),
+      );
+    } on DioException catch (e) {
+      throw _mapAssetDioError(e);
+    }
   }
 }

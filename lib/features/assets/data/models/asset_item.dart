@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'asset_amenity.dart';
 import 'asset_attribute.dart';
+import 'asset_gallery_image.dart';
 import 'asset_owner.dart';
 import '../../../../utils/helpers/asset_time_helper.dart';
 
@@ -18,6 +19,7 @@ class AssetItem {
   final String? country;
   final String? city;
   final String? region;
+  @JsonKey(fromJson: _priceFromJson)
   final String price;
   final CategoryItem category;
   final AssetOwner owner;
@@ -57,6 +59,61 @@ class AssetItem {
   final int? regionId;
   final List<AssetAttribute>? attributes;
   final List<AssetAmenity>? amenities;
+  @JsonKey(fromJson: _nullableIntFromJson)
+  final int? space;
+  @JsonKey(fromJson: _nullableIntFromJson)
+  final int? rooms;
+  @JsonKey(fromJson: _imagesFromJson)
+  final List<AssetGalleryImage>? images;
+  @JsonKey(name: 'is_available', fromJson: _boolFromJson)
+  final bool? isAvailable;
+
+  static String _priceFromJson(dynamic value) {
+    if (value is String) return value;
+    if (value is num) return value.toString();
+    return value?.toString() ?? '';
+  }
+
+  static bool? _boolFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) {
+      final normalized = value.trim().toLowerCase();
+      if (normalized == '1' || normalized == 'true') return true;
+      if (normalized == '0' || normalized == 'false') return false;
+    }
+    return null;
+  }
+
+  static List<AssetGalleryImage>? _imagesFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is! List) return null;
+
+    final images = <AssetGalleryImage>[];
+    for (var i = 0; i < value.length; i++) {
+      final item = value[i];
+      if (item is String) {
+        images.add(AssetGalleryImage(id: i, image: item));
+      } else if (item is Map<String, dynamic>) {
+        images.add(AssetGalleryImage.fromJson(item));
+      } else if (item is Map) {
+        images.add(AssetGalleryImage.fromJson(Map<String, dynamic>.from(item)));
+      }
+    }
+    return images.isEmpty ? null : images;
+  }
+
+  static int? _nullableIntFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.round();
+    if (value is String) {
+      final asDouble = double.tryParse(value);
+      if (asDouble != null) return asDouble.round();
+      return int.tryParse(value);
+    }
+    return null;
+  }
 
   static double? _nullableDoubleFromJson(dynamic value) {
     if (value == null) return null;
@@ -96,9 +153,39 @@ class AssetItem {
     this.regionId,
     this.attributes,
     this.amenities,
+    this.space,
+    this.rooms,
+    this.images,
+    this.isAvailable,
   });
 
   bool get isForSale => type == 'sale';
+
+  bool get isUnavailable => isAvailable == false;
+
+  List<String> get galleryImageUrls {
+    final urls = <String>[];
+    void addUrl(String? url) {
+      final trimmed = url?.trim();
+      if (trimmed == null || trimmed.isEmpty || urls.contains(trimmed)) return;
+      urls.add(trimmed);
+    }
+
+    addUrl(image);
+    for (final item in images ?? const <AssetGalleryImage>[]) {
+      addUrl(item.image);
+    }
+    return urls;
+  }
+
+  String get displayPrice {
+    final parsed = double.tryParse(price);
+    if (parsed == null) return price;
+    if (parsed == parsed.roundToDouble()) {
+      return parsed.round().toString();
+    }
+    return parsed.toStringAsFixed(2);
+  }
 
   String? get displayCheckInTime => formatAssetTimeForDisplay(checkInTime);
 
@@ -136,12 +223,12 @@ class AssetItem {
     region: region,
     price: price,
     rating: rating,
-    images: [image],
+    images: [image, ...?images?.map((e) => e.image)],
     description: description ?? '',
     guests: 0,
-    bedrooms: 0,
+    bedrooms: rooms ?? 0,
     bathrooms: 0,
-    size: 0,
+    size: (space ?? 0).toDouble(),
     hasPool: false,
     hasBbq: false,
     hasWifi: false,

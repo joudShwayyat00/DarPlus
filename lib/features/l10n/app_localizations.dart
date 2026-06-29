@@ -554,6 +554,12 @@ abstract class AppLocalizations {
   /// **'Renew your plan to keep your listings active.'**
   String get subscription_renew_message;
 
+  /// No description provided for @subscription_required_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription required'**
+  String get subscription_required_title;
+
   /// No description provided for @renew_now.
   ///
   /// In en, this message translates to:
@@ -2683,6 +2689,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Media'**
   String get media_section;
+
+  /// No description provided for @main_property_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Main photo'**
+  String get main_property_image;
+
+  /// No description provided for @gallery_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery photos'**
+  String get gallery_images;
+
+  /// No description provided for @add_gallery_photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Add gallery photos'**
+  String get add_gallery_photos;
+
+  /// No description provided for @property_space.
+  ///
+  /// In en, this message translates to:
+  /// **'Space (m²)'**
+  String get property_space;
+
+  /// No description provided for @rooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get rooms;
+
+  /// No description provided for @property_details_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Property details'**
+  String get property_details_section;
+
+  /// No description provided for @property_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This listing is currently unavailable'**
+  String get property_unavailable;
+
+  /// No description provided for @property_specs.
+  ///
+  /// In en, this message translates to:
+  /// **'Property specs'**
+  String get property_specs;
 
   /// No description provided for @video_url_optional.
   ///

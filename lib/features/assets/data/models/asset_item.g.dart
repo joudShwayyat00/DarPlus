@@ -14,7 +14,7 @@ AssetItem _$AssetItemFromJson(Map<String, dynamic> json) => AssetItem(
   country: json['country'] as String?,
   city: json['city'] as String?,
   region: json['region'] as String?,
-  price: json['price'] as String,
+  price: AssetItem._priceFromJson(json['price']),
   category: CategoryItem.fromJson(json['category'] as Map<String, dynamic>),
   owner: AssetOwner.fromJson(json['owner'] as Map<String, dynamic>),
   type: json['type'] as String,
@@ -41,6 +41,10 @@ AssetItem _$AssetItemFromJson(Map<String, dynamic> json) => AssetItem(
   amenities: (json['amenities'] as List<dynamic>?)
       ?.map((e) => AssetAmenity.fromJson(e as Map<String, dynamic>))
       .toList(),
+  space: AssetItem._nullableIntFromJson(json['space']),
+  rooms: AssetItem._nullableIntFromJson(json['rooms']),
+  images: AssetItem._imagesFromJson(json['images']),
+  isAvailable: AssetItem._boolFromJson(json['is_available']),
 );
 
 Map<String, dynamic> _$AssetItemToJson(AssetItem instance) => <String, dynamic>{
@@ -74,4 +78,8 @@ Map<String, dynamic> _$AssetItemToJson(AssetItem instance) => <String, dynamic>{
   'region_id': instance.regionId,
   'attributes': instance.attributes,
   'amenities': instance.amenities,
+  'space': instance.space,
+  'rooms': instance.rooms,
+  'images': instance.images,
+  'is_available': instance.isAvailable,
 };

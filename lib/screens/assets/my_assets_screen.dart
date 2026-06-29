@@ -1,3 +1,4 @@
+import 'package:dar_plus_app/core/network/asset_api_exception.dart';
 import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/assets/data/models/asset_item.dart';
@@ -6,6 +7,7 @@ import 'package:dar_plus_app/features/home/presentation/providers/home_providers
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
+import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
@@ -79,9 +81,40 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
       ref.invalidate(assetDetailControllerProvider(asset.id));
     } else {
       final err = ref.read(deleteAssetControllerProvider).error;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(err?.toString() ?? tr.something_went_wrong)),
-      );
+      if (err is AssetApiException && err.isSubscriptionRequired) {
+        await showDialog<void>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text(tr.subscription_required_title),
+            content: Text(err.message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(tr.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const SubscriptionsScreen(),
+                    ),
+                  );
+                },
+                child: Text(tr.renew_now),
+              ),
+            ],
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              formatAssetApiError(err, fallback: tr.something_went_wrong),
+            ),
+          ),
+        );
+      }
     }
   }
 

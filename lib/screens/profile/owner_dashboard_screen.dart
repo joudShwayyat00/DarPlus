@@ -7,6 +7,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
 import 'package:dar_plus_app/screens/assets/my_assets_screen.dart';
 import 'package:dar_plus_app/screens/profile/my_appointments_screen.dart';
+import 'package:dar_plus_app/screens/profile/owner_statistics_screen.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/widgets/login_required_view.dart';
 import 'package:flutter/material.dart';
@@ -148,6 +149,19 @@ class OwnerDashboardScreen extends ConsumerWidget {
                   ),
                 ),
                 badge: pendingCount > 0 ? '$pendingCount' : null,
+              ),
+              SizedBox(height: 1.2.h),
+              _DashboardTile(
+                icon: Icons.bar_chart_rounded,
+                title: tr.my_statistics,
+                subtitle: tr.statistics_overview,
+                gradient: const [Color(0xFF1565C0), Color(0xFF42A5F5)],
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const OwnerStatisticsScreen(),
+                  ),
+                ),
               ),
             ],
           ),
