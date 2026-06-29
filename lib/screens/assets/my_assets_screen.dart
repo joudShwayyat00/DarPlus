@@ -68,54 +68,65 @@ class _MyAssetsScreenState extends ConsumerState<MyAssetsScreen> {
     if (confirmed != true || !mounted) return;
 
     EasyLoading.show();
-    final success = await ref
+    final error = await ref
         .read(deleteAssetControllerProvider.notifier)
         .submit(assetId: asset.id);
     EasyLoading.dismiss();
 
     if (!mounted) return;
-    if (success) {
+    if (error == null) {
       EasyLoading.showSuccess(tr.asset_deleted_successfully);
       ref.invalidate(myAssetsControllerProvider);
       ref.invalidate(assetsControllerProvider);
       ref.invalidate(assetDetailControllerProvider(asset.id));
     } else {
-      final err = ref.read(deleteAssetControllerProvider).error;
-      if (err is AssetApiException && err.isSubscriptionRequired) {
-        await showDialog<void>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text(tr.subscription_required_title),
-            content: Text(err.message),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: Text(tr.cancel),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const SubscriptionsScreen(),
-                    ),
-                  );
-                },
-                child: Text(tr.renew_now),
-              ),
-            ],
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              formatAssetApiError(err, fallback: tr.something_went_wrong),
-            ),
-          ),
-        );
-      }
+      await _showDeleteError(error);
     }
+  }
+
+  Future<void> _showDeleteError(Object? error) async {
+    if (error is AssetApiException && error.isSubscriptionRequired) {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(tr.subscription_required_title),
+          content: Text(error.message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(tr.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SubscriptionsScreen(),
+                  ),
+                );
+              },
+              child: Text(tr.renew_now),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    final message = formatAssetApiError(error, fallback: tr.something_went_wrong);
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(tr.delete_asset),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(tr.done),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

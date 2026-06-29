@@ -357,15 +357,9 @@ class AssetsRepositoryImpl implements AssetsRepository {
 
   AssetApiException _mapAssetDioError(DioException error) {
     final statusCode = error.response?.statusCode;
-    final data = error.response?.data;
-    String message = 'Something went wrong';
-
-    if (data is Map) {
-      final apiMessage = data['message'];
-      if (apiMessage is String && apiMessage.isNotEmpty) {
-        message = apiMessage;
-      }
-    }
+    final message = extractApiErrorMessage(error.response?.data) ??
+        error.message ??
+        'Something went wrong';
 
     final isSubscriptionRequired = statusCode == 403 &&
         message.toLowerCase().contains('subscription');

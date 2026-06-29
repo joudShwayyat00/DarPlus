@@ -310,14 +310,14 @@ class DeleteAssetController extends _$DeleteAssetController {
   @override
   AsyncValue<void> build() => const AsyncData(null);
 
-  Future<bool> submit({required int assetId}) async {
+  Future<Object?> submit({required int assetId}) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(() async {
       final repository = ref.read(assetsRepositoryProvider);
       await repository.deleteAsset(assetId: assetId);
     });
     if (ref.mounted) state = result;
-    return result is AsyncData;
+    return result.hasError ? result.error : null;
   }
 }
 
