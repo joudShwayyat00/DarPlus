@@ -35,6 +35,8 @@ class ApiConstants {
   static const String deleteAsset = "api/the_assets/delete";
   // Book asset endpoint
   static const String bookAsset = "api/assets/book";
+  // Asset availability calendar ({assetId})
+  static const String assetCalendar = "api/calendar";
   // My bookings (requires auth, filter by status)
   static const String myBookings = "api/my_bookings";
   // Add appointment endpoint

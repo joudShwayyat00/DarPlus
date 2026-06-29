@@ -1561,4 +1561,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rating_score => 'Rating';
+
+  @override
+  String get calendar_availability => 'Availability';
+
+  @override
+  String get calendar_booked => 'Booked';
+
+  @override
+  String get calendar_blocked => 'Blocked';
+
+  @override
+  String get calendar_select_checkin => 'Select check-in date';
+
+  @override
+  String get calendar_select_checkout => 'Select check-out date';
+
+  @override
+  String get date_not_available => 'This date is not available';
+
+  @override
+  String get date_range_not_available =>
+      'Selected dates include unavailable days';
+
+  @override
+  String get clear_dates => 'Clear dates';
 }

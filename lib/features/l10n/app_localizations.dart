@@ -3055,6 +3055,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rating'**
   String get rating_score;
+
+  /// No description provided for @calendar_availability.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get calendar_availability;
+
+  /// No description provided for @calendar_booked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get calendar_booked;
+
+  /// No description provided for @calendar_blocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get calendar_blocked;
+
+  /// No description provided for @calendar_select_checkin.
+  ///
+  /// In en, this message translates to:
+  /// **'Select check-in date'**
+  String get calendar_select_checkin;
+
+  /// No description provided for @calendar_select_checkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Select check-out date'**
+  String get calendar_select_checkout;
+
+  /// No description provided for @date_not_available.
+  ///
+  /// In en, this message translates to:
+  /// **'This date is not available'**
+  String get date_not_available;
+
+  /// No description provided for @date_range_not_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected dates include unavailable days'**
+  String get date_range_not_available;
+
+  /// No description provided for @clear_dates.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear dates'**
+  String get clear_dates;
 }
 
 class _AppLocalizationsDelegate

@@ -149,6 +149,83 @@ abstract class _$BookingController extends $AsyncNotifier<BookingData?> {
   }
 }
 
+@ProviderFor(assetCalendar)
+const assetCalendarProvider = AssetCalendarFamily._();
+
+final class AssetCalendarProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<AssetCalendarData>,
+          AssetCalendarData,
+          FutureOr<AssetCalendarData>
+        >
+    with
+        $FutureModifier<AssetCalendarData>,
+        $FutureProvider<AssetCalendarData> {
+  const AssetCalendarProvider._({
+    required AssetCalendarFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'assetCalendarProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$assetCalendarHash();
+
+  @override
+  String toString() {
+    return r'assetCalendarProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<AssetCalendarData> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<AssetCalendarData> create(Ref ref) {
+    final argument = this.argument as int;
+    return assetCalendar(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is AssetCalendarProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$assetCalendarHash() => r'4ce8313749abffaf4e28e78fea6f3f1ed61ffd4a';
+
+final class AssetCalendarFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<AssetCalendarData>, int> {
+  const AssetCalendarFamily._()
+    : super(
+        retry: null,
+        name: r'assetCalendarProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  AssetCalendarProvider call(int assetId) =>
+      AssetCalendarProvider._(argument: assetId, from: this);
+
+  @override
+  String toString() => r'assetCalendarProvider';
+}
+
 @ProviderFor(MyBookingsController)
 const myBookingsControllerProvider = MyBookingsControllerFamily._();
 

@@ -1,8 +1,10 @@
 import 'package:dar_plus_app/core/constants/app_currency.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/booking/data/models/asset_calendar.dart';
 import 'package:dar_plus_app/features/booking/data/models/booking_response.dart';
 import 'package:dar_plus_app/features/booking/presentation/providers/booking_providers.dart';
 import 'package:dar_plus_app/models/property_item.dart';
+import 'package:dar_plus_app/screens/book_now/widgets/booking_calendar.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:dar_plus_app/utils/ui/app_net_image.dart';
@@ -26,6 +28,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
   DateTime? _checkIn;
   DateTime? _checkOut;
   int _guests = 2;
+  BookingDateStep _datePickStep = BookingDateStep.checkIn;
 
   bool _agree = true;
 
@@ -147,6 +150,81 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
   static String _apiDate(DateTime d) =>
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
+  static DateTime _normalizeDate(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  AssetCalendarData _calendarOrEmpty(AsyncValue<AssetCalendarData>? async) {
+    return async?.value ??
+        const AssetCalendarData(blockedByOwner: [], bookedDates: []);
+  }
+
+  void _onCalendarDaySelected(DateTime date, AssetCalendarData calendar) {
+    final picked = _normalizeDate(date);
+    if (calendar.isUnavailable(picked)) {
+      _toast(context, tr.date_not_available);
+      return;
+    }
+
+    final rentType = widget.item.rentType;
+
+    if (_datePickStep == BookingDateStep.checkIn) {
+      setState(() {
+        _checkIn = picked;
+        if (_checkOut != null &&
+            (!_checkOut!.isAfter(picked) ||
+                calendar.rangeHasUnavailable(picked, _checkOut!))) {
+          _checkOut = null;
+        }
+        _datePickStep = BookingDateStep.checkOut;
+      });
+      return;
+    }
+
+    if (_checkIn == null) {
+      setState(() {
+        _checkIn = picked;
+        _datePickStep = BookingDateStep.checkOut;
+      });
+      return;
+    }
+
+    if (!picked.isAfter(_checkIn!)) {
+      setState(() {
+        _checkIn = picked;
+        _checkOut = null;
+        _datePickStep = BookingDateStep.checkOut;
+      });
+      return;
+    }
+
+    if (calendar.rangeHasUnavailable(_checkIn!, picked)) {
+      _toast(context, tr.date_range_not_available);
+      return;
+    }
+
+    if (rentType == 'monthly') {
+      final maxOut = _maxCheckOutDate();
+      if (maxOut != null && picked.isAfter(maxOut)) {
+        _toast(context, tr.max_rental_months_exceeded(_maxMonthlyPeriods!));
+        return;
+      }
+      if (_maxMonthlyPeriods != null &&
+          _countMonthlyPeriods(_checkIn!, picked) > _maxMonthlyPeriods!) {
+        _toast(context, tr.max_rental_months_exceeded(_maxMonthlyPeriods!));
+        return;
+      }
+    }
+
+    setState(() => _checkOut = picked);
+  }
+
+  void _clearDates() {
+    setState(() {
+      _checkIn = null;
+      _checkOut = null;
+      _datePickStep = BookingDateStep.checkIn;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
@@ -157,6 +235,10 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
 
     final pricePerPeriod = _pricePerPeriodJod();
     final rentType = item.rentType;
+    final assetId = item.assetId;
+    final calendarAsync = assetId == null
+        ? null
+        : ref.watch(assetCalendarProvider(assetId));
     final isForSale = item.listingType == ListingType.sale;
 
     // Local price estimate (shown before API responds)
@@ -216,12 +298,23 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
               rentType: isForSale ? null : rentType,
               periods: _periodsCount(rentType),
               maxMonths: _maxMonthlyPeriods,
-              onPickCheckIn: () => _pickDate(context, isCheckIn: true),
-              onPickCheckOut: () => _pickDate(context, isCheckIn: false),
-              onClear: () => setState(() {
-                _checkIn = null;
-                _checkOut = null;
+              selectionStep: _datePickStep,
+              calendarAsync: calendarAsync,
+              onDaySelected: calendarAsync?.isLoading ?? false
+                  ? null
+                  : (date) => _onCalendarDaySelected(
+                        date,
+                        _calendarOrEmpty(calendarAsync),
+                      ),
+              onSelectCheckIn: () => setState(() {
+                _datePickStep = BookingDateStep.checkIn;
               }),
+              onSelectCheckOut: _checkIn == null
+                  ? null
+                  : () => setState(() {
+                        _datePickStep = BookingDateStep.checkOut;
+                      }),
+              onClear: _checkIn != null ? _clearDates : null,
             ),
 
             SizedBox(height: 2.0.h),
@@ -337,7 +430,10 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                     if (!context.mounted) return;
                     final latest = ref.read(bookingControllerProvider);
                     latest.when(
-                      data: (data) => _showSuccessDialog(context, data),
+                      data: (data) {
+                        ref.invalidate(assetCalendarProvider(assetId));
+                        _showSuccessDialog(context, data);
+                      },
                       error: (e, _) {
                         final msg = e.toString().replaceFirst(
                           'Exception: ',
@@ -408,108 +504,6 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
         ),
       ),
     );
-  }
-
-  /// Shared date picker helper
-  Future<void> _pickDate(
-    BuildContext context, {
-    required bool isCheckIn,
-  }) async {
-    final now = DateTime.now();
-    final rentType = widget.item.rentType;
-    final initialDate = isCheckIn
-        ? (_checkIn ?? now)
-        : (_checkOut ??
-              (_checkIn?.add(const Duration(days: 1))) ??
-              now.add(const Duration(days: 1)));
-    final firstDate = isCheckIn
-        ? DateTime(now.year, now.month, now.day)
-        : (_checkIn?.add(const Duration(days: 1)) ??
-              DateTime(now.year, now.month, now.day + 1));
-
-    var lastDate = DateTime(now.year + 2);
-    if (!isCheckIn && rentType == 'monthly') {
-      final maxOut = _maxCheckOutDate();
-      if (maxOut != null && maxOut.isBefore(lastDate)) {
-        lastDate = maxOut;
-      }
-    }
-
-    if (!isCheckIn && firstDate.isAfter(lastDate)) {
-      final maxMonths = _maxMonthlyPeriods;
-      if (maxMonths != null) {
-        _toast(context, tr.max_rental_months_exceeded(maxMonths));
-      }
-      return;
-    }
-
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate.isAfter(lastDate) ? lastDate : initialDate,
-      firstDate: firstDate,
-      lastDate: lastDate,
-      builder: (context, child) {
-        final base = Theme.of(context);
-        return Theme(
-          data: base.copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.goldBrandColor,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
-            ),
-            datePickerTheme: DatePickerThemeData(
-              headerHeadlineStyle: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-              weekdayStyle: const TextStyle(fontWeight: FontWeight.w700),
-              dayStyle: const TextStyle(fontWeight: FontWeight.w700),
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                textStyle: TextStyle(
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (!mounted) return;
-    if (picked == null) return;
-
-    if (!isCheckIn && rentType == 'monthly' && _checkIn != null) {
-      final maxOut = _maxCheckOutDate();
-      if (maxOut != null && picked.isAfter(maxOut)) {
-        if (!context.mounted) return;
-        _toast(
-          context,
-          tr.max_rental_months_exceeded(_maxMonthlyPeriods!),
-        );
-        return;
-      }
-    }
-
-    setState(() {
-      if (isCheckIn) {
-        _checkIn = picked;
-        if (_checkOut != null) {
-          final exceedsMonthly = rentType == 'monthly' &&
-              _maxMonthlyPeriods != null &&
-              _countMonthlyPeriods(picked, _checkOut!) > _maxMonthlyPeriods!;
-          if (!_checkOut!.isAfter(picked) || exceedsMonthly) {
-            _checkOut = null;
-          }
-        }
-      } else {
-        _checkOut = picked;
-      }
-    });
   }
 
   void _toast(BuildContext context, String msg) {
@@ -758,9 +752,12 @@ class _StayCard extends StatelessWidget {
   final String? rentType;
   final int periods;
   final int? maxMonths;
-  final VoidCallback onPickCheckIn;
-  final VoidCallback onPickCheckOut;
-  final VoidCallback onClear;
+  final BookingDateStep selectionStep;
+  final AsyncValue<AssetCalendarData>? calendarAsync;
+  final ValueChanged<DateTime>? onDaySelected;
+  final VoidCallback onSelectCheckIn;
+  final VoidCallback? onSelectCheckOut;
+  final VoidCallback? onClear;
 
   const _StayCard({
     required this.checkIn,
@@ -769,34 +766,98 @@ class _StayCard extends StatelessWidget {
     required this.rentType,
     required this.periods,
     required this.maxMonths,
-    required this.onPickCheckIn,
-    required this.onPickCheckOut,
-    required this.onClear,
+    required this.selectionStep,
+    this.calendarAsync,
+    this.onDaySelected,
+    required this.onSelectCheckIn,
+    this.onSelectCheckOut,
+    this.onClear,
   });
+
+  static const _emptyCalendar = AssetCalendarData(
+    blockedByOwner: [],
+    bookedDates: [],
+  );
 
   @override
   Widget build(BuildContext context) {
     final hasIn = checkIn != null;
     final hasOut = checkOut != null;
+    final calendarData = calendarAsync?.value ?? _emptyCalendar;
+    final isLoading = calendarAsync?.isLoading ?? false;
 
     return _CardShell(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Check-in row
-          _DateRow(
-            label: tr.check_in_date,
-            date: checkIn,
-            onTap: onPickCheckIn,
-            onClear: hasIn ? onClear : null,
+          Row(
+            children: [
+              Expanded(
+                child: _DateStepChip(
+                  label: tr.check_in_date,
+                  date: checkIn,
+                  isActive: selectionStep == BookingDateStep.checkIn,
+                  onTap: onSelectCheckIn,
+                ),
+              ),
+              SizedBox(width: 2.5.w),
+              Expanded(
+                child: _DateStepChip(
+                  label: tr.check_out_date,
+                  date: checkOut,
+                  isActive: selectionStep == BookingDateStep.checkOut,
+                  enabled: hasIn,
+                  onTap: onSelectCheckOut,
+                ),
+              ),
+            ],
           ),
+          if (onClear != null) ...[
+            SizedBox(height: 0.8.h),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: TextButton.icon(
+                onPressed: onClear,
+                icon: Icon(
+                  Icons.refresh_rounded,
+                  size: 16,
+                  color: AppColors.goldBrandColor,
+                ),
+                label: Text(
+                  tr.clear_dates,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 9.5.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.goldBrandColor,
+                  ),
+                ),
+              ),
+            ),
+          ],
           SizedBox(height: 1.2.h),
-          // Check-out row
-          _DateRow(
-            label: tr.check_out_date,
-            date: checkOut,
-            onTap: hasIn ? onPickCheckOut : null,
-            onClear: null,
-          ),
+          if (isLoading)
+            SizedBox(
+              height: 30.h,
+              child: Center(
+                child: SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: AppColors.goldBrandColor,
+                  ),
+                ),
+              ),
+            )
+          else
+            BookingCalendar(
+              calendar: calendarData,
+              checkIn: checkIn,
+              checkOut: checkOut,
+              selectionStep: selectionStep,
+              onDaySelected: onDaySelected ?? (_) {},
+            ),
           if (rentType == 'monthly' && maxMonths != null) ...[
             SizedBox(height: 1.h),
             Text(
@@ -848,92 +909,76 @@ class _StayCard extends StatelessWidget {
   }
 }
 
-class _DateRow extends StatelessWidget {
+class _DateStepChip extends StatelessWidget {
   final String label;
   final DateTime? date;
+  final bool isActive;
+  final bool enabled;
   final VoidCallback? onTap;
-  final VoidCallback? onClear;
 
-  const _DateRow({
+  const _DateStepChip({
     required this.label,
     required this.date,
-    required this.onTap,
-    required this.onClear,
+    required this.isActive,
+    this.enabled = true,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final hasDate = date != null;
-    final isEnabled = onTap != null;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: EdgeInsets.all(3.6.w),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: hasDate
-                ? AppColors.goldBrandColor.withAlpha(100)
-                : Colors.black.withAlpha(18),
+    final canTap = enabled && onTap != null;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: canTap ? onTap : null,
+        borderRadius: BorderRadius.circular(16),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: EdgeInsets.symmetric(horizontal: 3.2.w, vertical: 1.2.h),
+          decoration: BoxDecoration(
+            color: isActive
+                ? AppColors.goldBrandColor.withAlpha(18)
+                : Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isActive
+                  ? AppColors.goldBrandColor
+                  : Colors.black.withAlpha(18),
+              width: isActive ? 1.8 : 1,
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(2.6.w),
-              decoration: BoxDecoration(
-                color: AppColors.goldBrandColor.withAlpha(22),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(
-                Icons.date_range,
-                color: Colors.black.withAlpha(isEnabled ? 200 : 100),
-              ),
-            ),
-            SizedBox(width: 3.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: appTextStyle(
-                      context,
-                      fontSize: 10.6.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black.withAlpha(150),
-                    ),
-                  ),
-                  SizedBox(height: 0.35.h),
-                  Text(
-                    hasDate ? _fmt(date!) : (isEnabled ? tr.select_date : '--'),
-                    style: appTextStyle(
-                      context,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.black.withAlpha(hasDate ? 230 : 140),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (hasDate && onClear != null)
-              IconButton(
-                onPressed: onClear,
-                icon: Icon(
-                  Icons.close_rounded,
-                  color: Colors.black.withAlpha(170),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: appTextStyle(
+                  context,
+                  fontSize: 9.5.sp,
+                  fontWeight: FontWeight.w700,
+                  color: isActive
+                      ? AppColors.goldBrandColor
+                      : Colors.black.withAlpha(130),
                 ),
-              )
-            else
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 16,
-                color: Colors.black.withAlpha(isEnabled ? 170 : 80),
               ),
-          ],
+              SizedBox(height: 0.35.h),
+              Text(
+                hasDate
+                    ? _fmt(date!)
+                    : (canTap ? tr.select_date : '--'),
+                style: appTextStyle(
+                  context,
+                  fontSize: 11.5.sp,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black.withAlpha(
+                    hasDate ? 230 : (canTap ? 160 : 100),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

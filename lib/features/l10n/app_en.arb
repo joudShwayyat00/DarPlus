@@ -529,5 +529,13 @@
   "login_required_booking": "Sign in to book this property and manage your reservations.",
   "login_required_appointment": "Sign in to request a viewing appointment for this property.",
   "login_required_subscriptions": "Sign in to subscribe to a plan and unlock premium features.",
-  "rating_score": "Rating"
+  "rating_score": "Rating",
+  "calendar_availability": "Availability",
+  "calendar_booked": "Booked",
+  "calendar_blocked": "Blocked",
+  "calendar_select_checkin": "Select check-in date",
+  "calendar_select_checkout": "Select check-out date",
+  "date_not_available": "This date is not available",
+  "date_range_not_available": "Selected dates include unavailable days",
+  "clear_dates": "Clear dates"
 }

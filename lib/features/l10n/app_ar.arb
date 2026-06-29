@@ -529,5 +529,13 @@
   "login_required_booking": "سجّل الدخول لحجز هذا العقار وإدارة حجوزاتك.",
   "login_required_appointment": "سجّل الدخول لطلب موعد لمعاينة هذا العقار.",
   "login_required_subscriptions": "سجّل الدخول للاشتراك في باقة والاستفادة من الميزات المميزة.",
-  "rating_score": "التقييم"
+  "rating_score": "التقييم",
+  "calendar_availability": "التوفر",
+  "calendar_booked": "محجوز",
+  "calendar_blocked": "محظور",
+  "calendar_select_checkin": "اختر تاريخ الوصول",
+  "calendar_select_checkout": "اختر تاريخ المغادرة",
+  "date_not_available": "هذا التاريخ غير متاح",
+  "date_range_not_available": "التواريخ المحددة تتضمن أيامًا غير متاحة",
+  "clear_dates": "مسح التواريخ"
 }

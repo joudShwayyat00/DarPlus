@@ -1551,4 +1551,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rating_score => 'التقييم';
+
+  @override
+  String get calendar_availability => 'التوفر';
+
+  @override
+  String get calendar_booked => 'محجوز';
+
+  @override
+  String get calendar_blocked => 'محظور';
+
+  @override
+  String get calendar_select_checkin => 'اختر تاريخ الوصول';
+
+  @override
+  String get calendar_select_checkout => 'اختر تاريخ المغادرة';
+
+  @override
+  String get date_not_available => 'هذا التاريخ غير متاح';
+
+  @override
+  String get date_range_not_available =>
+      'التواريخ المحددة تتضمن أيامًا غير متاحة';
+
+  @override
+  String get clear_dates => 'مسح التواريخ';
 }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../domain/repositories/booking_repository.dart';
 import '../data_sources/booking_service_client.dart';
+import '../models/asset_calendar.dart';
 import '../models/booking_response.dart';
 import '../models/my_booking_item.dart';
 
@@ -52,6 +53,20 @@ class BookingRepositoryImpl implements BookingRepository {
       final message = data is Map
           ? (data['message'] as String? ?? 'Failed to load bookings')
           : 'Failed to load bookings';
+      throw Exception(message);
+    }
+  }
+
+  @override
+  Future<AssetCalendarData> getAssetCalendar(int assetId) async {
+    try {
+      final response = await _serviceClient.getAssetCalendar(assetId);
+      return response.data;
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final message = data is Map
+          ? (data['message'] as String? ?? 'Failed to load calendar')
+          : 'Failed to load calendar';
       throw Exception(message);
     }
   }

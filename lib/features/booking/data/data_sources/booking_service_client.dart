@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/network/api_constants.dart';
+import '../models/asset_calendar.dart';
 import '../models/booking_response.dart';
 import '../models/my_booking_item.dart';
 
@@ -30,5 +31,10 @@ abstract class BookingServiceClient {
   @MultiPart()
   Future<List<MyBookingItem>> getMyBookings(
     @Part(name: 'status') String status,
+  );
+
+  @GET('${ApiConstants.assetCalendar}/{assetId}')
+  Future<AssetCalendarResponse> getAssetCalendar(
+    @Path('assetId') int assetId,
   );
 }

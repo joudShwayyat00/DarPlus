@@ -484,7 +484,7 @@ final class DeleteAssetControllerProvider
 }
 
 String _$deleteAssetControllerHash() =>
-    r'8f41d6e0f575498ec82ca793ab3eeb9f066f2160';
+    r'ce0871f7afe3fff4505af68b0bad92c21a3e21cf';
 
 abstract class _$DeleteAssetController extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();

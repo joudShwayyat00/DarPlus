@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/network/dio_factory.dart';
 import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../data/data_sources/booking_service_client.dart';
+import '../../data/models/asset_calendar.dart';
 import '../../data/models/booking_response.dart';
 import '../../data/models/my_booking_item.dart';
 import '../../data/repositories/booking_repository_impl.dart';
@@ -77,6 +78,11 @@ class BookingController extends _$BookingController {
   }
 
   void reset() => state = const AsyncData(null);
+}
+
+@riverpod
+Future<AssetCalendarData> assetCalendar(Ref ref, int assetId) async {
+  return ref.read(bookingRepositoryProvider).getAssetCalendar(assetId);
 }
 
 @riverpod
