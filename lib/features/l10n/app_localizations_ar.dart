@@ -432,6 +432,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'سجّل الدخول لعرض وإدارة طلبات المواعيد الخاصة بك.';
 
   @override
+  String get view_my_appointments => 'عرض مواعيدي';
+
+  @override
   String get my_dashboard => 'لوحة التحكم';
 
   @override
@@ -489,6 +492,30 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get statistics_coming_soon_message =>
       'ستتوفر هنا قريباً تفاصيل عن عقاراتك والمشاهدات والحجوزات.';
+
+  @override
+  String get statistics_total_revenue => 'إجمالي الإيرادات';
+
+  @override
+  String get statistics_avg_rating => 'متوسط التقييم';
+
+  @override
+  String get statistics_available_properties => 'متاحة';
+
+  @override
+  String get statistics_total_bookings => 'إجمالي الحجوزات';
+
+  @override
+  String get statistics_properties_section => 'العقارات';
+
+  @override
+  String get statistics_bookings_section => 'الحجوزات';
+
+  @override
+  String get statistics_appointments_section => 'المواعيد';
+
+  @override
+  String get statistics_performance_section => 'الأداء';
 
   @override
   String get no_appointments_found => 'لا توجد مواعيد';

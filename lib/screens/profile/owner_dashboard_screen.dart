@@ -7,6 +7,7 @@ import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/add_asset_screen.dart';
 import 'package:dar_plus_app/screens/assets/my_assets_screen.dart';
 import 'package:dar_plus_app/screens/profile/my_appointments_screen.dart';
+import 'package:dar_plus_app/features/owners/presentation/providers/owners_providers.dart';
 import 'package:dar_plus_app/screens/profile/owner_statistics_screen.dart';
 import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -20,6 +21,7 @@ class OwnerDashboardScreen extends ConsumerWidget {
 
   Future<void> _onRefresh(WidgetRef ref) async {
     ref.invalidate(myAssetsControllerProvider);
+    ref.invalidate(ownerStatisticsControllerProvider);
     for (final status in AppointmentStatusFilter.values) {
       ref.invalidate(ownerAppointmentsControllerProvider(status));
     }

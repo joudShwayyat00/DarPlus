@@ -82,7 +82,7 @@ class _BookingServiceClient implements BookingServiceClient {
   }
 
   @override
-  Future<List<MyBookingItem>> getMyBookings(String status) async {
+  Future<List<MyBookingItem>> getMyBookings({required String status}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};

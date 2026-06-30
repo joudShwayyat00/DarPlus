@@ -31,7 +31,7 @@ class MyBookingItem {
   @JsonKey(name: 'final_price', fromJson: _numFromJson)
   final num finalPrice;
   @JsonKey(name: 'payment_method')
-  final String paymentMethod;
+  final String? paymentMethod;
   final String? notes;
   final String status;
   @JsonKey(fromJson: _currencyFromJson)
@@ -52,7 +52,7 @@ class MyBookingItem {
     required this.totalPrice,
     required this.serviceFee,
     required this.finalPrice,
-    required this.paymentMethod,
+    this.paymentMethod,
     this.notes,
     required this.status,
     required this.currency,

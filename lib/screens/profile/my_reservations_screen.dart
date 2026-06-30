@@ -25,7 +25,6 @@ class MyReservationsScreen extends ConsumerStatefulWidget {
 }
 
 class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
-  int _sectionIndex = 0;
   BookingStatusFilter _selectedStatus = BookingStatusFilter.pending;
 
   Future<void> _onRefresh() async {
@@ -47,17 +46,42 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
     }
   }
 
-  String _formatDate(String isoDate) {
-    try {
-      final date = DateTime.parse(isoDate);
-      const months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-      ];
-      return '${months[date.month - 1]} ${date.day}, ${date.year}';
-    } catch (_) {
-      return isoDate;
+  String _formatDate(String rawDate) {
+    final date = _parseBookingDate(rawDate);
+    if (date == null) return rawDate;
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
+  }
+
+  DateTime? _parseBookingDate(String raw) {
+    final trimmed = raw.trim();
+    final ddMmYyyy = RegExp(r'^(\d{1,2})-(\d{1,2})-(\d{4})$');
+    final match = ddMmYyyy.firstMatch(trimmed);
+    if (match != null) {
+      return DateTime(
+        int.parse(match.group(3)!),
+        int.parse(match.group(2)!),
+        int.parse(match.group(1)!),
+      );
     }
+    try {
+      return DateTime.parse(trimmed);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String _formatBookingPrice(MyBookingItem booking) {
+    final amount = booking.finalPrice;
+    final amountStr = amount == amount.roundToDouble()
+        ? amount.round().toString()
+        : amount.toStringAsFixed(2);
+    final currency = booking.currencySymbol.trim();
+    if (currency.isEmpty) return formatPrice(amount);
+    return '$amountStr $currency';
   }
 
   @override
@@ -74,7 +98,7 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
           leadingWidth: 0,
           automaticallyImplyLeading: false,
           title: Text(
-            _sectionIndex == 0 ? tr.my_bookings : tr.my_appointments,
+            tr.my_bookings,
             style: appTextStyle(
               context,
               fontSize: 14.sp,
@@ -88,38 +112,6 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
           icon: Icons.bookmark_rounded,
           title: tr.sign_in_to_continue,
           message: tr.login_required_bookings,
-        ),
-      );
-    }
-
-    if (_sectionIndex == 1) {
-      return Scaffold(
-        backgroundColor: const Color(0xFFF8F7F4),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFF8F7F4),
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leadingWidth: 0,
-          automaticallyImplyLeading: false,
-          title: Text(
-            tr.my_appointments,
-            style: appTextStyle(
-              context,
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w800,
-              color: Colors.black.withAlpha(220),
-            ),
-          ),
-          centerTitle: false,
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTabs(),
-            const Expanded(
-              child: MyRequestedAppointmentsScreen(embedded: true),
-            ),
-          ],
         ),
       );
     }
@@ -149,8 +141,8 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTabs(),
           _buildStatusFilters(),
+          _buildAppointmentsLink(),
           Expanded(
             child: bookingsAsync.when(
               data: (bookings) => _buildDataState(bookings),
@@ -163,35 +155,65 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
     );
   }
 
-  Widget _buildSectionTabs() {
+  Widget _buildAppointmentsLink() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(5.w, 0.5.h, 5.w, 1.h),
-      child: Container(
-        padding: EdgeInsets.all(0.8.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.black.withAlpha(12)),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: _SectionTab(
-                label: tr.my_bookings,
-                icon: Icons.bookmark_rounded,
-                isSelected: _sectionIndex == 0,
-                onTap: () => setState(() => _sectionIndex = 0),
-              ),
+      padding: EdgeInsets.fromLTRB(5.w, 0, 5.w, 1.2.h),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const MyRequestedAppointmentsScreen(),
             ),
-            Expanded(
-              child: _SectionTab(
-                label: tr.my_appointments,
-                icon: Icons.event_available_rounded,
-                isSelected: _sectionIndex == 1,
-                onTap: () => setState(() => _sectionIndex = 1),
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.3.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.goldBrandColor.withAlpha(50)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(6),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(2.5.w),
+                decoration: BoxDecoration(
+                  color: AppColors.goldBrandColor.withAlpha(18),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.event_available_rounded,
+                  size: 18,
+                  color: AppColors.goldBrandColor,
+                ),
+              ),
+              SizedBox(width: 3.w),
+              Expanded(
+                child: Text(
+                  tr.view_my_appointments,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 10.5.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black.withAlpha(200),
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 22,
+                color: AppColors.goldBrandColor.withAlpha(180),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -623,7 +645,7 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
                             ),
                           ),
                           Text(
-                            formatPrice(booking.finalPrice),
+                            _formatBookingPrice(booking),
                             style: appTextStyle(
                               context,
                               fontSize: 13.sp,
@@ -839,61 +861,6 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
           fontSize: 9.sp,
           fontWeight: FontWeight.w700,
           color: textColor,
-        ),
-      ),
-    );
-  }
-}
-
-class _SectionTab extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _SectionTab({
-    required this.label,
-    required this.icon,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 220),
-        padding: EdgeInsets.symmetric(vertical: 1.1.h),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.goldBrandColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 16,
-              color: isSelected ? Colors.white : AppColors.goldBrandColor,
-            ),
-            SizedBox(width: 2.w),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: appTextStyle(
-                  context,
-                  fontSize: 9.5.sp,
-                  fontWeight: FontWeight.w800,
-                  color: isSelected
-                      ? Colors.white
-                      : Colors.black.withAlpha(180),
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );

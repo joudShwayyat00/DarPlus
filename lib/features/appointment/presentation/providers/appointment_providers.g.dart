@@ -322,7 +322,7 @@ final class OwnerAppointmentsControllerProvider
 }
 
 String _$ownerAppointmentsControllerHash() =>
-    r'191c0ec52be077cd80ab1749e66adfd411527f31';
+    r'a0e2074b4174ccab23c4a3d87fa25985521502e7';
 
 /// Incoming appointment requests on the owner's listed properties.
 

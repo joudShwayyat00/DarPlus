@@ -29,9 +29,9 @@ abstract class BookingServiceClient {
 
   @POST(ApiConstants.myBookings)
   @MultiPart()
-  Future<List<MyBookingItem>> getMyBookings(
-    @Part(name: 'status') String status,
-  );
+  Future<List<MyBookingItem>> getMyBookings({
+    @Part(name: 'status') required String status,
+  });
 
   @GET('${ApiConstants.assetCalendar}/{assetId}')
   Future<AssetCalendarResponse> getAssetCalendar(

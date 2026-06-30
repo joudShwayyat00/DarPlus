@@ -8,7 +8,7 @@ part of 'asset_item.dart';
 
 AssetItem _$AssetItemFromJson(Map<String, dynamic> json) => AssetItem(
   id: (json['id'] as num).toInt(),
-  name: json['name'] as String,
+  name: AssetItem._nameFromJson(json['name']),
   image: json['image'] as String,
   location: json['location'] as String,
   country: json['country'] as String?,

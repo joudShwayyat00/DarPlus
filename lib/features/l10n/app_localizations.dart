@@ -920,6 +920,12 @@ abstract class AppLocalizations {
   /// **'Sign in to view and manage your appointment requests.'**
   String get login_required_my_appointments;
 
+  /// No description provided for @view_my_appointments.
+  ///
+  /// In en, this message translates to:
+  /// **'View my appointments'**
+  String get view_my_appointments;
+
   /// No description provided for @my_dashboard.
   ///
   /// In en, this message translates to:
@@ -1033,6 +1039,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Detailed insights about your properties, views, and bookings will be available here soon.'**
   String get statistics_coming_soon_message;
+
+  /// No description provided for @statistics_total_revenue.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Revenue'**
+  String get statistics_total_revenue;
+
+  /// No description provided for @statistics_avg_rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Rating'**
+  String get statistics_avg_rating;
+
+  /// No description provided for @statistics_available_properties.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get statistics_available_properties;
+
+  /// No description provided for @statistics_total_bookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Bookings'**
+  String get statistics_total_bookings;
+
+  /// No description provided for @statistics_properties_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Properties'**
+  String get statistics_properties_section;
+
+  /// No description provided for @statistics_bookings_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get statistics_bookings_section;
+
+  /// No description provided for @statistics_appointments_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments'**
+  String get statistics_appointments_section;
+
+  /// No description provided for @statistics_performance_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance'**
+  String get statistics_performance_section;
 
   /// No description provided for @no_appointments_found.
   ///

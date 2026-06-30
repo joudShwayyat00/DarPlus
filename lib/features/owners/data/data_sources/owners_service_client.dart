@@ -3,6 +3,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/network/api_constants.dart';
 import '../models/owner_detail.dart';
+import '../models/owner_statistics_response.dart';
 import '../models/owners_response.dart';
 
 part 'owners_service_client.g.dart';
@@ -16,4 +17,7 @@ abstract class OwnersServiceClient {
 
   @GET("${ApiConstants.ownerDetail}/{id}")
   Future<OwnerDetailResponse> getOwnerDetail(@Path("id") int id);
+
+  @GET(ApiConstants.ownerStatistics)
+  Future<OwnerStatisticsResponse> getOwnerStatistics();
 }

@@ -13,6 +13,7 @@ part 'asset_item.g.dart';
 @JsonSerializable()
 class AssetItem {
   final int id;
+  @JsonKey(fromJson: _nameFromJson)
   final String name;
   final String image;
   final String location;
@@ -67,6 +68,23 @@ class AssetItem {
   final List<AssetGalleryImage>? images;
   @JsonKey(name: 'is_available', fromJson: _boolFromJson)
   final bool? isAvailable;
+
+  static String _nameFromJson(dynamic value) {
+    if (value is String) return value;
+    if (value is Map) {
+      final map = Map<String, dynamic>.from(value);
+      final en = map['en']?.toString();
+      if (en != null && en.isNotEmpty) return en;
+      final ar = map['ar']?.toString();
+      if (ar != null && ar.isNotEmpty) return ar;
+      for (final entry in map.values) {
+        final text = entry?.toString() ?? '';
+        if (text.isNotEmpty) return text;
+      }
+      return '';
+    }
+    return value?.toString() ?? '';
+  }
 
   static String _priceFromJson(dynamic value) {
     if (value is String) return value;

@@ -438,6 +438,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign in to view and manage your appointment requests.';
 
   @override
+  String get view_my_appointments => 'View my appointments';
+
+  @override
   String get my_dashboard => 'My Dashboard';
 
   @override
@@ -495,6 +498,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get statistics_coming_soon_message =>
       'Detailed insights about your properties, views, and bookings will be available here soon.';
+
+  @override
+  String get statistics_total_revenue => 'Total Revenue';
+
+  @override
+  String get statistics_avg_rating => 'Average Rating';
+
+  @override
+  String get statistics_available_properties => 'Available';
+
+  @override
+  String get statistics_total_bookings => 'Total Bookings';
+
+  @override
+  String get statistics_properties_section => 'Properties';
+
+  @override
+  String get statistics_bookings_section => 'Bookings';
+
+  @override
+  String get statistics_appointments_section => 'Appointments';
+
+  @override
+  String get statistics_performance_section => 'Performance';
 
   @override
   String get no_appointments_found => 'No appointments found';

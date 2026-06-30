@@ -81,6 +81,8 @@ class ApiConstants {
   static const String owners = "api/owners/get";
   // Single owner profile ({id})
   static const String ownerDetail = "api/owners";
+  // Owner dashboard statistics (requires auth)
+  static const String ownerStatistics = "api/owner/statistics";
 
   static const String contentType = "application/json";
   static const String accept = "application/json";

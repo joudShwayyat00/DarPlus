@@ -22,7 +22,7 @@ MyBookingItem _$MyBookingItemFromJson(Map<String, dynamic> json) =>
       totalPrice: MyBookingItem._numFromJson(json['total_price']),
       serviceFee: MyBookingItem._numFromJson(json['service_fee']),
       finalPrice: MyBookingItem._numFromJson(json['final_price']),
-      paymentMethod: json['payment_method'] as String,
+      paymentMethod: json['payment_method'] as String?,
       notes: json['notes'] as String?,
       status: json['status'] as String,
       currency: MyBookingItem._currencyFromJson(json['currency']),

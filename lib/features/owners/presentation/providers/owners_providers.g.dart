@@ -239,3 +239,52 @@ abstract class _$OwnerDetailController extends $AsyncNotifier<OwnerDetail> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(OwnerStatisticsController)
+const ownerStatisticsControllerProvider = OwnerStatisticsControllerProvider._();
+
+final class OwnerStatisticsControllerProvider
+    extends
+        $AsyncNotifierProvider<OwnerStatisticsController, OwnerStatisticsData> {
+  const OwnerStatisticsControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ownerStatisticsControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ownerStatisticsControllerHash();
+
+  @$internal
+  @override
+  OwnerStatisticsController create() => OwnerStatisticsController();
+}
+
+String _$ownerStatisticsControllerHash() =>
+    r'219d92125380c0601e9e9ab6da4f49808072d577';
+
+abstract class _$OwnerStatisticsController
+    extends $AsyncNotifier<OwnerStatisticsData> {
+  FutureOr<OwnerStatisticsData> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref as $Ref<AsyncValue<OwnerStatisticsData>, OwnerStatisticsData>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<OwnerStatisticsData>, OwnerStatisticsData>,
+              AsyncValue<OwnerStatisticsData>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

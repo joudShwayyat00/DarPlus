@@ -50,7 +50,7 @@ class BookingRepositoryImpl implements BookingRepository {
   @override
   Future<List<MyBookingItem>> getMyBookings({required String status}) async {
     try {
-      return await _serviceClient.getMyBookings(status);
+      return await _serviceClient.getMyBookings(status: status);
     } on DioException catch (e) {
       final data = e.response?.data;
       final message = data is Map
