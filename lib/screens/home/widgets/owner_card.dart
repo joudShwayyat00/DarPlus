@@ -39,65 +39,64 @@ class OwnerCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            OwnerAvatar(owner: owner, size: 58),
-            SizedBox(height: 1.h),
-            SizedBox(
-              height: 2.6.h,
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  owner.name,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.blackColor,
+            OwnerAvatar(owner: owner, size: 52),
+            SizedBox(height: 0.6.h),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    owner.name,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.blackColor,
+                    ),
                   ),
+                  SizedBox(height: 0.2.h),
+                  Text(
+                    _statusLabel,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 8.8.sp,
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (owner.rating != null)
+              Padding(
+                padding: EdgeInsets.only(top: 0.2.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.star_rounded,
+                      color: AppColors.goldBrandColor,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      owner.rating!.toStringAsFixed(1),
+                      style: appTextStyle(
+                        context,
+                        fontSize: 9.5.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.goldBrandColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            SizedBox(height: 0.3.h),
-            Text(
-              _statusLabel,
-              maxLines: 1,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: appTextStyle(
-                context,
-                fontSize: 8.8.sp,
-                color: Colors.grey.shade500,
-              ),
-            ),
-            const Spacer(),
-            SizedBox(
-              height: 2.h,
-              child: owner.rating != null
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.star_rounded,
-                          color: AppColors.goldBrandColor,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          owner.rating!.toStringAsFixed(1),
-                          style: appTextStyle(
-                            context,
-                            fontSize: 9.5.sp,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.goldBrandColor,
-                          ),
-                        ),
-                      ],
-                    )
-                  : null,
-            ),
           ],
         ),
       ),
