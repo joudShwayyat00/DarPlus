@@ -21,7 +21,7 @@ class OwnerDashboardScreen extends ConsumerWidget {
   Future<void> _onRefresh(WidgetRef ref) async {
     ref.invalidate(myAssetsControllerProvider);
     for (final status in AppointmentStatusFilter.values) {
-      ref.invalidate(myAppointmentsControllerProvider(status));
+      ref.invalidate(ownerAppointmentsControllerProvider(status));
     }
   }
 
@@ -85,7 +85,7 @@ class OwnerDashboardScreen extends ConsumerWidget {
     }
 
     final pendingAsync = ref.watch(
-      myAppointmentsControllerProvider(AppointmentStatusFilter.pending),
+      ownerAppointmentsControllerProvider(AppointmentStatusFilter.pending),
     );
 
     final pendingCount = pendingAsync.maybeWhen(

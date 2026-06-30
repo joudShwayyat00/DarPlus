@@ -60,4 +60,63 @@ class AppointmentRepositoryImpl implements AppointmentRepository {
       throw Exception(message);
     }
   }
+
+  @override
+  Future<List<MyAppointmentItem>> getMyAppointments() async {
+    try {
+      final response = await _serviceClient.getMyAppointments();
+      return response.data;
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final message = data is Map
+          ? (data['message'] as String? ?? 'Failed to load appointments')
+          : 'Failed to load appointments';
+      throw Exception(message);
+    }
+  }
+
+  @override
+  Future<AppointmentResponse> editAppointment({
+    required int appointmentId,
+    required String name,
+    required String phone,
+    required String email,
+    required String date,
+    required String time,
+    String? note,
+  }) async {
+    try {
+      return await _serviceClient.editAppointment(
+        appointmentId: appointmentId,
+        name: name,
+        phone: phone,
+        email: email,
+        date: date,
+        time: time,
+        note: note,
+      );
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final message = data is Map
+          ? (data['message'] as String? ?? 'Failed to update appointment')
+          : 'Failed to update appointment';
+      throw Exception(message);
+    }
+  }
+
+  @override
+  Future<String> deleteAppointment({required int appointmentId}) async {
+    try {
+      final response = await _serviceClient.deleteAppointment(
+        appointmentId: appointmentId,
+      );
+      return response.message;
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final message = data is Map
+          ? (data['message'] as String? ?? 'Failed to delete appointment')
+          : 'Failed to delete appointment';
+      throw Exception(message);
+    }
+  }
 }

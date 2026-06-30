@@ -17,4 +17,18 @@ abstract class AppointmentRepository {
     int? assetId,
     int page = 1,
   });
+
+  Future<List<MyAppointmentItem>> getMyAppointments();
+
+  Future<AppointmentResponse> editAppointment({
+    required int appointmentId,
+    required String name,
+    required String phone,
+    required String email,
+    required String date,
+    required String time,
+    String? note,
+  });
+
+  Future<String> deleteAppointment({required int appointmentId});
 }

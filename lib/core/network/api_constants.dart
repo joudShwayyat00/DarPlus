@@ -43,8 +43,11 @@ class ApiConstants {
   static const String myBookings = "api/my_bookings";
   // Add appointment endpoint
   static const String addAppointment = "api/appointments/add";
-  // My appointments (owner, requires auth)
+  // My requested appointments (requires auth)
   static const String myAppointments = "api/my_appointments";
+  // Edit / delete appointment (pending only, requires auth)
+  static const String editAppointment = "api/appointment/edit";
+  static const String deleteAppointment = "api/appointment/delete";
   // Owner appointments with status filter (requires auth)
   static const String ownerAppointments = "api/owner/appointments";
   // Terms & conditions

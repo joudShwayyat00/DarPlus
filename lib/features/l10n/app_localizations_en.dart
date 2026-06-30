@@ -416,6 +416,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get my_appointments_subtitle => 'Viewing requests on your properties';
 
   @override
+  String get my_requested_appointments_subtitle =>
+      'Appointments you requested for property viewings';
+
+  @override
+  String get edit_appointment => 'Edit Appointment';
+
+  @override
+  String get delete_appointment => 'Delete Appointment';
+
+  @override
+  String get delete_appointment_confirm =>
+      'Are you sure you want to delete this appointment request?';
+
+  @override
+  String get appointment_updated_successfully =>
+      'Appointment updated successfully';
+
+  @override
+  String get login_required_my_appointments =>
+      'Sign in to view and manage your appointment requests.';
+
+  @override
   String get my_dashboard => 'My Dashboard';
 
   @override

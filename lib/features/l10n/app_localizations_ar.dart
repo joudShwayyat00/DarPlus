@@ -411,6 +411,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get my_appointments_subtitle => 'طلبات المعاينة على عقاراتك';
 
   @override
+  String get my_requested_appointments_subtitle =>
+      'المواعيد التي طلبتها لمعاينة العقارات';
+
+  @override
+  String get edit_appointment => 'تعديل الموعد';
+
+  @override
+  String get delete_appointment => 'حذف الموعد';
+
+  @override
+  String get delete_appointment_confirm =>
+      'هل أنت متأكد من حذف طلب الموعد هذا؟';
+
+  @override
+  String get appointment_updated_successfully => 'تم تحديث الموعد بنجاح';
+
+  @override
+  String get login_required_my_appointments =>
+      'سجّل الدخول لعرض وإدارة طلبات المواعيد الخاصة بك.';
+
+  @override
   String get my_dashboard => 'لوحة التحكم';
 
   @override

@@ -1,5 +1,6 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/appointment/data/models/appointment_response.dart';
+import 'package:dar_plus_app/features/appointment/data/models/my_appointment_item.dart';
 import 'package:dar_plus_app/features/appointment/presentation/providers/appointment_providers.dart';
 import 'package:dar_plus_app/features/auth/data/models/user_model.dart';
 import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
@@ -40,15 +41,36 @@ Future<void> showAppointmentSheet(
   );
 }
 
+Future<void> showEditAppointmentSheet(
+  BuildContext context, {
+  required MyAppointmentItem appointment,
+  required String assetName,
+}) async {
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => AppointmentSheet(
+      assetId: appointment.assetId,
+      assetName: assetName,
+      appointment: appointment,
+    ),
+  );
+}
+
 class AppointmentSheet extends ConsumerStatefulWidget {
   final int assetId;
   final String assetName;
+  final MyAppointmentItem? appointment;
 
   const AppointmentSheet({
     super.key,
     required this.assetId,
     required this.assetName,
+    this.appointment,
   });
+
+  bool get isEditMode => appointment != null;
 
   @override
   ConsumerState<AppointmentSheet> createState() => _AppointmentSheetState();
@@ -77,6 +99,32 @@ class _AppointmentSheetState extends ConsumerState<AppointmentSheet> {
     }
 
     _isProfileLoaded = true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final existing = widget.appointment;
+    if (existing != null) {
+      _nameCtrl.text = existing.name;
+      _phoneCtrl.text = existing.phone;
+      _emailCtrl.text = existing.email;
+      _noteCtrl.text = existing.note ?? '';
+      _completePhoneNumber = existing.phone;
+      _isProfileLoaded = true;
+      try {
+        _date = DateTime.parse(existing.date);
+      } catch (_) {}
+      try {
+        final parts = existing.time.split(':');
+        if (parts.length >= 2) {
+          _time = TimeOfDay(
+            hour: int.parse(parts[0]),
+            minute: int.parse(parts[1]),
+          );
+        }
+      } catch (_) {}
+    }
   }
 
   @override
@@ -177,6 +225,40 @@ class _AppointmentSheetState extends ConsumerState<AppointmentSheet> {
     }
     if (_time == null) {
       _toast('Please select a time');
+      return;
+    }
+
+    if (widget.isEditMode) {
+      await ref.read(editAppointmentControllerProvider.notifier).submit(
+            appointmentId: widget.appointment!.id,
+            name: name,
+            phone: phone,
+            email: email,
+            date: _fmtDate(_date!),
+            time: _fmtTime(_time!),
+            note: _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim(),
+          );
+
+      if (!mounted) return;
+      final state = ref.read(editAppointmentControllerProvider);
+      state.when(
+        data: (data) {
+          Navigator.pop(context);
+          ref.invalidate(myRequestedAppointmentsControllerProvider);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(tr.appointment_updated_successfully),
+              backgroundColor: Colors.black.withAlpha(220),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        },
+        error: (e, _) {
+          final msg = e.toString().replaceFirst('Exception: ', '');
+          _toast(msg);
+        },
+        loading: () {},
+      );
       return;
     }
 
@@ -288,16 +370,20 @@ class _AppointmentSheetState extends ConsumerState<AppointmentSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(appointmentControllerProvider).isLoading;
+    final isLoading = widget.isEditMode
+        ? ref.watch(editAppointmentControllerProvider).isLoading
+        : ref.watch(appointmentControllerProvider).isLoading;
 
-    ref
-        .watch(profileControllerProvider)
-        .maybeWhen(
-          data: (user) {
-            if (user != null) _prefillFromProfile(user);
-          },
-          orElse: () {},
-        );
+    if (!widget.isEditMode) {
+      ref
+          .watch(profileControllerProvider)
+          .maybeWhen(
+            data: (user) {
+              if (user != null) _prefillFromProfile(user);
+            },
+            orElse: () {},
+          );
+    }
 
     return Container(
       decoration: const BoxDecoration(
@@ -346,7 +432,9 @@ class _AppointmentSheetState extends ConsumerState<AppointmentSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        tr.request_appointment,
+                        widget.isEditMode
+                            ? tr.edit_appointment
+                            : tr.request_appointment,
                         style: appTextStyle(
                           context,
                           fontSize: 14.sp,
@@ -472,7 +560,9 @@ class _AppointmentSheetState extends ConsumerState<AppointmentSheet> {
                           ),
                         )
                       : Text(
-                          'Submit Appointment',
+                          widget.isEditMode
+                              ? tr.save_changes
+                              : 'Submit Appointment',
                           style: appTextStyle(
                             context,
                             fontSize: 13.sp,

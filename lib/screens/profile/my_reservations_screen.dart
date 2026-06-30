@@ -6,6 +6,7 @@ import 'package:dar_plus_app/features/booking/domain/booking_status_filter.dart'
 import 'package:dar_plus_app/features/booking/presentation/providers/booking_providers.dart';
 import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/screens/profile/my_requested_appointments_screen.dart';
 import 'package:dar_plus_app/utils/widgets/login_required_view.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
@@ -24,6 +25,7 @@ class MyReservationsScreen extends ConsumerStatefulWidget {
 }
 
 class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
+  int _sectionIndex = 0;
   BookingStatusFilter _selectedStatus = BookingStatusFilter.pending;
 
   Future<void> _onRefresh() async {
@@ -72,7 +74,7 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
           leadingWidth: 0,
           automaticallyImplyLeading: false,
           title: Text(
-            tr.my_bookings,
+            _sectionIndex == 0 ? tr.my_bookings : tr.my_appointments,
             style: appTextStyle(
               context,
               fontSize: 14.sp,
@@ -86,6 +88,38 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
           icon: Icons.bookmark_rounded,
           title: tr.sign_in_to_continue,
           message: tr.login_required_bookings,
+        ),
+      );
+    }
+
+    if (_sectionIndex == 1) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF8F7F4),
+        appBar: AppBar(
+          backgroundColor: const Color(0xFFF8F7F4),
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leadingWidth: 0,
+          automaticallyImplyLeading: false,
+          title: Text(
+            tr.my_appointments,
+            style: appTextStyle(
+              context,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w800,
+              color: Colors.black.withAlpha(220),
+            ),
+          ),
+          centerTitle: false,
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTabs(),
+            const Expanded(
+              child: MyRequestedAppointmentsScreen(embedded: true),
+            ),
+          ],
         ),
       );
     }
@@ -115,6 +149,7 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildSectionTabs(),
           _buildStatusFilters(),
           Expanded(
             child: bookingsAsync.when(
@@ -124,6 +159,40 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTabs() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(5.w, 0.5.h, 5.w, 1.h),
+      child: Container(
+        padding: EdgeInsets.all(0.8.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.black.withAlpha(12)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: _SectionTab(
+                label: tr.my_bookings,
+                icon: Icons.bookmark_rounded,
+                isSelected: _sectionIndex == 0,
+                onTap: () => setState(() => _sectionIndex = 0),
+              ),
+            ),
+            Expanded(
+              child: _SectionTab(
+                label: tr.my_appointments,
+                icon: Icons.event_available_rounded,
+                isSelected: _sectionIndex == 1,
+                onTap: () => setState(() => _sectionIndex = 1),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -770,6 +839,61 @@ class _MyReservationsScreenState extends ConsumerState<MyReservationsScreen> {
           fontSize: 9.sp,
           fontWeight: FontWeight.w700,
           color: textColor,
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionTab extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _SectionTab({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        padding: EdgeInsets.symmetric(vertical: 1.1.h),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.goldBrandColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected ? Colors.white : AppColors.goldBrandColor,
+            ),
+            SizedBox(width: 2.w),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: appTextStyle(
+                  context,
+                  fontSize: 9.5.sp,
+                  fontWeight: FontWeight.w800,
+                  color: isSelected
+                      ? Colors.white
+                      : Colors.black.withAlpha(180),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../../../core/network/api_constants.dart';
+import '../models/appointment_action_response.dart';
 import '../models/appointment_response.dart';
+import '../models/my_appointments_response.dart';
 import '../models/owner_appointments_response.dart';
 
 part 'appointment_service_client.g.dart';
@@ -22,6 +24,27 @@ abstract class AppointmentServiceClient {
     @Part(name: 'date') required String date,
     @Part(name: 'time') required String time,
     @Part(name: 'note') String? note,
+  });
+
+  @GET(ApiConstants.myAppointments)
+  Future<MyAppointmentsResponse> getMyAppointments();
+
+  @POST(ApiConstants.editAppointment)
+  @MultiPart()
+  Future<AppointmentResponse> editAppointment({
+    @Part(name: 'appointment_id') required int appointmentId,
+    @Part(name: 'name') required String name,
+    @Part(name: 'phone') required String phone,
+    @Part(name: 'email') required String email,
+    @Part(name: 'date') required String date,
+    @Part(name: 'time') required String time,
+    @Part(name: 'note') String? note,
+  });
+
+  @POST(ApiConstants.deleteAppointment)
+  @MultiPart()
+  Future<AppointmentActionResponse> deleteAppointment({
+    @Part(name: 'appointment_id') required int appointmentId,
   });
 
   @GET(ApiConstants.ownerAppointments)

@@ -153,43 +153,165 @@ abstract class _$AppointmentController
   }
 }
 
-@ProviderFor(MyAppointmentsController)
-const myAppointmentsControllerProvider = MyAppointmentsControllerFamily._();
+@ProviderFor(EditAppointmentController)
+const editAppointmentControllerProvider = EditAppointmentControllerProvider._();
 
-final class MyAppointmentsControllerProvider
+final class EditAppointmentControllerProvider
+    extends
+        $AsyncNotifierProvider<EditAppointmentController, AppointmentData?> {
+  const EditAppointmentControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'editAppointmentControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$editAppointmentControllerHash();
+
+  @$internal
+  @override
+  EditAppointmentController create() => EditAppointmentController();
+}
+
+String _$editAppointmentControllerHash() =>
+    r'72b226974832818bea34ff09ac1fc6d7638c1d43';
+
+abstract class _$EditAppointmentController
+    extends $AsyncNotifier<AppointmentData?> {
+  FutureOr<AppointmentData?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref as $Ref<AsyncValue<AppointmentData?>, AppointmentData?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<AppointmentData?>, AppointmentData?>,
+              AsyncValue<AppointmentData?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+/// Appointments the current user requested on properties (buyer/visitor view).
+
+@ProviderFor(MyRequestedAppointmentsController)
+const myRequestedAppointmentsControllerProvider =
+    MyRequestedAppointmentsControllerProvider._();
+
+/// Appointments the current user requested on properties (buyer/visitor view).
+final class MyRequestedAppointmentsControllerProvider
     extends
         $AsyncNotifierProvider<
-          MyAppointmentsController,
+          MyRequestedAppointmentsController,
           List<MyAppointmentItem>
         > {
-  const MyAppointmentsControllerProvider._({
-    required MyAppointmentsControllerFamily super.from,
+  /// Appointments the current user requested on properties (buyer/visitor view).
+  const MyRequestedAppointmentsControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'myRequestedAppointmentsControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$myRequestedAppointmentsControllerHash();
+
+  @$internal
+  @override
+  MyRequestedAppointmentsController create() =>
+      MyRequestedAppointmentsController();
+}
+
+String _$myRequestedAppointmentsControllerHash() =>
+    r'cc96792998b8c7d639748376c9a1ef2bfd474bc0';
+
+/// Appointments the current user requested on properties (buyer/visitor view).
+
+abstract class _$MyRequestedAppointmentsController
+    extends $AsyncNotifier<List<MyAppointmentItem>> {
+  FutureOr<List<MyAppointmentItem>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<
+              AsyncValue<List<MyAppointmentItem>>,
+              List<MyAppointmentItem>
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<List<MyAppointmentItem>>,
+                List<MyAppointmentItem>
+              >,
+              AsyncValue<List<MyAppointmentItem>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+/// Incoming appointment requests on the owner's listed properties.
+
+@ProviderFor(OwnerAppointmentsController)
+const ownerAppointmentsControllerProvider =
+    OwnerAppointmentsControllerFamily._();
+
+/// Incoming appointment requests on the owner's listed properties.
+final class OwnerAppointmentsControllerProvider
+    extends
+        $AsyncNotifierProvider<
+          OwnerAppointmentsController,
+          List<MyAppointmentItem>
+        > {
+  /// Incoming appointment requests on the owner's listed properties.
+  const OwnerAppointmentsControllerProvider._({
+    required OwnerAppointmentsControllerFamily super.from,
     required AppointmentStatusFilter super.argument,
   }) : super(
          retry: null,
-         name: r'myAppointmentsControllerProvider',
+         name: r'ownerAppointmentsControllerProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$myAppointmentsControllerHash();
+  String debugGetCreateSourceHash() => _$ownerAppointmentsControllerHash();
 
   @override
   String toString() {
-    return r'myAppointmentsControllerProvider'
+    return r'ownerAppointmentsControllerProvider'
         ''
         '($argument)';
   }
 
   @$internal
   @override
-  MyAppointmentsController create() => MyAppointmentsController();
+  OwnerAppointmentsController create() => OwnerAppointmentsController();
 
   @override
   bool operator ==(Object other) {
-    return other is MyAppointmentsControllerProvider &&
+    return other is OwnerAppointmentsControllerProvider &&
         other.argument == argument;
   }
 
@@ -199,35 +321,41 @@ final class MyAppointmentsControllerProvider
   }
 }
 
-String _$myAppointmentsControllerHash() =>
-    r'e71ea9d58481dc52af78e473e0518edf5b845788';
+String _$ownerAppointmentsControllerHash() =>
+    r'191c0ec52be077cd80ab1749e66adfd411527f31';
 
-final class MyAppointmentsControllerFamily extends $Family
+/// Incoming appointment requests on the owner's listed properties.
+
+final class OwnerAppointmentsControllerFamily extends $Family
     with
         $ClassFamilyOverride<
-          MyAppointmentsController,
+          OwnerAppointmentsController,
           AsyncValue<List<MyAppointmentItem>>,
           List<MyAppointmentItem>,
           FutureOr<List<MyAppointmentItem>>,
           AppointmentStatusFilter
         > {
-  const MyAppointmentsControllerFamily._()
+  const OwnerAppointmentsControllerFamily._()
     : super(
         retry: null,
-        name: r'myAppointmentsControllerProvider',
+        name: r'ownerAppointmentsControllerProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  MyAppointmentsControllerProvider call(AppointmentStatusFilter status) =>
-      MyAppointmentsControllerProvider._(argument: status, from: this);
+  /// Incoming appointment requests on the owner's listed properties.
+
+  OwnerAppointmentsControllerProvider call(AppointmentStatusFilter status) =>
+      OwnerAppointmentsControllerProvider._(argument: status, from: this);
 
   @override
-  String toString() => r'myAppointmentsControllerProvider';
+  String toString() => r'ownerAppointmentsControllerProvider';
 }
 
-abstract class _$MyAppointmentsController
+/// Incoming appointment requests on the owner's listed properties.
+
+abstract class _$OwnerAppointmentsController
     extends $AsyncNotifier<List<MyAppointmentItem>> {
   late final _$args = ref.$arg as AppointmentStatusFilter;
   AppointmentStatusFilter get status => _$args;

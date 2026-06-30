@@ -884,6 +884,42 @@ abstract class AppLocalizations {
   /// **'Viewing requests on your properties'**
   String get my_appointments_subtitle;
 
+  /// No description provided for @my_requested_appointments_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments you requested for property viewings'**
+  String get my_requested_appointments_subtitle;
+
+  /// No description provided for @edit_appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Appointment'**
+  String get edit_appointment;
+
+  /// No description provided for @delete_appointment.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Appointment'**
+  String get delete_appointment;
+
+  /// No description provided for @delete_appointment_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this appointment request?'**
+  String get delete_appointment_confirm;
+
+  /// No description provided for @appointment_updated_successfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment updated successfully'**
+  String get appointment_updated_successfully;
+
+  /// No description provided for @login_required_my_appointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to view and manage your appointment requests.'**
+  String get login_required_my_appointments;
+
   /// No description provided for @my_dashboard.
   ///
   /// In en, this message translates to:

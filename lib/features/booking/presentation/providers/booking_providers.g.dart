@@ -251,7 +251,7 @@ final class OwnerCalendarControllerProvider
 }
 
 String _$ownerCalendarControllerHash() =>
-    r'a0a833e75d147bf72b5fdd798b6ad81265e5bf2a';
+    r'0cd38f017e98b50707c5c87a9d35daf7d4243527';
 
 abstract class _$OwnerCalendarController extends $AsyncNotifier<void> {
   FutureOr<void> build();

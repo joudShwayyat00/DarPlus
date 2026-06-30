@@ -1,3 +1,4 @@
+import 'package:dar_plus_app/screens/profile/my_requested_appointments_screen.dart';
 import 'package:dar_plus_app/screens/profile/owner_dashboard_screen.dart';
 import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
@@ -90,6 +91,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       const EditProfileScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _MenuItem(
+                            icon: Icons.event_available_rounded,
+                            title: tr.my_appointments,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MyRequestedAppointmentsScreen(),
                                 ),
                               );
                             },

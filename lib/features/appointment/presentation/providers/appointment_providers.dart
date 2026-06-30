@@ -58,7 +58,73 @@ class AppointmentController extends _$AppointmentController {
 }
 
 @riverpod
-class MyAppointmentsController extends _$MyAppointmentsController {
+class EditAppointmentController extends _$EditAppointmentController {
+  @override
+  FutureOr<AppointmentData?> build() => null;
+
+  Future<void> submit({
+    required int appointmentId,
+    required String name,
+    required String phone,
+    required String email,
+    required String date,
+    required String time,
+    String? note,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard<AppointmentData?>(() async {
+      final response = await ref
+          .read(appointmentRepositoryProvider)
+          .editAppointment(
+            appointmentId: appointmentId,
+            name: name,
+            phone: phone,
+            email: email,
+            date: date,
+            time: time,
+            note: note,
+          );
+      return response.data;
+    });
+  }
+
+  void reset() => state = const AsyncData(null);
+}
+
+/// Appointments the current user requested on properties (buyer/visitor view).
+@riverpod
+class MyRequestedAppointmentsController
+    extends _$MyRequestedAppointmentsController {
+  @override
+  FutureOr<List<MyAppointmentItem>> build() async {
+    if (!ref.read(isLoggedInProvider)) return [];
+    return ref.read(appointmentRepositoryProvider).getMyAppointments();
+  }
+
+  Future<void> refresh() async {
+    if (!ref.read(isLoggedInProvider)) {
+      state = const AsyncData([]);
+      return;
+    }
+
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      return ref.read(appointmentRepositoryProvider).getMyAppointments();
+    });
+  }
+
+  Future<String> deleteAppointment(int appointmentId) async {
+    final message = await ref
+        .read(appointmentRepositoryProvider)
+        .deleteAppointment(appointmentId: appointmentId);
+    await refresh();
+    return message;
+  }
+}
+
+/// Incoming appointment requests on the owner's listed properties.
+@riverpod
+class OwnerAppointmentsController extends _$OwnerAppointmentsController {
   @override
   FutureOr<List<MyAppointmentItem>> build(
     AppointmentStatusFilter status,

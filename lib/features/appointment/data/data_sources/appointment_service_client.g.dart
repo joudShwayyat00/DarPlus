@@ -72,6 +72,118 @@ class _AppointmentServiceClient implements AppointmentServiceClient {
   }
 
   @override
+  Future<MyAppointmentsResponse> getMyAppointments() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<MyAppointmentsResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/my_appointments',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late MyAppointmentsResponse _value;
+    try {
+      _value = MyAppointmentsResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AppointmentResponse> editAppointment({
+    required int appointmentId,
+    required String name,
+    required String phone,
+    required String email,
+    required String date,
+    required String time,
+    String? note,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('appointment_id', appointmentId.toString()));
+    _data.fields.add(MapEntry('name', name));
+    _data.fields.add(MapEntry('phone', phone));
+    _data.fields.add(MapEntry('email', email));
+    _data.fields.add(MapEntry('date', date));
+    _data.fields.add(MapEntry('time', time));
+    if (note != null) {
+      _data.fields.add(MapEntry('note', note));
+    }
+    final _options = _setStreamType<AppointmentResponse>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            'api/appointment/edit',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AppointmentResponse _value;
+    try {
+      _value = AppointmentResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AppointmentActionResponse> deleteAppointment({
+    required int appointmentId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('appointment_id', appointmentId.toString()));
+    final _options = _setStreamType<AppointmentActionResponse>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            'api/appointment/delete',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AppointmentActionResponse _value;
+    try {
+      _value = AppointmentActionResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<OwnerAppointmentsResponse> getOwnerAppointments({
     required String status,
     int? assetId,

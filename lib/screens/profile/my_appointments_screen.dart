@@ -29,7 +29,7 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
 
   Future<void> _onRefresh() async {
     await ref
-        .read(myAppointmentsControllerProvider(_selectedStatus).notifier)
+        .read(ownerAppointmentsControllerProvider(_selectedStatus).notifier)
         .refresh();
   }
 
@@ -97,7 +97,7 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
     }
 
     final appointmentsAsync =
-        ref.watch(myAppointmentsControllerProvider(_selectedStatus));
+        ref.watch(ownerAppointmentsControllerProvider(_selectedStatus));
 
     return _buildShell(
       body: Column(
