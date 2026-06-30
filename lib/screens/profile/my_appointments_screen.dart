@@ -130,8 +130,18 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
     try {
       final date = DateTime.parse(isoDate);
       const months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ];
       return '${months[date.month - 1]} ${date.day}, ${date.year}';
     } catch (_) {
@@ -171,13 +181,12 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
     }
 
     if (!isOwner) {
-      return _buildShell(
-        body: _buildOwnerRequiredState(),
-      );
+      return _buildShell(body: _buildOwnerRequiredState());
     }
 
-    final appointmentsAsync =
-        ref.watch(ownerAppointmentsControllerProvider(_selectedStatus));
+    final appointmentsAsync = ref.watch(
+      ownerAppointmentsControllerProvider(_selectedStatus),
+    );
 
     return _buildShell(
       body: Column(
@@ -293,11 +302,12 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOutCubic,
-                padding: EdgeInsets.symmetric(horizontal: 4.5.w, vertical: 1.1.h),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 4.5.w,
+                  vertical: 1.1.h,
+                ),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.goldBrandColor
-                      : Colors.white,
+                  color: isSelected ? AppColors.goldBrandColor : Colors.white,
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
                     color: isSelected
@@ -393,8 +403,7 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
         itemCount: appointments.length,
         itemBuilder: (context, index) {
           final appointment = appointments[index];
-          final isPending =
-              appointment.status.toLowerCase() == 'pending';
+          final isPending = appointment.status.toLowerCase() == 'pending';
           return _AppointmentCard(
             appointment: appointment,
             formatDate: _formatDate,
@@ -495,8 +504,7 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
             GestureDetector(
               onTap: _onRefresh,
               child: Container(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 1.4.h),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 1.4.h),
                 decoration: BoxDecoration(
                   color: AppColors.goldBrandColor,
                   borderRadius: BorderRadius.circular(14),
@@ -565,13 +573,14 @@ class _AppointmentCard extends ConsumerWidget {
           if (asset != null)
             GestureDetector(
               onTap: () {
-                AppNavigator.of(context).push(
-                  AssetDetailsScreen(assetId: asset.id),
-                );
+                AppNavigator.of(
+                  context,
+                ).push(AssetDetailsScreen(assetId: asset.id));
               },
               child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(22)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(22),
+                ),
                 child: Stack(
                   children: [
                     SizedBox(
@@ -876,9 +885,9 @@ class _AppointmentCard extends ConsumerWidget {
                 SizedBox(height: 1.8.h),
                 GestureDetector(
                   onTap: () {
-                    AppNavigator.of(context).push(
-                      AssetDetailsScreen(assetId: appointment.assetId),
-                    );
+                    AppNavigator.of(
+                      context,
+                    ).push(AssetDetailsScreen(assetId: appointment.assetId));
                   },
                   child: Container(
                     width: double.infinity,
@@ -967,11 +976,7 @@ class _VisitorRow extends StatelessWidget {
   final String label;
   final VoidCallback? onTap;
 
-  const _VisitorRow({
-    required this.icon,
-    required this.label,
-    this.onTap,
-  });
+  const _VisitorRow({required this.icon, required this.label, this.onTap});
 
   @override
   Widget build(BuildContext context) {
