@@ -33,6 +33,86 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
         .refresh();
   }
 
+  Future<void> _confirmDelete(MyAppointmentItem appointment) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          tr.delete_appointment,
+          style: appTextStyle(
+            context,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w900,
+            color: Colors.red,
+          ),
+        ),
+        content: Text(
+          tr.delete_appointment_confirm,
+          style: appTextStyle(
+            context,
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.black.withAlpha(160),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(
+              tr.cancel,
+              style: appTextStyle(
+                context,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w700,
+                color: Colors.black.withAlpha(150),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(
+              tr.delete,
+              style: appTextStyle(
+                context,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w800,
+                color: Colors.red,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      final message = await ref
+          .read(ownerAppointmentsControllerProvider(_selectedStatus).notifier)
+          .deleteAppointment(appointment.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.black.withAlpha(220),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e.toString().replaceFirst('Exception: ', '');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          backgroundColor: Colors.red.shade700,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   String _statusLabel(AppointmentStatusFilter status) {
     switch (status) {
       case AppointmentStatusFilter.pending:
@@ -312,10 +392,14 @@ class _MyAppointmentsScreenState extends ConsumerState<MyAppointmentsScreen> {
         padding: EdgeInsets.fromLTRB(5.w, 0.5.h, 5.w, 2.h),
         itemCount: appointments.length,
         itemBuilder: (context, index) {
+          final appointment = appointments[index];
+          final isPending =
+              appointment.status.toLowerCase() == 'pending';
           return _AppointmentCard(
-            appointment: appointments[index],
+            appointment: appointment,
             formatDate: _formatDate,
             formatTime: _formatTime,
+            onDelete: isPending ? () => _confirmDelete(appointment) : null,
           );
         },
       ),
@@ -446,11 +530,13 @@ class _AppointmentCard extends ConsumerWidget {
   final MyAppointmentItem appointment;
   final String Function(String) formatDate;
   final String Function(String) formatTime;
+  final VoidCallback? onDelete;
 
   const _AppointmentCard({
     required this.appointment,
     required this.formatDate,
     required this.formatTime,
+    this.onDelete,
   });
 
   @override
@@ -744,6 +830,46 @@ class _AppointmentCard extends ConsumerWidget {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ],
+                if (onDelete != null) ...[
+                  SizedBox(height: 1.8.h),
+                  GestureDetector(
+                    onTap: onDelete,
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 2.w,
+                        vertical: 1.3.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade600.withAlpha(18),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: Colors.red.shade600.withAlpha(60),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.delete_outline_rounded,
+                            size: 16,
+                            color: Colors.red.shade600,
+                          ),
+                          SizedBox(width: 1.5.w),
+                          Text(
+                            tr.delete,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 9.5.sp,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.red.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

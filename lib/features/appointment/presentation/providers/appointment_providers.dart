@@ -156,6 +156,20 @@ class OwnerAppointmentsController extends _$OwnerAppointmentsController {
           );
     });
   }
+
+  Future<String> deleteAppointment(int appointmentId) async {
+    final message = await ref
+        .read(appointmentRepositoryProvider)
+        .deleteAppointment(appointmentId: appointmentId);
+    await refresh();
+    for (final filter in AppointmentStatusFilter.values) {
+      if (filter != status) {
+        ref.invalidate(ownerAppointmentsControllerProvider(filter));
+      }
+    }
+    ref.invalidate(ownerAllAppointmentsProvider);
+    return message;
+  }
 }
 
 @riverpod
