@@ -18,7 +18,9 @@ import 'package:dar_plus_app/screens/profile/my_subscriptions_screen.dart';
 import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/screens/owners/all_owners_screen.dart';
 import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
+import 'package:dar_plus_app/screens/search.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/widgets/filter_bottom_sheet.dart';
 import 'package:dar_plus_app/utils/ui/shimmer_placeholder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,17 +38,24 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentRecommendedIndex = 0;
   int? _selectedCategoryIndex;
-  late _ListingType _listingType;
   bool _subscriptionReminderDismissed = false;
 
   final PageController _recommendedController = PageController(
     viewportFraction: 0.92,
   );
 
-  @override
-  void initState() {
-    super.initState();
-    _listingType = _ListingType.both;
+  void _openSearchWithListingType(_ListingType type) {
+    final listingType = switch (type) {
+      _ListingType.buy => 'buy',
+      _ListingType.rent => 'rent',
+      _ListingType.both => 'both',
+    };
+    AppNavigator.of(context).push(
+      SearchScreen(
+        showBackButton: true,
+        initialFilter: FilterData(listingType: listingType),
+      ),
+    );
   }
 
   @override
@@ -101,23 +110,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         CategoryBox(
                           title: tr.buy,
-                          isSelected: _listingType == _ListingType.buy,
-                          onTap: () =>
-                              setState(() => _listingType = _ListingType.buy),
+                          onTap: () => _openSearchWithListingType(_ListingType.buy),
                         ),
                         SizedBox(width: 2.5.w),
                         CategoryBox(
                           title: tr.rent,
-                          isSelected: _listingType == _ListingType.rent,
-                          onTap: () =>
-                              setState(() => _listingType = _ListingType.rent),
+                          onTap: () => _openSearchWithListingType(_ListingType.rent),
                         ),
                         SizedBox(width: 2.5.w),
                         CategoryBox(
                           title: tr.both,
-                          isSelected: _listingType == _ListingType.both,
-                          onTap: () =>
-                              setState(() => _listingType = _ListingType.both),
+                          onTap: () => _openSearchWithListingType(_ListingType.both),
                         ),
                       ],
                     ),

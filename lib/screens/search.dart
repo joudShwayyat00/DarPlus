@@ -21,8 +21,13 @@ import 'package:dar_plus_app/main.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   final bool showBackButton;
+  final FilterData? initialFilter;
 
-  const SearchScreen({super.key, this.showBackButton = false});
+  const SearchScreen({
+    super.key,
+    this.showBackButton = false,
+    this.initialFilter,
+  });
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
@@ -41,8 +46,30 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   FilterData _activeFilter = FilterData.empty;
   bool _showAllRecent = false;
   bool _showAllPopular = false;
+  bool _initialFilterApplied = false;
 
   // recent searches are fetched from the API; no local fallbacks kept here
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initialFilter;
+    if (initial != null && initial.hasActiveFilters) {
+      _activeFilter = initial;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialFilterApplied ||
+        widget.initialFilter == null ||
+        !widget.initialFilter!.hasActiveFilters) {
+      return;
+    }
+    _initialFilterApplied = true;
+    ref.invalidate(filteredAssetsControllerProvider(_activeFilter));
+  }
 
   @override
   void dispose() {
