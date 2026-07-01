@@ -151,3 +151,220 @@ abstract class _$PackagesController extends $AsyncNotifier<List<PackageItem>> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(MySubscriptionsController)
+const mySubscriptionsControllerProvider = MySubscriptionsControllerProvider._();
+
+final class MySubscriptionsControllerProvider
+    extends
+        $AsyncNotifierProvider<
+          MySubscriptionsController,
+          List<MySubscriptionItem>
+        > {
+  const MySubscriptionsControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mySubscriptionsControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mySubscriptionsControllerHash();
+
+  @$internal
+  @override
+  MySubscriptionsController create() => MySubscriptionsController();
+}
+
+String _$mySubscriptionsControllerHash() =>
+    r'edd8f98383a4d3b9db2e55992c6aaa84bfd1af15';
+
+abstract class _$MySubscriptionsController
+    extends $AsyncNotifier<List<MySubscriptionItem>> {
+  FutureOr<List<MySubscriptionItem>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<
+              AsyncValue<List<MySubscriptionItem>>,
+              List<MySubscriptionItem>
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<List<MySubscriptionItem>>,
+                List<MySubscriptionItem>
+              >,
+              AsyncValue<List<MySubscriptionItem>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(PaymentInfoController)
+const paymentInfoControllerProvider = PaymentInfoControllerProvider._();
+
+final class PaymentInfoControllerProvider
+    extends
+        $AsyncNotifierProvider<PaymentInfoController, PaymentInfoResponse?> {
+  const PaymentInfoControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'paymentInfoControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$paymentInfoControllerHash();
+
+  @$internal
+  @override
+  PaymentInfoController create() => PaymentInfoController();
+}
+
+String _$paymentInfoControllerHash() =>
+    r'4cb666f629e847928348a0990f6af9e3a5f7e29e';
+
+abstract class _$PaymentInfoController
+    extends $AsyncNotifier<PaymentInfoResponse?> {
+  FutureOr<PaymentInfoResponse?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<AsyncValue<PaymentInfoResponse?>, PaymentInfoResponse?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<PaymentInfoResponse?>,
+                PaymentInfoResponse?
+              >,
+              AsyncValue<PaymentInfoResponse?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(SubscribeController)
+const subscribeControllerProvider = SubscribeControllerProvider._();
+
+final class SubscribeControllerProvider
+    extends $AsyncNotifierProvider<SubscribeController, String?> {
+  const SubscribeControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'subscribeControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$subscribeControllerHash();
+
+  @$internal
+  @override
+  SubscribeController create() => SubscribeController();
+}
+
+String _$subscribeControllerHash() =>
+    r'bb2a3bab266e62f1d38f63a6a322de7a9144efed';
+
+abstract class _$SubscribeController extends $AsyncNotifier<String?> {
+  FutureOr<String?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<String?>, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<String?>, String?>,
+              AsyncValue<String?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(PaymentCallbackController)
+const paymentCallbackControllerProvider = PaymentCallbackControllerProvider._();
+
+final class PaymentCallbackControllerProvider
+    extends
+        $AsyncNotifierProvider<
+          PaymentCallbackController,
+          PaymentCallbackResponse?
+        > {
+  const PaymentCallbackControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'paymentCallbackControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$paymentCallbackControllerHash();
+
+  @$internal
+  @override
+  PaymentCallbackController create() => PaymentCallbackController();
+}
+
+String _$paymentCallbackControllerHash() =>
+    r'15a3a172054204728c4a773087f9b366782f6881';
+
+abstract class _$PaymentCallbackController
+    extends $AsyncNotifier<PaymentCallbackResponse?> {
+  FutureOr<PaymentCallbackResponse?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<
+              AsyncValue<PaymentCallbackResponse?>,
+              PaymentCallbackResponse?
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<PaymentCallbackResponse?>,
+                PaymentCallbackResponse?
+              >,
+              AsyncValue<PaymentCallbackResponse?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

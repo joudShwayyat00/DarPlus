@@ -1,5 +1,6 @@
 import 'package:dar_plus_app/screens/profile/my_requested_appointments_screen.dart';
 import 'package:dar_plus_app/screens/profile/owner_dashboard_screen.dart';
+import 'package:dar_plus_app/screens/profile/my_subscriptions_screen.dart';
 import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/controller/local_provider.dart';
@@ -143,7 +144,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ),
                           _MenuItem(
                             icon: Icons.card_membership_rounded,
-                            title: tr.subscriptions,
+                            title: tr.my_subscriptions,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MySubscriptionsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _MenuItem(
+                            icon: Icons.upgrade_rounded,
+                            title: tr.browse_plans,
                             onTap: () {
                               Navigator.push(
                                 context,

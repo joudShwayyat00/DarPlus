@@ -1680,4 +1680,105 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gallery_tap_to_zoom => 'Tap image to view full screen';
+
+  @override
+  String get my_subscriptions => 'My Subscriptions';
+
+  @override
+  String get my_subscription_empty_title => 'No active subscription';
+
+  @override
+  String get my_subscription_empty_message =>
+      'Choose a plan to list your properties and unlock owner features.';
+
+  @override
+  String get continue_payment => 'Continue payment';
+
+  @override
+  String get browse_plans => 'Browse plans';
+
+  @override
+  String get subscription_starts_at => 'Started';
+
+  @override
+  String get subscription_expires_at => 'Expires';
+
+  @override
+  String get subscription_usage_title => 'Listing usage';
+
+  @override
+  String subscription_listings_used(int used, int limit) {
+    return '$used of $limit used';
+  }
+
+  @override
+  String subscription_listings_remaining(int remaining) {
+    return '$remaining remaining';
+  }
+
+  @override
+  String get subscription_status_active => 'Active';
+
+  @override
+  String get subscription_status_pending => 'Pending payment';
+
+  @override
+  String get subscription_status_expired => 'Expired';
+
+  @override
+  String get login_required_my_subscriptions =>
+      'Sign in to view your subscription details and manage your plan.';
+
+  @override
+  String get payment_info_title => 'Payment details';
+
+  @override
+  String get payment_info_subtitle =>
+      'Transfer the plan amount to the account below, then upload your payment receipt to activate your subscription.';
+
+  @override
+  String get bank_account_name => 'Account name';
+
+  @override
+  String get bank_account_number => 'Account number';
+
+  @override
+  String get bank_iban => 'IBAN';
+
+  @override
+  String get bank_swift => 'SWIFT code';
+
+  @override
+  String get bank_cliq => 'CliQ alias';
+
+  @override
+  String get bank_phone => 'Phone number';
+
+  @override
+  String get copied_to_clipboard => 'Copied to clipboard';
+
+  @override
+  String get submit_payment_proof => 'Submit payment proof';
+
+  @override
+  String get payment_receipt_image => 'Payment receipt';
+
+  @override
+  String get transaction_id => 'Transaction ID';
+
+  @override
+  String get transaction_id_hint => 'Optional reference number';
+
+  @override
+  String get payment_amount => 'Amount';
+
+  @override
+  String get upload_receipt_hint =>
+      'Upload a screenshot or photo of your bank transfer so we can verify your payment.';
+
+  @override
+  String get payment_image_required => 'Please upload a payment receipt image';
+
+  @override
+  String get tap_to_upload_receipt => 'Tap to upload receipt';
 }

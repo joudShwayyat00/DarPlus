@@ -573,5 +573,47 @@
   "calendar_updated_success": "Calendar updated successfully",
   "calendar_booked_locked": "Booked dates cannot be changed",
   "calendar_selected_dates": "Selected dates",
-  "gallery_tap_to_zoom": "Tap image to view full screen"
+  "gallery_tap_to_zoom": "Tap image to view full screen",
+  "my_subscriptions": "My Subscriptions",
+  "my_subscription_empty_title": "No active subscription",
+  "my_subscription_empty_message": "Choose a plan to list your properties and unlock owner features.",
+  "continue_payment": "Continue payment",
+  "browse_plans": "Browse plans",
+  "subscription_starts_at": "Started",
+  "subscription_expires_at": "Expires",
+  "subscription_usage_title": "Listing usage",
+  "subscription_listings_used": "{used} of {limit} used",
+  "@subscription_listings_used": {
+    "placeholders": {
+      "used": { "type": "int" },
+      "limit": { "type": "int" }
+    }
+  },
+  "subscription_listings_remaining": "{remaining} remaining",
+  "@subscription_listings_remaining": {
+    "placeholders": {
+      "remaining": { "type": "int" }
+    }
+  },
+  "subscription_status_active": "Active",
+  "subscription_status_pending": "Pending payment",
+  "subscription_status_expired": "Expired",
+  "login_required_my_subscriptions": "Sign in to view your subscription details and manage your plan.",
+  "payment_info_title": "Payment details",
+  "payment_info_subtitle": "Transfer the plan amount to the account below, then upload your payment receipt to activate your subscription.",
+  "bank_account_name": "Account name",
+  "bank_account_number": "Account number",
+  "bank_iban": "IBAN",
+  "bank_swift": "SWIFT code",
+  "bank_cliq": "CliQ alias",
+  "bank_phone": "Phone number",
+  "copied_to_clipboard": "Copied to clipboard",
+  "submit_payment_proof": "Submit payment proof",
+  "payment_receipt_image": "Payment receipt",
+  "transaction_id": "Transaction ID",
+  "transaction_id_hint": "Optional reference number",
+  "payment_amount": "Amount",
+  "upload_receipt_hint": "Upload a screenshot or photo of your bank transfer so we can verify your payment.",
+  "payment_image_required": "Please upload a payment receipt image",
+  "tap_to_upload_receipt": "Tap to upload receipt"
 }

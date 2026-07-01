@@ -4,6 +4,7 @@ import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/features/packages/data/models/package_item.dart';
 import 'package:dar_plus_app/features/packages/presentation/providers/packages_providers.dart';
 import 'package:dar_plus_app/main.dart';
+import 'package:dar_plus_app/screens/profile/my_subscriptions_screen.dart';
 import 'package:dar_plus_app/screens/profile/widgets/content_widgets.dart';
 import 'package:dar_plus_app/utils/widgets/auth_required_sheet.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
@@ -83,6 +84,8 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
     }
 
     final lang = ref.read(apiLanguageCodeProvider);
+    final isSubscribing = ref.watch(subscribeControllerProvider).isLoading;
+    final selectedPlan = packages[_selectedPlanIndex];
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -113,30 +116,72 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
           SizedBox(height: 3.h),
           AppButton(
             backgroundColor: AppColors.goldBrandColor,
-            onPressed: () async {
-              if (!await requireAuth(
-                context,
-                message: tr.login_required_subscriptions,
-                icon: Icons.card_membership_rounded,
-              )) {
-                return;
-              }
-              // TODO: Process subscription purchase
-            },
-            child: Text(
-              tr.upgrade_plan,
-              style: appTextStyle(
-                context,
-                fontSize: 12.2.sp,
-                fontWeight: FontWeight.w700,
-                color: AppColors.whiteColor,
-              ),
-            ),
+            onPressed: isSubscribing
+                ? () {}
+                : () => _subscribeToPlan(selectedPlan.id),
+            child: isSubscribing
+                ? SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation(
+                        AppColors.whiteColor,
+                      ),
+                    ),
+                  )
+                : Text(
+                    tr.upgrade_plan,
+                    style: appTextStyle(
+                      context,
+                      fontSize: 12.2.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.whiteColor,
+                    ),
+                  ),
           ),
           SizedBox(height: 3.h),
         ],
       ),
     );
+  }
+
+  Future<void> _subscribeToPlan(int packageId) async {
+    if (!await requireAuth(
+      context,
+      message: tr.login_required_subscriptions,
+      icon: Icons.card_membership_rounded,
+    )) {
+      return;
+    }
+
+    try {
+      final message = await ref
+          .read(subscribeControllerProvider.notifier)
+          .subscribe(packageId);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.black.withAlpha(220),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const MySubscriptionsScreen()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e.toString().replaceFirst('Exception: ', '');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          backgroundColor: Colors.red.shade700,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 
   Widget _buildHeader() {

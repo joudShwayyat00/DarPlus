@@ -3277,6 +3277,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap image to view full screen'**
   String get gallery_tap_to_zoom;
+
+  /// No description provided for @my_subscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'My Subscriptions'**
+  String get my_subscriptions;
+
+  /// No description provided for @my_subscription_empty_title.
+  ///
+  /// In en, this message translates to:
+  /// **'No active subscription'**
+  String get my_subscription_empty_title;
+
+  /// No description provided for @my_subscription_empty_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a plan to list your properties and unlock owner features.'**
+  String get my_subscription_empty_message;
+
+  /// No description provided for @continue_payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue payment'**
+  String get continue_payment;
+
+  /// No description provided for @browse_plans.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse plans'**
+  String get browse_plans;
+
+  /// No description provided for @subscription_starts_at.
+  ///
+  /// In en, this message translates to:
+  /// **'Started'**
+  String get subscription_starts_at;
+
+  /// No description provided for @subscription_expires_at.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires'**
+  String get subscription_expires_at;
+
+  /// No description provided for @subscription_usage_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Listing usage'**
+  String get subscription_usage_title;
+
+  /// No description provided for @subscription_listings_used.
+  ///
+  /// In en, this message translates to:
+  /// **'{used} of {limit} used'**
+  String subscription_listings_used(int used, int limit);
+
+  /// No description provided for @subscription_listings_remaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} remaining'**
+  String subscription_listings_remaining(int remaining);
+
+  /// No description provided for @subscription_status_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get subscription_status_active;
+
+  /// No description provided for @subscription_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending payment'**
+  String get subscription_status_pending;
+
+  /// No description provided for @subscription_status_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get subscription_status_expired;
+
+  /// No description provided for @login_required_my_subscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to view your subscription details and manage your plan.'**
+  String get login_required_my_subscriptions;
+
+  /// No description provided for @payment_info_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment details'**
+  String get payment_info_title;
+
+  /// No description provided for @payment_info_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer the plan amount to the account below, then upload your payment receipt to activate your subscription.'**
+  String get payment_info_subtitle;
+
+  /// No description provided for @bank_account_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Account name'**
+  String get bank_account_name;
+
+  /// No description provided for @bank_account_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Account number'**
+  String get bank_account_number;
+
+  /// No description provided for @bank_iban.
+  ///
+  /// In en, this message translates to:
+  /// **'IBAN'**
+  String get bank_iban;
+
+  /// No description provided for @bank_swift.
+  ///
+  /// In en, this message translates to:
+  /// **'SWIFT code'**
+  String get bank_swift;
+
+  /// No description provided for @bank_cliq.
+  ///
+  /// In en, this message translates to:
+  /// **'CliQ alias'**
+  String get bank_cliq;
+
+  /// No description provided for @bank_phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get bank_phone;
+
+  /// No description provided for @copied_to_clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copied_to_clipboard;
+
+  /// No description provided for @submit_payment_proof.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit payment proof'**
+  String get submit_payment_proof;
+
+  /// No description provided for @payment_receipt_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment receipt'**
+  String get payment_receipt_image;
+
+  /// No description provided for @transaction_id.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID'**
+  String get transaction_id;
+
+  /// No description provided for @transaction_id_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional reference number'**
+  String get transaction_id_hint;
+
+  /// No description provided for @payment_amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get payment_amount;
+
+  /// No description provided for @upload_receipt_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload a screenshot or photo of your bank transfer so we can verify your payment.'**
+  String get upload_receipt_hint;
+
+  /// No description provided for @payment_image_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload a payment receipt image'**
+  String get payment_image_required;
+
+  /// No description provided for @tap_to_upload_receipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to upload receipt'**
+  String get tap_to_upload_receipt;
 }
 
 class _AppLocalizationsDelegate

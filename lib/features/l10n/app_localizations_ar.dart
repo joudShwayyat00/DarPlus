@@ -1669,4 +1669,105 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get gallery_tap_to_zoom => 'اضغط على الصورة لعرضها بالحجم الكامل';
+
+  @override
+  String get my_subscriptions => 'اشتراكاتي';
+
+  @override
+  String get my_subscription_empty_title => 'لا يوجد اشتراك نشط';
+
+  @override
+  String get my_subscription_empty_message =>
+      'اختر باقة لعرض عقاراتك والاستفادة من ميزات المالك.';
+
+  @override
+  String get continue_payment => 'متابعة الدفع';
+
+  @override
+  String get browse_plans => 'تصفح الباقات';
+
+  @override
+  String get subscription_starts_at => 'تاريخ البدء';
+
+  @override
+  String get subscription_expires_at => 'تاريخ الانتهاء';
+
+  @override
+  String get subscription_usage_title => 'استخدام العقارات';
+
+  @override
+  String subscription_listings_used(int used, int limit) {
+    return '$used من $limit مستخدم';
+  }
+
+  @override
+  String subscription_listings_remaining(int remaining) {
+    return 'متبقي $remaining';
+  }
+
+  @override
+  String get subscription_status_active => 'نشط';
+
+  @override
+  String get subscription_status_pending => 'بانتظار الدفع';
+
+  @override
+  String get subscription_status_expired => 'منتهي';
+
+  @override
+  String get login_required_my_subscriptions =>
+      'سجّل الدخول لعرض تفاصيل اشتراكك وإدارة خطتك.';
+
+  @override
+  String get payment_info_title => 'تفاصيل الدفع';
+
+  @override
+  String get payment_info_subtitle =>
+      'حوّل مبلغ الباقة إلى الحساب أدناه، ثم ارفع إيصال الدفع لتفعيل اشتراكك.';
+
+  @override
+  String get bank_account_name => 'اسم الحساب';
+
+  @override
+  String get bank_account_number => 'رقم الحساب';
+
+  @override
+  String get bank_iban => 'رقم الآيبان';
+
+  @override
+  String get bank_swift => 'رمز SWIFT';
+
+  @override
+  String get bank_cliq => 'اسم CliQ';
+
+  @override
+  String get bank_phone => 'رقم الهاتف';
+
+  @override
+  String get copied_to_clipboard => 'تم النسخ';
+
+  @override
+  String get submit_payment_proof => 'إرسال إثبات الدفع';
+
+  @override
+  String get payment_receipt_image => 'إيصال الدفع';
+
+  @override
+  String get transaction_id => 'رقم العملية';
+
+  @override
+  String get transaction_id_hint => 'رقم مرجعي اختياري';
+
+  @override
+  String get payment_amount => 'المبلغ';
+
+  @override
+  String get upload_receipt_hint =>
+      'ارفع لقطة شاشة أو صورة للتحويل البنكي حتى نتمكن من التحقق من دفعتك.';
+
+  @override
+  String get payment_image_required => 'يرجى رفع صورة إيصال الدفع';
+
+  @override
+  String get tap_to_upload_receipt => 'اضغط لرفع الإيصال';
 }
