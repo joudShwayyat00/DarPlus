@@ -825,6 +825,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'This action cannot be undone. All your data will be permanently deleted. Are you sure you want to continue?';
 
   @override
+  String get delete_account_password_prompt =>
+      'Enter your password to confirm account deletion.';
+
+  @override
   String get free => 'Free';
 
   @override

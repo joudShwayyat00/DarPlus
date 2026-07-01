@@ -1664,6 +1664,12 @@ abstract class AppLocalizations {
   /// **'This action cannot be undone. All your data will be permanently deleted. Are you sure you want to continue?'**
   String get delete_confirm_message;
 
+  /// No description provided for @delete_account_password_prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password to confirm account deletion.'**
+  String get delete_account_password_prompt;
+
   /// No description provided for @free.
   ///
   /// In en, this message translates to:

@@ -296,6 +296,7 @@
   "delete": "Delete",
   "edit": "Edit",
   "delete_confirm_message": "This action cannot be undone. All your data will be permanently deleted. Are you sure you want to continue?",
+  "delete_account_password_prompt": "Enter your password to confirm account deletion.",
   "free": "Free",
   "features_browse_properties": "Browse properties",
   "features_save_favorites": "Save favorites",

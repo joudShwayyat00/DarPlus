@@ -10,6 +10,7 @@ import '../../data/models/forgot_password_response.dart';
 import '../../data/models/edit_profile_response.dart';
 import '../../data/models/update_password_response.dart';
 import '../../data/models/upload_image_response.dart';
+import '../../data/models/delete_account_response.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 
@@ -186,6 +187,23 @@ class UpdatePasswordController extends _$UpdatePasswordController {
         password: password,
         passwordConfirmation: passwordConfirmation,
       );
+      return response;
+    });
+  }
+}
+
+@riverpod
+class DeleteAccountController extends _$DeleteAccountController {
+  @override
+  FutureOr<DeleteAccountResponse?> build() => null;
+
+  Future<void> deleteAccount(String password) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard<DeleteAccountResponse?>(() async {
+      final repository = ref.read(authRepositoryProvider);
+      final response = await repository.deleteAccount(password: password);
+      DioFactory.updateAuthToken();
+      ref.invalidate(profileControllerProvider);
       return response;
     });
   }

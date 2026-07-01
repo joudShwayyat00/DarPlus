@@ -817,6 +817,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع بياناتك نهائيًا. هل أنت متأكد أنك تريد المتابعة؟';
 
   @override
+  String get delete_account_password_prompt =>
+      'أدخل كلمة المرور لتأكيد حذف الحساب.';
+
+  @override
   String get free => 'مجانًا';
 
   @override

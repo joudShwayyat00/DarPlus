@@ -1,6 +1,7 @@
 import '../../data/models/register_response.dart';
 import '../../data/models/user_model.dart';
 import '../../data/models/logout_response.dart';
+import '../../data/models/delete_account_response.dart';
 import '../../data/models/forgot_password_response.dart';
 import '../../data/models/edit_profile_response.dart';
 import '../../data/models/update_password_response.dart';
@@ -25,6 +26,8 @@ abstract class AuthRepository {
   Future<UserModel> getProfile();
 
   Future<LogoutResponse> logout();
+
+  Future<DeleteAccountResponse> deleteAccount({required String password});
   Future<ForgotPasswordResponse> forgotPassword(String email);
 
   Future<EditProfileResponse> editProfile({

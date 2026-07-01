@@ -451,6 +451,62 @@ abstract class _$UpdatePasswordController
   }
 }
 
+@ProviderFor(DeleteAccountController)
+const deleteAccountControllerProvider = DeleteAccountControllerProvider._();
+
+final class DeleteAccountControllerProvider
+    extends
+        $AsyncNotifierProvider<
+          DeleteAccountController,
+          DeleteAccountResponse?
+        > {
+  const DeleteAccountControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteAccountControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteAccountControllerHash();
+
+  @$internal
+  @override
+  DeleteAccountController create() => DeleteAccountController();
+}
+
+String _$deleteAccountControllerHash() =>
+    r'fccc83c76c494b942a4c3b2276e71bb4f1974876';
+
+abstract class _$DeleteAccountController
+    extends $AsyncNotifier<DeleteAccountResponse?> {
+  FutureOr<DeleteAccountResponse?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<AsyncValue<DeleteAccountResponse?>, DeleteAccountResponse?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<DeleteAccountResponse?>,
+                DeleteAccountResponse?
+              >,
+              AsyncValue<DeleteAccountResponse?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
 @ProviderFor(UploadImageController)
 const uploadImageControllerProvider = UploadImageControllerProvider._();
 

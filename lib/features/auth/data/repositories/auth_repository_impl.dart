@@ -3,6 +3,7 @@ import '../data_sources/auth_service_client.dart';
 import '../models/register_response.dart';
 import '../models/user_model.dart';
 import '../models/logout_response.dart';
+import '../models/delete_account_response.dart';
 import '../models/forgot_password_response.dart';
 import '../models/edit_profile_response.dart';
 import '../models/update_password_response.dart';
@@ -61,11 +62,41 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<LogoutResponse> logout() async {
     final response = await _authServiceClient.logout();
     if (response.status) {
-      SharedPerfManager().token = '';
-      SharedPerfManager().isLoggedIn = false;
-      SharedPerfManager().userEmail = '';
+      _clearSession();
     }
     return response;
+  }
+
+  @override
+  Future<DeleteAccountResponse> deleteAccount({
+    required String password,
+  }) async {
+    try {
+      final response = await _authServiceClient.deleteAccount(password);
+      if (response.status) {
+        _clearSession();
+      }
+      return response;
+    } on DioException catch (e) {
+      throw Exception(_dioMessage(e, 'Failed to delete account'));
+    }
+  }
+
+  void _clearSession() {
+    SharedPerfManager().token = '';
+    SharedPerfManager().isLoggedIn = false;
+    SharedPerfManager().userEmail = '';
+  }
+
+  String _dioMessage(DioException error, String fallback) {
+    final data = error.response?.data;
+    if (data is Map) {
+      final message = data['message'];
+      if (message is String && message.trim().isNotEmpty) {
+        return message;
+      }
+    }
+    return fallback;
   }
 
   @override

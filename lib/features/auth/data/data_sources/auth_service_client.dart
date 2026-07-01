@@ -4,6 +4,7 @@ import 'package:retrofit/retrofit.dart';
 import '../models/register_response.dart';
 import '../models/user_model.dart';
 import '../models/logout_response.dart';
+import '../models/delete_account_response.dart';
 import '../models/forgot_password_response.dart';
 import '../models/edit_profile_response.dart';
 import '../models/update_password_response.dart';
@@ -35,6 +36,10 @@ abstract class AuthServiceClient {
 
   @POST(ApiConstants.logout)
   Future<LogoutResponse> logout();
+
+  @POST(ApiConstants.deleteAccount)
+  @MultiPart()
+  Future<DeleteAccountResponse> deleteAccount(@Part() String password);
 
   @POST(ApiConstants.forgotPassword)
   @MultiPart()

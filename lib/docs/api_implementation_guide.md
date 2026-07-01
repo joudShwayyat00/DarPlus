@@ -98,3 +98,36 @@ Always use `AppLocalizations` for user-facing strings. Add keys to `lib/features
 ```bash
 flutter gen-l10n
 ```
+
+## 9. Example: Delete Account (`POST /api/delete_account`)
+
+Requires authentication. The user must confirm their password before the account is permanently deleted.
+
+### Endpoint
+```dart
+static const String deleteAccount = '/api/delete_account';
+```
+
+### Request
+- **Method:** `POST`
+- **Content-Type:** `multipart/form-data`
+- **Field:** `password` (current account password)
+
+### Responses
+| Status | Body | App behavior |
+|--------|------|--------------|
+| `200` | `{"status":true,"message":"Account deleted successfully"}` | Clear session, show success, navigate to welcome screen |
+| `400` | `{"status":false,"message":"Password is incorrect"}` | Show API `message` to the user |
+
+### Service client
+```dart
+@POST(ApiConstants.deleteAccount)
+@MultiPart()
+Future<DeleteAccountResponse> deleteAccount(@Part() String password);
+```
+
+### Repository
+On `status == true`, clear the local session (token, `isLoggedIn`, `userEmail`) — same as logout.
+
+### UI
+Profile → Delete Account → password confirmation dialog → call API → logout and redirect to `WelcomeScreen`.

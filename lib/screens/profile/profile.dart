@@ -16,13 +16,16 @@ import 'package:dar_plus_app/screens/profile/notifications_screen.dart';
 import 'package:dar_plus_app/screens/profile/privacy_policy_screen.dart';
 import 'package:dar_plus_app/screens/profile/terms_conditions_screen.dart';
 import 'package:dar_plus_app/utils/helpers/app_navigation.dart';
+import 'package:dar_plus_app/utils/ui/app_input_field.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/data/models/user_model.dart';
+import '../../features/auth/data/models/delete_account_response.dart';
 import '../../features/notifications/presentation/providers/notifications_providers.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -35,6 +38,31 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<DeleteAccountResponse?>>(
+      deleteAccountControllerProvider,
+      (previous, next) {
+        next.when(
+          data: (data) {
+            if (data != null) {
+              EasyLoading.dismiss();
+              EasyLoading.showSuccess(data.message);
+              if (context.mounted) {
+                AppNavigator.of(
+                  context,
+                ).pushAndRemoveUntil(const WelcomeScreen());
+              }
+            }
+          },
+          loading: () => EasyLoading.show(status: tr.loading),
+          error: (error, stack) {
+            EasyLoading.dismiss();
+            final message = error.toString().replaceFirst('Exception: ', '');
+            EasyLoading.showError(message);
+          },
+        );
+      },
+    );
+
     final isLoggedIn = ref.watch(isLoggedInProvider);
     final notificationBadge = isLoggedIn
         ? ref
@@ -861,60 +889,114 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _showDeleteAccountDialog(BuildContext context) {
+    final passwordController = TextEditingController();
+    final passwordFocusNode = FocusNode();
+    var obscurePassword = true;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.whiteColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          tr.delete_account,
-          style: appTextStyle(
-            context,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w900,
-            color: Colors.red,
-          ),
-        ),
-        content: Text(
-          tr.delete_confirm_message,
-          style: appTextStyle(
-            context,
-            fontSize: 11.5.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.black.withAlpha(160),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              tr.cancel,
-              style: appTextStyle(
-                context,
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w700,
-                color: Colors.black.withAlpha(150),
-              ),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: AppColors.whiteColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            tr.delete_account,
+            style: appTextStyle(
+              context,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w900,
+              color: Colors.red,
             ),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              AppNavigator.of(context).push(WelcomeScreen());
-            },
-            child: Text(
-              tr.delete,
-              style: appTextStyle(
-                context,
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w800,
-                color: Colors.red,
-              ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tr.delete_confirm_message,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 11.5.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black.withAlpha(160),
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  tr.delete_account_password_prompt,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 10.5.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black.withAlpha(180),
+                  ),
+                ),
+                SizedBox(height: 1.h),
+                AppInputField(
+                  controller: passwordController,
+                  focusNode: passwordFocusNode,
+                  hint: tr.password,
+                  prefixIcon: Icons.lock_outline,
+                  obscure: obscurePassword,
+                  textInputAction: TextInputAction.done,
+                  suffixIcon: IconButton(
+                    onPressed: () => setDialogState(
+                      () => obscurePassword = !obscurePassword,
+                    ),
+                    icon: Icon(
+                      obscurePassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                tr.cancel,
+                style: appTextStyle(
+                  context,
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black.withAlpha(150),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                final password = passwordController.text.trim();
+                if (password.isEmpty) {
+                  EasyLoading.showError(tr.password_required);
+                  return;
+                }
+                Navigator.pop(dialogContext);
+                ref
+                    .read(deleteAccountControllerProvider.notifier)
+                    .deleteAccount(password);
+              },
+              child: Text(
+                tr.delete,
+                style: appTextStyle(
+                  context,
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    );
+    ).then((_) {
+      passwordController.dispose();
+      passwordFocusNode.dispose();
+    });
   }
 }
 

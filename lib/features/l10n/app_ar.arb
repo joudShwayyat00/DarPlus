@@ -296,6 +296,7 @@
   "delete": "حذف",
   "edit": "تعديل",
   "delete_confirm_message": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع بياناتك نهائيًا. هل أنت متأكد أنك تريد المتابعة؟",
+  "delete_account_password_prompt": "أدخل كلمة المرور لتأكيد حذف الحساب.",
   "free": "مجانًا",
   "features_browse_properties": "تصفح العقارات",
   "features_save_favorites": "حفظ المفضلات",
