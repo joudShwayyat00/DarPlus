@@ -8,6 +8,15 @@ import '../models/payment_info_response.dart';
 import '../models/subscribe_response.dart';
 import '../models/upload_proof_response.dart';
 
+class SubscribeException implements Exception {
+  final String message;
+
+  const SubscribeException(this.message);
+
+  @override
+  String toString() => message;
+}
+
 class PackagesRepositoryImpl implements PackagesRepository {
   final PackagesServiceClient _client;
 
@@ -21,8 +30,13 @@ class PackagesRepositoryImpl implements PackagesRepository {
 
   @override
   Future<List<MySubscriptionItem>> getMySubscriptions() async {
-    final response = await _client.getMySubscriptions();
-    return response.data;
+    try {
+      final response = await _client.getMySubscriptions();
+      return response.data;
+    } on DioException catch (e) {
+      if (_isEmptySubscriptionsResponse(e)) return [];
+      throw Exception(_dioMessage(e, 'Failed to load subscriptions'));
+    }
   }
 
   @override
@@ -35,6 +49,9 @@ class PackagesRepositoryImpl implements PackagesRepository {
     try {
       return await _client.subscribe(packageId);
     } on DioException catch (e) {
+      if (e.response?.statusCode == 422) {
+        throw SubscribeException(_dioMessage(e, 'Subscription failed'));
+      }
       throw Exception(_dioMessage(e, 'Subscription failed'));
     }
   }
@@ -71,5 +88,11 @@ class PackagesRepositoryImpl implements PackagesRepository {
       }
     }
     return fallback;
+  }
+
+  bool _isEmptySubscriptionsResponse(DioException error) {
+    if (error.response?.statusCode != 404) return false;
+    final message = _dioMessage(error, '').toLowerCase();
+    return message.contains('no subscription');
   }
 }

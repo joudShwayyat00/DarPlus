@@ -181,7 +181,7 @@ final class MySubscriptionsControllerProvider
 }
 
 String _$mySubscriptionsControllerHash() =>
-    r'edd8f98383a4d3b9db2e55992c6aaa84bfd1af15';
+    r'811ce37652a69a87ad143b0c89c9856c5b751173';
 
 abstract class _$MySubscriptionsController
     extends $AsyncNotifier<List<MySubscriptionItem>> {
@@ -289,7 +289,7 @@ final class SubscribeControllerProvider
 }
 
 String _$subscribeControllerHash() =>
-    r'22779a5a972195146255cf273ce31d2fc39da972';
+    r'f4d209a93fe23bf9908e68bbe152555516529710';
 
 abstract class _$SubscribeController
     extends $AsyncNotifier<SubscribeResponse?> {
@@ -338,7 +338,7 @@ final class UploadProofControllerProvider
 }
 
 String _$uploadProofControllerHash() =>
-    r'd0dc24e25cb46c0c54b9a578d745cfdd294090ea';
+    r'cadcf386a9c69ed9b55705ad52624ace7225d01d';
 
 abstract class _$UploadProofController
     extends $AsyncNotifier<UploadProofResponse?> {

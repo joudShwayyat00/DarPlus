@@ -14,15 +14,104 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 
-Future<bool?> showPaymentSubmissionSheet({
+Future<String?> showPaymentSubmissionSheet({
   required BuildContext context,
   required MySubscriptionItem subscription,
 }) {
-  return showModalBottomSheet<bool>(
+  return showModalBottomSheet<String?>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) => PaymentSubmissionSheet(subscription: subscription),
+  );
+}
+
+Future<void> showPaymentProofSuccessDialog({
+  required BuildContext context,
+  required String message,
+}) {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    useRootNavigator: true,
+    builder: (dialogContext) => Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.symmetric(horizontal: 8.w),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(5.w, 3.h, 5.w, 2.5.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(3.5.w),
+              decoration: BoxDecoration(
+                color: AppColors.goldBrandColor.withAlpha(28),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.check_circle_rounded,
+                color: AppColors.goldBrandColor,
+                size: 52,
+              ),
+            ),
+            SizedBox(height: 2.h),
+            Text(
+              tr.payment_proof_submitted_title,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w900,
+                color: Colors.black.withAlpha(230),
+              ),
+            ),
+            SizedBox(height: 1.h),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 10.5.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black.withAlpha(160),
+                height: 1.45,
+              ),
+            ),
+            SizedBox(height: 0.8.h),
+            Text(
+              tr.awaiting_admin_approval_message,
+              textAlign: TextAlign.center,
+              style: appTextStyle(
+                context,
+                fontSize: 9.5.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.black.withAlpha(110),
+                height: 1.4,
+              ),
+            ),
+            SizedBox(height: 2.5.h),
+            AppButton(
+              height: 5.5.h,
+              backgroundColor: AppColors.goldBrandColor,
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                tr.done,
+                style: appTextStyle(
+                  context,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.whiteColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
   );
 }
 
@@ -160,9 +249,7 @@ class _PaymentSubmissionSheetState extends ConsumerState<PaymentSubmissionSheet>
                 pendingSubscriptionIds: [widget.subscription.id],
               );
       if (!mounted) return;
-      await _showUploadSuccessDialog(response.message);
-      if (!mounted) return;
-      Navigator.pop(context, true);
+      Navigator.of(context).pop(response.message);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -173,93 +260,10 @@ class _PaymentSubmissionSheetState extends ConsumerState<PaymentSubmissionSheet>
         ),
       );
     } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+      if (mounted && _isSubmitting) {
+        setState(() => _isSubmitting = false);
+      }
     }
-  }
-
-  Future<void> _showUploadSuccessDialog(String message) {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.symmetric(horizontal: 8.w),
-        child: Container(
-          padding: EdgeInsets.fromLTRB(5.w, 3.h, 5.w, 2.5.h),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.all(3.5.w),
-                decoration: BoxDecoration(
-                  color: AppColors.goldBrandColor.withAlpha(28),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.check_circle_rounded,
-                  color: AppColors.goldBrandColor,
-                  size: 52,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              Text(
-                tr.payment_proof_submitted_title,
-                textAlign: TextAlign.center,
-                style: appTextStyle(
-                  context,
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.black.withAlpha(230),
-                ),
-              ),
-              SizedBox(height: 1.h),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: appTextStyle(
-                  context,
-                  fontSize: 10.5.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black.withAlpha(160),
-                  height: 1.45,
-                ),
-              ),
-              SizedBox(height: 0.8.h),
-              Text(
-                tr.awaiting_admin_approval_message,
-                textAlign: TextAlign.center,
-                style: appTextStyle(
-                  context,
-                  fontSize: 9.5.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black.withAlpha(110),
-                  height: 1.4,
-                ),
-              ),
-              SizedBox(height: 2.5.h),
-              AppButton(
-                height: 5.5.h,
-                backgroundColor: AppColors.goldBrandColor,
-                onPressed: () => Navigator.pop(dialogContext),
-                child: Text(
-                  tr.done,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.whiteColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   @override

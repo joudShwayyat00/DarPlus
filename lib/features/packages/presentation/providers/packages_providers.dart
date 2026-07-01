@@ -42,7 +42,6 @@ class MySubscriptionsController extends _$MySubscriptionsController {
   }
 
   Future<void> refresh() async {
-    state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       if (!ref.read(isLoggedInProvider)) return <MySubscriptionItem>[];
       return ref.read(packagesRepositoryProvider).getMySubscriptions();
@@ -113,14 +112,15 @@ class UploadProofController extends _$UploadProofController {
             receiptPath: receiptPath,
           );
       if (response.status != true) {
-        throw Exception(response.message);
+        throw Exception(response.message.isNotEmpty
+            ? response.message
+            : 'Payment proof upload failed');
       }
       if (pendingSubscriptionIds.isNotEmpty) {
         ref
             .read(awaitingReviewSubscriptionsProvider.notifier)
             .markSubmitted(pendingSubscriptionIds);
       }
-      await ref.read(mySubscriptionsControllerProvider.notifier).refresh();
       return response;
     });
     if (state.hasError) throw state.error!;

@@ -1685,11 +1685,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get my_subscriptions => 'My Subscriptions';
 
   @override
-  String get my_subscription_empty_title => 'No active subscription';
+  String get my_subscription_empty_title => 'No subscriptions yet';
 
   @override
   String get my_subscription_empty_message =>
-      'Choose a plan to list your properties and unlock owner features.';
+      'Subscribe to a plan to list properties, manage rentals, and unlock all owner features.';
+
+  @override
+  String get my_subscription_how_it_works => 'How it works';
 
   @override
   String get continue_payment => 'Continue payment';
@@ -1783,19 +1786,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tap_to_upload_receipt => 'Tap to upload receipt';
 
   @override
-  String get subscribe_and_pay => 'Subscribe & upload payment';
+  String get subscribe_and_pay => 'Subscribe now';
 
   @override
-  String get subscribe_flow_title => 'Subscribe in 3 easy steps';
+  String get subscribe_flow_title => 'Subscription in 4 steps';
 
   @override
-  String get payment_step_choose_plan => 'Choose a plan';
+  String get subscription_step_subscribe => '1. Subscribe to a plan';
 
   @override
-  String get payment_step_transfer => 'Transfer to bank account';
+  String get subscription_step_view => '2. View in My Subscriptions';
 
   @override
-  String get payment_step_upload => 'Upload payment receipt';
+  String get subscription_step_upload => '3. Upload payment proof';
+
+  @override
+  String get subscription_step_see_status => '4. See your subscription status';
+
+  @override
+  String get bank_transfer_details => 'Transfer to bank account';
+
+  @override
+  String get go_to_my_subscriptions => 'Go to My Subscriptions';
+
+  @override
+  String get complete_in_my_subscriptions_hint =>
+      'You already have a subscription in progress. Open My Subscriptions to upload payment or check its status.';
 
   @override
   String get view_active_subscriptions => 'View my active subscriptions';

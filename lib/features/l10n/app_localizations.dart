@@ -3287,14 +3287,20 @@ abstract class AppLocalizations {
   /// No description provided for @my_subscription_empty_title.
   ///
   /// In en, this message translates to:
-  /// **'No active subscription'**
+  /// **'No subscriptions yet'**
   String get my_subscription_empty_title;
 
   /// No description provided for @my_subscription_empty_message.
   ///
   /// In en, this message translates to:
-  /// **'Choose a plan to list your properties and unlock owner features.'**
+  /// **'Subscribe to a plan to list properties, manage rentals, and unlock all owner features.'**
   String get my_subscription_empty_message;
+
+  /// No description provided for @my_subscription_how_it_works.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
+  String get my_subscription_how_it_works;
 
   /// No description provided for @continue_payment.
   ///
@@ -3467,32 +3473,56 @@ abstract class AppLocalizations {
   /// No description provided for @subscribe_and_pay.
   ///
   /// In en, this message translates to:
-  /// **'Subscribe & upload payment'**
+  /// **'Subscribe now'**
   String get subscribe_and_pay;
 
   /// No description provided for @subscribe_flow_title.
   ///
   /// In en, this message translates to:
-  /// **'Subscribe in 3 easy steps'**
+  /// **'Subscription in 4 steps'**
   String get subscribe_flow_title;
 
-  /// No description provided for @payment_step_choose_plan.
+  /// No description provided for @subscription_step_subscribe.
   ///
   /// In en, this message translates to:
-  /// **'Choose a plan'**
-  String get payment_step_choose_plan;
+  /// **'1. Subscribe to a plan'**
+  String get subscription_step_subscribe;
 
-  /// No description provided for @payment_step_transfer.
+  /// No description provided for @subscription_step_view.
+  ///
+  /// In en, this message translates to:
+  /// **'2. View in My Subscriptions'**
+  String get subscription_step_view;
+
+  /// No description provided for @subscription_step_upload.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Upload payment proof'**
+  String get subscription_step_upload;
+
+  /// No description provided for @subscription_step_see_status.
+  ///
+  /// In en, this message translates to:
+  /// **'4. See your subscription status'**
+  String get subscription_step_see_status;
+
+  /// No description provided for @bank_transfer_details.
   ///
   /// In en, this message translates to:
   /// **'Transfer to bank account'**
-  String get payment_step_transfer;
+  String get bank_transfer_details;
 
-  /// No description provided for @payment_step_upload.
+  /// No description provided for @go_to_my_subscriptions.
   ///
   /// In en, this message translates to:
-  /// **'Upload payment receipt'**
-  String get payment_step_upload;
+  /// **'Go to My Subscriptions'**
+  String get go_to_my_subscriptions;
+
+  /// No description provided for @complete_in_my_subscriptions_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have a subscription in progress. Open My Subscriptions to upload payment or check its status.'**
+  String get complete_in_my_subscriptions_hint;
 
   /// No description provided for @view_active_subscriptions.
   ///

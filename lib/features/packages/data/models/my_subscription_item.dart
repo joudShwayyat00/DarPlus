@@ -35,6 +35,8 @@ class MySubscriptionItem {
 
   bool get needsPayment => status.toLowerCase() == 'pending';
 
+  bool get isIncomplete => !isActive && !isExpired;
+
   bool get isExpired =>
       status.toLowerCase() == 'expired' || daysRemaining <= 0 && !needsPayment;
 

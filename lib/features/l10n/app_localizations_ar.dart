@@ -1674,11 +1674,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get my_subscriptions => 'اشتراكاتي';
 
   @override
-  String get my_subscription_empty_title => 'لا يوجد اشتراك نشط';
+  String get my_subscription_empty_title => 'لا توجد اشتراكات بعد';
 
   @override
   String get my_subscription_empty_message =>
-      'اختر باقة لعرض عقاراتك والاستفادة من ميزات المالك.';
+      'اشترك في باقة لعرض العقارات وإدارة الإيجارات والاستفادة من جميع ميزات المالك.';
+
+  @override
+  String get my_subscription_how_it_works => 'كيف يعمل الاشتراك';
 
   @override
   String get continue_payment => 'متابعة الدفع';
@@ -1772,19 +1775,32 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tap_to_upload_receipt => 'اضغط لرفع الإيصال';
 
   @override
-  String get subscribe_and_pay => 'اشترك وارفع الدفع';
+  String get subscribe_and_pay => 'اشترك الآن';
 
   @override
-  String get subscribe_flow_title => 'اشترك في 3 خطوات بسيطة';
+  String get subscribe_flow_title => 'الاشتراك في 4 خطوات';
 
   @override
-  String get payment_step_choose_plan => 'اختر الباقة';
+  String get subscription_step_subscribe => '1. اشترك في باقة';
 
   @override
-  String get payment_step_transfer => 'حوّل إلى الحساب البنكي';
+  String get subscription_step_view => '2. اعرض في اشتراكاتي';
 
   @override
-  String get payment_step_upload => 'ارفع إيصال الدفع';
+  String get subscription_step_upload => '3. ارفع إثبات الدفع';
+
+  @override
+  String get subscription_step_see_status => '4. تابع حالة اشتراكك';
+
+  @override
+  String get bank_transfer_details => 'حوّل إلى الحساب البنكي';
+
+  @override
+  String get go_to_my_subscriptions => 'اذهب إلى اشتراكاتي';
+
+  @override
+  String get complete_in_my_subscriptions_hint =>
+      'لديك اشتراك قيد المعالجة. افتح اشتراكاتي لرفع الدفع أو متابعة حالته.';
 
   @override
   String get view_active_subscriptions => 'عرض اشتراكاتي النشطة';

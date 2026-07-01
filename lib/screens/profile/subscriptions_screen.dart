@@ -4,14 +4,12 @@ import 'package:dar_plus_app/controller/local_provider.dart';
 import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
 import 'package:dar_plus_app/features/packages/data/models/my_subscription_item.dart';
 import 'package:dar_plus_app/features/packages/data/models/package_item.dart';
-import 'package:dar_plus_app/features/packages/data/models/payment_info_response.dart';
+import 'package:dar_plus_app/features/packages/data/repositories/packages_repository_impl.dart';
 import 'package:dar_plus_app/features/packages/presentation/providers/packages_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/profile/my_subscriptions_screen.dart';
 import 'package:dar_plus_app/screens/profile/widgets/content_widgets.dart';
-import 'package:dar_plus_app/screens/profile/widgets/payment_info_card.dart';
 import 'package:dar_plus_app/utils/widgets/auth_required_sheet.dart';
-import 'package:dar_plus_app/utils/widgets/payment_submission_sheet.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
 import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
@@ -35,8 +33,6 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
   Widget build(BuildContext context) {
     final packagesAsync = ref.watch(packagesControllerProvider);
     final isLoggedIn = ref.watch(isLoggedInProvider);
-    final paymentInfoAsync =
-        isLoggedIn ? ref.watch(paymentInfoControllerProvider) : null;
     final mySubsAsync =
         isLoggedIn ? ref.watch(mySubscriptionsControllerProvider) : null;
 
@@ -84,11 +80,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
       body: packagesAsync.when(
         data: (packages) => _buildContent(
           packages: packages,
-          paymentInfoAsync: paymentInfoAsync,
-          pendingSubscriptions: mySubsAsync?.value
-                  ?.where((sub) => sub.needsPayment)
-                  .toList() ??
-              [],
+          mySubscriptions: mySubsAsync?.value ?? [],
         ),
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.goldBrandColor),
@@ -98,7 +90,6 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
             onRetry: () {
               ref.invalidate(packagesControllerProvider);
               if (isLoggedIn) {
-                ref.invalidate(paymentInfoControllerProvider);
                 ref.invalidate(mySubscriptionsControllerProvider);
               }
             },
@@ -110,8 +101,7 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
 
   Widget _buildContent({
     required List<PackageItem> packages,
-    required AsyncValue<PaymentInfoResponse?>? paymentInfoAsync,
-    required List<MySubscriptionItem> pendingSubscriptions,
+    required List<MySubscriptionItem> mySubscriptions,
   }) {
     if (packages.isEmpty) {
       return Center(
@@ -133,15 +123,12 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
 
     final lang = ref.read(apiLanguageCodeProvider);
     final selectedPlan = packages[_selectedPlanIndex];
-    final awaitingIds = ref.watch(awaitingReviewSubscriptionsProvider);
-    final pendingForSelected = pendingSubscriptions
-        .where((sub) => sub.package.id == selectedPlan.id)
-        .toList();
-    final selectedPending = pendingForSelected.isNotEmpty
-        ? pendingForSelected.first
-        : null;
-    final selectedAwaitingReview = selectedPending != null &&
-        awaitingIds.contains(selectedPending.id);
+    final incompleteSubscriptions =
+        mySubscriptions.where((sub) => sub.isIncomplete).toList();
+    final hasIncompleteSubscription = incompleteSubscriptions.isNotEmpty;
+    final incompletePlanName = hasIncompleteSubscription
+        ? incompleteSubscriptions.first.package.name.forLang(lang)
+        : selectedPlan.name.forLang(lang);
 
     return RefreshIndicator(
       color: AppColors.goldBrandColor,
@@ -154,22 +141,10 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
           children: [
             SizedBox(height: 1.5.h),
             _buildStepsHeader(),
-            if (pendingSubscriptions.isNotEmpty) ...[
+            if (hasIncompleteSubscription) ...[
               SizedBox(height: 2.h),
-              ...pendingSubscriptions.map(
-                (sub) => Padding(
-                  padding: EdgeInsets.only(bottom: 1.2.h),
-                  child: awaitingIds.contains(sub.id)
-                      ? _AwaitingReviewBanner(
-                          subscription: sub,
-                          lang: lang,
-                        )
-                      : _PendingPaymentBanner(
-                          subscription: sub,
-                          lang: lang,
-                          onUpload: () => _openPaymentSheet(sub),
-                        ),
-                ),
+              _PendingSubscriptionNotice(
+                planName: incompletePlanName,
               ),
             ],
             SizedBox(height: 2.h),
@@ -191,58 +166,33 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
               );
             }),
             SizedBox(height: 2.5.h),
-            if (paymentInfoAsync != null) ...[
-              Text(
-                tr.payment_step_transfer,
-                style: appTextStyle(
-                  context,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.black.withAlpha(220),
-                ),
-              ),
-              SizedBox(height: 1.2.h),
-              paymentInfoAsync.when(
-                data: (info) => info == null
-                    ? const SizedBox.shrink()
-                    : PaymentInfoCard(info: info),
-                loading: () => const PaymentInfoLoadingCard(),
-                error: (_, __) => PaymentInfoErrorCard(onRetry: _refreshAll),
-              ),
-              SizedBox(height: 2.5.h),
-            ],
-            if (selectedPending != null && selectedAwaitingReview)
-              _AwaitingReviewCard(lang: lang, subscription: selectedPending)
-            else if (selectedPending != null)
+            if (hasIncompleteSubscription)
               AppButton(
                 backgroundColor: AppColors.goldBrandColor,
-                onPressed: _isProcessing
-                    ? () {}
-                    : () => _openPaymentSheet(selectedPending),
-                child: _buttonChild(tr.submit_payment_proof),
+                onPressed: _goToMySubscriptions,
+                child: Text(
+                  tr.go_to_my_subscriptions,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 12.2.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.whiteColor,
+                  ),
+                ),
               )
             else
               AppButton(
                 backgroundColor: AppColors.goldBrandColor,
-                onPressed: _isProcessing
-                    ? () {}
-                    : () => _subscribeAndPay(selectedPlan),
+                onPressed: _isProcessing ? () {} : () => _subscribe(selectedPlan),
                 child: _buttonChild(tr.subscribe_and_pay),
               ),
             SizedBox(height: 1.2.h),
             AppButton(
               backgroundColor: Colors.transparent,
               borderColor: AppColors.goldBrandColor.withAlpha(120),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const MySubscriptionsScreen(),
-                  ),
-                );
-              },
+              onPressed: _goToMySubscriptions,
               child: Text(
-                tr.view_active_subscriptions,
+                tr.my_subscriptions,
                 style: appTextStyle(
                   context,
                   fontSize: 11.sp,
@@ -333,11 +283,13 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
             ],
           ),
           SizedBox(height: 1.5.h),
-          _StepChip(number: 1, label: tr.payment_step_choose_plan),
+          _StepChip(number: 1, label: tr.subscription_step_subscribe),
           SizedBox(height: 0.6.h),
-          _StepChip(number: 2, label: tr.payment_step_transfer),
+          _StepChip(number: 2, label: tr.subscription_step_view),
           SizedBox(height: 0.6.h),
-          _StepChip(number: 3, label: tr.payment_step_upload),
+          _StepChip(number: 3, label: tr.subscription_step_upload),
+          SizedBox(height: 0.6.h),
+          _StepChip(number: 4, label: tr.subscription_step_see_status),
         ],
       ),
     );
@@ -483,14 +435,11 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
   Future<void> _refreshAll() async {
     ref.invalidate(packagesControllerProvider);
     if (ref.read(isLoggedInProvider)) {
-      await Future.wait([
-        ref.read(paymentInfoControllerProvider.notifier).refresh(),
-        ref.read(mySubscriptionsControllerProvider.notifier).refresh(),
-      ]);
+      await ref.read(mySubscriptionsControllerProvider.notifier).refresh();
     }
   }
 
-  Future<void> _subscribeAndPay(PackageItem plan) async {
+  Future<void> _subscribe(PackageItem plan) async {
     if (!await requireAuth(
       context,
       message: tr.login_required_subscriptions,
@@ -506,9 +455,6 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
           .subscribe(plan.id);
       if (!mounted) return;
 
-      final pending = _findSubscriptionById(response.subscriptionId) ??
-          _findPendingSubscription(plan.id);
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(response.message),
@@ -517,10 +463,13 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
         ),
       );
 
-      _goToMySubscriptions(openPaymentForSubscriptionId: pending?.id);
+      _goToMySubscriptions();
     } catch (e) {
       if (!mounted) return;
-      final msg = e.toString().replaceFirst('Exception: ', '');
+      final isExistingSubscription = e is SubscribeException;
+      final msg = isExistingSubscription
+          ? e.message
+          : e.toString().replaceFirst('Exception: ', '');
 
       await ref.read(mySubscriptionsControllerProvider.notifier).refresh();
       if (!mounted) return;
@@ -528,70 +477,90 @@ class _SubscriptionsScreenState extends ConsumerState<SubscriptionsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(msg),
-          backgroundColor: Colors.red.shade700,
+          backgroundColor: isExistingSubscription
+              ? Colors.black.withAlpha(220)
+              : Colors.red.shade700,
           behavior: SnackBarBehavior.floating,
         ),
       );
 
-      final pending = _findPendingSubscription(plan.id) ??
-          _findAnyPendingSubscription();
-      if (pending != null) {
-        _goToMySubscriptions(openPaymentForSubscriptionId: pending.id);
+      if (isExistingSubscription || _hasIncompleteSubscription()) {
+        _goToMySubscriptions();
       }
     } finally {
       if (mounted) setState(() => _isProcessing = false);
     }
   }
 
-  void _goToMySubscriptions({int? openPaymentForSubscriptionId}) {
+  void _goToMySubscriptions() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => MySubscriptionsScreen(
-          openPaymentForSubscriptionId: openPaymentForSubscriptionId,
-        ),
+        builder: (_) => const MySubscriptionsScreen(),
       ),
     );
   }
 
-  MySubscriptionItem? _findSubscriptionById(int? subscriptionId) {
-    if (subscriptionId == null) return null;
+  bool _hasIncompleteSubscription() {
     final subscriptions =
         ref.read(mySubscriptionsControllerProvider).value ?? [];
-    for (final item in subscriptions) {
-      if (item.id == subscriptionId) return item;
-    }
-    return null;
+    return subscriptions.any((item) => item.isIncomplete);
   }
+}
 
-  MySubscriptionItem? _findPendingSubscription(int packageId) {
-    final subscriptions =
-        ref.read(mySubscriptionsControllerProvider).value ?? [];
-    for (final item in subscriptions) {
-      if (item.needsPayment && item.package.id == packageId) {
-        return item;
-      }
-    }
-    return null;
-  }
+class _PendingSubscriptionNotice extends StatelessWidget {
+  final String planName;
 
-  MySubscriptionItem? _findAnyPendingSubscription() {
-    final subscriptions =
-        ref.read(mySubscriptionsControllerProvider).value ?? [];
-    for (final item in subscriptions) {
-      if (item.needsPayment) return item;
-    }
-    return null;
-  }
+  const _PendingSubscriptionNotice({required this.planName});
 
-  Future<void> _openPaymentSheet(MySubscriptionItem subscription) async {
-    final success = await showPaymentSubmissionSheet(
-      context: context,
-      subscription: subscription,
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(3.5.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF8E8),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE67E22).withAlpha(120)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.info_outline_rounded,
+            color: Color(0xFFE67E22),
+            size: 24,
+          ),
+          SizedBox(width: 3.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  planName,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 10.5.sp,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.black.withAlpha(210),
+                  ),
+                ),
+                SizedBox(height: 0.4.h),
+                Text(
+                  tr.complete_in_my_subscriptions_hint,
+                  style: appTextStyle(
+                    context,
+                    fontSize: 9.5.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black.withAlpha(120),
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
-    if (mounted && success == true) {
-      await ref.read(mySubscriptionsControllerProvider.notifier).refresh();
-    }
   }
 }
 
@@ -636,187 +605,6 @@ class _StepChip extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _AwaitingReviewBanner extends StatelessWidget {
-  final MySubscriptionItem subscription;
-  final String lang;
-
-  const _AwaitingReviewBanner({
-    required this.subscription,
-    required this.lang,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(3.5.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8F4FD),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1565C0).withAlpha(80)),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.hourglass_top_rounded,
-            color: Color(0xFF1565C0),
-            size: 28,
-          ),
-          SizedBox(width: 3.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  tr.awaiting_admin_approval,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 10.5.sp,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black.withAlpha(210),
-                  ),
-                ),
-                SizedBox(height: 0.3.h),
-                Text(
-                  subscription.package.name.forLang(lang),
-                  style: appTextStyle(
-                    context,
-                    fontSize: 9.5.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black.withAlpha(120),
-                  ),
-                ),
-                SizedBox(height: 0.4.h),
-                Text(
-                  tr.awaiting_admin_approval_message,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 9.sp,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black.withAlpha(100),
-                    height: 1.3,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AwaitingReviewCard extends StatelessWidget {
-  final MySubscriptionItem subscription;
-  final String lang;
-
-  const _AwaitingReviewCard({
-    required this.subscription,
-    required this.lang,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8F4FD),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1565C0).withAlpha(80)),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.verified_user_outlined, color: Color(0xFF1565C0)),
-          SizedBox(width: 3.w),
-          Expanded(
-            child: Text(
-              tr.awaiting_admin_approval_message,
-              style: appTextStyle(
-                context,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.black.withAlpha(150),
-                height: 1.35,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PendingPaymentBanner extends StatelessWidget {
-  final MySubscriptionItem subscription;
-  final String lang;
-  final VoidCallback onUpload;
-
-  const _PendingPaymentBanner({
-    required this.subscription,
-    required this.lang,
-    required this.onUpload,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(3.5.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E8),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE67E22).withAlpha(120)),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.pending_actions_rounded,
-            color: const Color(0xFFE67E22),
-            size: 28,
-          ),
-          SizedBox(width: 3.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  tr.pending_payment_banner,
-                  style: appTextStyle(
-                    context,
-                    fontSize: 10.5.sp,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black.withAlpha(210),
-                  ),
-                ),
-                SizedBox(height: 0.3.h),
-                Text(
-                  subscription.package.name.forLang(lang),
-                  style: appTextStyle(
-                    context,
-                    fontSize: 9.5.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black.withAlpha(120),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          TextButton(
-            onPressed: onUpload,
-            child: Text(
-              tr.submit_payment_proof,
-              style: appTextStyle(
-                context,
-                fontSize: 9.sp,
-                fontWeight: FontWeight.w800,
-                color: AppColors.goldBrandColor,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
