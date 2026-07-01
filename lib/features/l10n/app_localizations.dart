@@ -3350,6 +3350,12 @@ abstract class AppLocalizations {
   /// **'Active'**
   String get subscription_status_active;
 
+  /// No description provided for @subscription_status_banner_title.
+  ///
+  /// In en, this message translates to:
+  /// **'My subscription'**
+  String get subscription_status_banner_title;
+
   /// No description provided for @subscription_status_pending.
   ///
   /// In en, this message translates to:

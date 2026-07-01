@@ -1723,6 +1723,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscription_status_active => 'Active';
 
   @override
+  String get subscription_status_banner_title => 'My subscription';
+
+  @override
   String get subscription_status_pending => 'Pending payment';
 
   @override

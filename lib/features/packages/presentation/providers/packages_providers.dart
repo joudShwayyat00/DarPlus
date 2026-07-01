@@ -72,7 +72,8 @@ class SubscriptionStatusController extends _$SubscriptionStatusController {
   @override
   FutureOr<SubscriptionStatusResponse?> build() async {
     if (!ref.watch(isLoggedInProvider)) return null;
-    final user = ref.watch(profileControllerProvider).value;
+    // Wait for profile so we don't bail out while it is still loading.
+    final user = await ref.watch(profileControllerProvider.future);
     if (user?.isOwner != true) return null;
     return ref.read(packagesRepositoryProvider).getSubscriptionStatus();
   }
@@ -80,7 +81,7 @@ class SubscriptionStatusController extends _$SubscriptionStatusController {
   Future<void> refresh() async {
     state = await AsyncValue.guard(() async {
       if (!ref.read(isLoggedInProvider)) return null;
-      final user = ref.read(profileControllerProvider).value;
+      final user = await ref.read(profileControllerProvider.future);
       if (user?.isOwner != true) return null;
       return ref.read(packagesRepositoryProvider).getSubscriptionStatus();
     });

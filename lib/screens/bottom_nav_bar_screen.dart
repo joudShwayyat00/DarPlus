@@ -1,22 +1,25 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/auth/presentation/providers/auth_providers.dart';
+import 'package:dar_plus_app/features/packages/presentation/providers/packages_providers.dart';
 import 'package:dar_plus_app/screens/home/home_screen.dart';
 import 'package:dar_plus_app/screens/profile/my_reservations_screen.dart';
 import 'package:dar_plus_app/screens/profile/profile.dart';
 import 'package:dar_plus_app/screens/search.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:sizer/sizer.dart';
 import 'package:dar_plus_app/main.dart';
 
-class BottomNavBarScreen extends StatefulWidget {
+class BottomNavBarScreen extends ConsumerStatefulWidget {
   const BottomNavBarScreen({super.key});
 
   @override
-  State<BottomNavBarScreen> createState() => _BottomNavBarScreenState();
+  ConsumerState<BottomNavBarScreen> createState() => _BottomNavBarScreenState();
 }
 
-class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
+class _BottomNavBarScreenState extends ConsumerState<BottomNavBarScreen> {
   int _index = 0;
 
   late final List<Widget> _pages = [
@@ -51,7 +54,12 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
           ),
           child: GNav(
             selectedIndex: _index,
-            onTabChange: (i) => setState(() => _index = i),
+            onTabChange: (i) {
+              setState(() => _index = i);
+              if (i == 0 && ref.read(isLoggedInProvider)) {
+                ref.read(subscriptionStatusControllerProvider.notifier).refresh();
+              }
+            },
             gap: 8,
             padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
             tabBorderRadius: 16,

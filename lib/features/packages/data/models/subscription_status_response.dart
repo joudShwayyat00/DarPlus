@@ -34,6 +34,8 @@ class SubscriptionStatusResponse {
   bool get isExpiringSoon =>
       isActive && daysRemaining != null && daysRemaining! > 0 && daysRemaining! <= 7;
 
-  bool get shouldShowHomeReminder =>
-      isPending || isExpired || isExpiringSoon || (status != true && message.isNotEmpty);
+  bool get isHealthyActive => isActive && status == true && !isExpiringSoon;
+
+  /// Show on home for any owner subscription status from the API.
+  bool get shouldShowHomeBanner => message.isNotEmpty || subscriptionStatus.isNotEmpty;
 }

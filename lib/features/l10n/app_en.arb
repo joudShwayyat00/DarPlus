@@ -597,6 +597,7 @@
     }
   },
   "subscription_status_active": "Active",
+  "subscription_status_banner_title": "My subscription",
   "subscription_status_pending": "Pending payment",
   "subscription_status_expired": "Expired",
   "login_required_my_subscriptions": "Sign in to view your subscription details and manage your plan.",

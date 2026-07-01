@@ -1712,6 +1712,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subscription_status_active => 'نشط';
 
   @override
+  String get subscription_status_banner_title => 'اشتراكي';
+
+  @override
   String get subscription_status_pending => 'بانتظار الدفع';
 
   @override

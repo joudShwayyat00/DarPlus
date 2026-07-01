@@ -59,17 +59,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (ref.read(isLoggedInProvider)) {
+        ref.read(subscriptionStatusControllerProvider.notifier).refresh();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final user = ref.watch(profileControllerProvider).value;
-    final isOwner = user?.isOwner == true;
-    final subscriptionStatusAsync = isOwner
-        ? ref.watch(subscriptionStatusControllerProvider)
-        : const AsyncValue.data(null);
-    final subscriptionStatus = subscriptionStatusAsync.value;
-    final showSubscriptionReminder = isOwner &&
-        !_subscriptionReminderDismissed &&
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    final subscriptionStatusAsync =
+        ref.watch(subscriptionStatusControllerProvider);
+    final subscriptionStatus = subscriptionStatusAsync.asData?.value;
+    final showSubscriptionBanner = isLoggedIn &&
         subscriptionStatus != null &&
-        subscriptionStatus.shouldShowHomeReminder;
+        subscriptionStatus.shouldShowHomeBanner &&
+        (subscriptionStatus.isHealthyActive
+            ? !_subscriptionReminderDismissed
+            : true);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -79,11 +90,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               SizedBox(height: 2.h),
               const HomeSlider(),
-              if (showSubscriptionReminder)
+              if (showSubscriptionBanner)
                 SubscriptionExpiryReminder(
                   status: subscriptionStatus!,
                   onAction: () {
-                    if (subscriptionStatus.isPending) {
+                    if (subscriptionStatus.isPending ||
+                        subscriptionStatus.isHealthyActive) {
                       AppNavigator.of(context).push(
                         const MySubscriptionsScreen(),
                       );
@@ -91,9 +103,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       AppNavigator.of(context).push(const SubscriptionsScreen());
                     }
                   },
-                  onDismiss: () {
-                    setState(() => _subscriptionReminderDismissed = true);
-                  },
+                  onDismiss: subscriptionStatus.isHealthyActive
+                      ? () => setState(() => _subscriptionReminderDismissed = true)
+                      : null,
                 ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),

@@ -597,6 +597,7 @@
     }
   },
   "subscription_status_active": "نشط",
+  "subscription_status_banner_title": "اشتراكي",
   "subscription_status_pending": "بانتظار الدفع",
   "subscription_status_expired": "منتهي",
   "login_required_my_subscriptions": "سجّل الدخول لعرض تفاصيل اشتراكك وإدارة خطتك.",

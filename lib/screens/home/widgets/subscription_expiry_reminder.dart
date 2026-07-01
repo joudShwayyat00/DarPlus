@@ -5,6 +5,7 @@ import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
+/// Home banner that reflects the current subscription status from the API.
 class SubscriptionExpiryReminder extends StatelessWidget {
   final SubscriptionStatusResponse status;
   final VoidCallback onAction;
@@ -64,14 +65,24 @@ class SubscriptionExpiryReminder extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          style.title,
-                          style: appTextStyle(
-                            context,
-                            fontSize: 11.5.sp,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black.withAlpha(230),
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                style.title,
+                                style: appTextStyle(
+                                  context,
+                                  fontSize: 11.5.sp,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.black.withAlpha(230),
+                                ),
+                              ),
+                            ),
+                            _StatusChip(
+                              label: style.statusLabel,
+                              color: style.iconColor,
+                            ),
+                          ],
                         ),
                         if (style.subtitle != null) ...[
                           SizedBox(height: 0.5.h),
@@ -85,17 +96,19 @@ class SubscriptionExpiryReminder extends StatelessWidget {
                             ),
                           ),
                         ],
-                        SizedBox(height: 0.5.h),
-                        Text(
-                          status.message,
-                          style: appTextStyle(
-                            context,
-                            fontSize: 9.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black.withAlpha(120),
-                            height: 1.35,
+                        if (status.message.isNotEmpty) ...[
+                          SizedBox(height: 0.5.h),
+                          Text(
+                            status.message,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black.withAlpha(120),
+                              height: 1.35,
+                            ),
                           ),
-                        ),
+                        ],
                         SizedBox(height: 1.2.h),
                         TextButton(
                           onPressed: onAction,
@@ -150,8 +163,37 @@ class SubscriptionExpiryReminder extends StatelessWidget {
   }
 }
 
+class _StatusChip extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _StatusChip({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 2.2.w, vertical: 0.35.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withAlpha(100)),
+      ),
+      child: Text(
+        label,
+        style: appTextStyle(
+          context,
+          fontSize: 8.sp,
+          fontWeight: FontWeight.w800,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
 class _ReminderStyle {
   final String title;
+  final String statusLabel;
   final String? subtitle;
   final String actionLabel;
   final IconData icon;
@@ -162,6 +204,7 @@ class _ReminderStyle {
 
   const _ReminderStyle({
     required this.title,
+    required this.statusLabel,
     this.subtitle,
     required this.actionLabel,
     required this.icon,
@@ -174,7 +217,8 @@ class _ReminderStyle {
   factory _ReminderStyle.fromStatus(SubscriptionStatusResponse status) {
     if (status.isPending) {
       return _ReminderStyle(
-        title: tr.awaiting_admin_approval,
+        title: tr.subscription_status_banner_title,
+        statusLabel: tr.subscription_status_pending,
         actionLabel: tr.my_subscriptions,
         icon: Icons.hourglass_top_rounded,
         iconColor: const Color(0xFF1565C0),
@@ -187,9 +231,10 @@ class _ReminderStyle {
       );
     }
 
-    if (status.isExpired || status.status != true) {
+    if (status.isExpired) {
       return _ReminderStyle(
-        title: tr.subscription_status_expired,
+        title: tr.subscription_status_banner_title,
+        statusLabel: tr.subscription_status_expired,
         actionLabel: tr.renew_now,
         icon: Icons.event_busy_rounded,
         iconColor: const Color(0xFFC0392B),
@@ -202,19 +247,55 @@ class _ReminderStyle {
       );
     }
 
+    if (status.isActive && status.isExpiringSoon) {
+      return _ReminderStyle(
+        title: tr.subscription_expiring_soon,
+        statusLabel: tr.subscription_status_active,
+        subtitle: status.daysRemaining == null
+            ? null
+            : tr.subscription_days_remaining(status.daysRemaining!),
+        actionLabel: tr.renew_now,
+        icon: Icons.timer_outlined,
+        iconColor: AppColors.goldBrandColor,
+        iconBackground: AppColors.goldBrandColor.withAlpha(30),
+        borderColor: AppColors.goldBrandColor.withAlpha(90),
+        gradientColors: [
+          const Color(0xFFFFF8E8),
+          AppColors.goldBrandColor.withAlpha(35),
+        ],
+      );
+    }
+
+    if (status.isHealthyActive) {
+      return _ReminderStyle(
+        title: tr.subscription_status_banner_title,
+        statusLabel: tr.subscription_status_active,
+        subtitle: status.daysRemaining == null
+            ? null
+            : tr.subscription_days_remaining(status.daysRemaining!),
+        actionLabel: tr.my_subscriptions,
+        icon: Icons.verified_rounded,
+        iconColor: const Color(0xFF2E8B47),
+        iconBackground: const Color(0xFF2E8B47).withAlpha(25),
+        borderColor: const Color(0xFF2E8B47).withAlpha(80),
+        gradientColors: [
+          const Color(0xFFEEF9F1),
+          const Color(0xFF2E8B47).withAlpha(18),
+        ],
+      );
+    }
+
     return _ReminderStyle(
-      title: tr.subscription_expiring_soon,
-      subtitle: status.daysRemaining == null
-          ? null
-          : tr.subscription_days_remaining(status.daysRemaining!),
-      actionLabel: tr.renew_now,
-      icon: Icons.event_busy_rounded,
+      title: tr.subscription_status_banner_title,
+      statusLabel: tr.subscription_status_expired,
+      actionLabel: tr.browse_plans,
+      icon: Icons.workspace_premium_outlined,
       iconColor: AppColors.goldBrandColor,
-      iconBackground: AppColors.goldBrandColor.withAlpha(30),
+      iconBackground: AppColors.goldBrandColor.withAlpha(25),
       borderColor: AppColors.goldBrandColor.withAlpha(90),
       gradientColors: [
         const Color(0xFFFFF8E8),
-        AppColors.goldBrandColor.withAlpha(35),
+        AppColors.goldBrandColor.withAlpha(30),
       ],
     );
   }
