@@ -42,9 +42,15 @@ class SubscriptionExpiryReminder extends StatelessWidget {
           ],
         ),
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(4.w, 3.5.w, 4.w, 3.5.w),
+              padding: EdgeInsets.fromLTRB(
+                4.w,
+                3.5.w,
+                onDismiss != null ? 11.w : 4.w,
+                3.5.w,
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -143,17 +149,26 @@ class SubscriptionExpiryReminder extends StatelessWidget {
             ),
             if (onDismiss != null)
               Positioned(
-                top: 0.5.h,
-                right: 1.w,
-                child: IconButton(
-                  onPressed: onDismiss,
-                  icon: Icon(
-                    Icons.close_rounded,
-                    size: 18,
-                    color: Colors.black.withAlpha(100),
+                top: 2.w,
+                right: 2.w,
+                child: Material(
+                  color: Colors.white,
+                  elevation: 2,
+                  shadowColor: Colors.black26,
+                  shape: const CircleBorder(),
+                  child: InkWell(
+                    onTap: onDismiss,
+                    customBorder: const CircleBorder(),
+                    child: SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: Icon(
+                        Icons.close_rounded,
+                        size: 18,
+                        color: Colors.black.withAlpha(180),
+                      ),
+                    ),
                   ),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
                 ),
               ),
           ],

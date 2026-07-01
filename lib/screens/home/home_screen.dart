@@ -92,7 +92,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const HomeSlider(),
               if (showSubscriptionBanner)
                 SubscriptionExpiryReminder(
-                  status: subscriptionStatus!,
+                  status: subscriptionStatus,
                   onAction: () {
                     if (subscriptionStatus.isPending ||
                         subscriptionStatus.isHealthyActive) {

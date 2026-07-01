@@ -5,17 +5,21 @@ part 'subscription_status_response.g.dart';
 @JsonSerializable()
 class SubscriptionStatusResponse {
   final bool? status;
-  @JsonKey(name: 'subscription_status')
+  @JsonKey(name: 'subscription_status', defaultValue: '')
   final String subscriptionStatus;
+  @JsonKey(defaultValue: '')
   final String message;
   @JsonKey(name: 'days_remaining')
   final int? daysRemaining;
+  @JsonKey(name: 'expires_at')
+  final String? expiresAt;
 
   const SubscriptionStatusResponse({
     this.status,
-    required this.subscriptionStatus,
-    required this.message,
+    this.subscriptionStatus = '',
+    this.message = '',
     this.daysRemaining,
+    this.expiresAt,
   });
 
   factory SubscriptionStatusResponse.fromJson(Map<String, dynamic> json) =>
@@ -36,6 +40,6 @@ class SubscriptionStatusResponse {
 
   bool get isHealthyActive => isActive && status == true && !isExpiringSoon;
 
-  /// Show on home for any owner subscription status from the API.
-  bool get shouldShowHomeBanner => message.isNotEmpty || subscriptionStatus.isNotEmpty;
+  /// Show on home whenever the API reports a subscription status.
+  bool get shouldShowHomeBanner => subscriptionStatus.isNotEmpty;
 }

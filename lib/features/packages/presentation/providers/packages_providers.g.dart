@@ -294,7 +294,7 @@ final class SubscriptionStatusControllerProvider
 }
 
 String _$subscriptionStatusControllerHash() =>
-    r'7dd2815b9c34e7c58986567877e17f62155b6b73';
+    r'b364e39756b651f2a36c07756798e5c5c400b426';
 
 abstract class _$SubscriptionStatusController
     extends $AsyncNotifier<SubscriptionStatusResponse?> {
