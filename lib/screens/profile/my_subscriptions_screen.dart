@@ -28,19 +28,11 @@ class MySubscriptionsScreen extends ConsumerStatefulWidget {
 
 class _MySubscriptionsScreenState extends ConsumerState<MySubscriptionsScreen> {
   Future<void> _handlePaymentProof(MySubscriptionItem subscription) async {
-    final message = await showPaymentSubmissionSheet(
+    await openPaymentProofSubmissionFlow(
       context: context,
+      ref: ref,
       subscription: subscription,
     );
-    if (!mounted || message == null) return;
-
-    await showPaymentProofSuccessDialog(
-      context: context,
-      message: message,
-    );
-    if (!mounted) return;
-
-    await ref.read(mySubscriptionsControllerProvider.notifier).refresh();
   }
 
   @override

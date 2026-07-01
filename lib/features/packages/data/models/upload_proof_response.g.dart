@@ -8,7 +8,7 @@ part of 'upload_proof_response.dart';
 
 UploadProofResponse _$UploadProofResponseFromJson(Map<String, dynamic> json) =>
     UploadProofResponse(
-      status: json['status'] as bool?,
+      status: UploadProofResponse._readStatus(json['status']),
       message: json['message'] as String,
     );
 

@@ -6,6 +6,7 @@ import '../models/packages_response.dart';
 import '../models/my_subscriptions_response.dart';
 import '../models/payment_info_response.dart';
 import '../models/subscribe_response.dart';
+import '../models/subscription_status_response.dart';
 import '../models/upload_proof_response.dart';
 
 part 'packages_service_client.g.dart';
@@ -20,6 +21,9 @@ abstract class PackagesServiceClient {
 
   @GET(ApiConstants.mySubscriptions)
   Future<MySubscriptionsResponse> getMySubscriptions();
+
+  @GET(ApiConstants.subscriptionStatus)
+  Future<SubscriptionStatusResponse> getSubscriptionStatus();
 
   @GET(ApiConstants.paymentInfo)
   Future<PaymentInfoResponse> getPaymentInfo();

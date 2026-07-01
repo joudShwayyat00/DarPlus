@@ -5,6 +5,7 @@ import 'package:dar_plus_app/screens/assets/assets_screen.dart';
 import 'package:dar_plus_app/screens/assets/top_rated_screen.dart';
 import 'package:dar_plus_app/configuration/app_colors.dart';
 import 'package:dar_plus_app/features/home/presentation/providers/home_providers.dart';
+import 'package:dar_plus_app/features/packages/presentation/providers/packages_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/asset_details/asset_details_screen.dart';
 import 'package:dar_plus_app/screens/home/widgets/category_card.dart';
@@ -13,6 +14,7 @@ import 'package:dar_plus_app/screens/home/widgets/owner_card.dart';
 import 'package:dar_plus_app/screens/home/widgets/property_tile.dart';
 import 'package:dar_plus_app/screens/home/widgets/section_header.dart';
 import 'package:dar_plus_app/screens/home/widgets/subscription_expiry_reminder.dart';
+import 'package:dar_plus_app/screens/profile/my_subscriptions_screen.dart';
 import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
 import 'package:dar_plus_app/screens/owners/all_owners_screen.dart';
 import 'package:dar_plus_app/screens/owners/owner_profile_screen.dart';
@@ -32,9 +34,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  /// UI mock — replace with subscription API days remaining.
-  static const int _mockSubscriptionDaysRemaining = 2;
-
   int _currentRecommendedIndex = 0;
   int? _selectedCategoryIndex;
   late _ListingType _listingType;
@@ -53,10 +52,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(profileControllerProvider).value;
-    final showSubscriptionReminder = user?.isOwner == true &&
+    final isOwner = user?.isOwner == true;
+    final subscriptionStatusAsync = isOwner
+        ? ref.watch(subscriptionStatusControllerProvider)
+        : const AsyncValue.data(null);
+    final subscriptionStatus = subscriptionStatusAsync.value;
+    final showSubscriptionReminder = isOwner &&
         !_subscriptionReminderDismissed &&
-        _mockSubscriptionDaysRemaining > 0 &&
-        _mockSubscriptionDaysRemaining <= 2;
+        subscriptionStatus != null &&
+        subscriptionStatus.shouldShowHomeReminder;
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -68,9 +72,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const HomeSlider(),
               if (showSubscriptionReminder)
                 SubscriptionExpiryReminder(
-                  daysRemaining: _mockSubscriptionDaysRemaining,
-                  onRenew: () {
-                    AppNavigator.of(context).push(const SubscriptionsScreen());
+                  status: subscriptionStatus!,
+                  onAction: () {
+                    if (subscriptionStatus.isPending) {
+                      AppNavigator.of(context).push(
+                        const MySubscriptionsScreen(),
+                      );
+                    } else {
+                      AppNavigator.of(context).push(const SubscriptionsScreen());
+                    }
                   },
                   onDismiss: () {
                     setState(() => _subscriptionReminderDismissed = true);

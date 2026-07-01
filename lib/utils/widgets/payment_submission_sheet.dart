@@ -14,6 +14,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 
+Future<void> openPaymentProofSubmissionFlow({
+  required BuildContext context,
+  required WidgetRef ref,
+  required MySubscriptionItem subscription,
+}) async {
+  final message = await showModalBottomSheet<String?>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    useRootNavigator: true,
+    builder: (context) => PaymentSubmissionSheet(subscription: subscription),
+  );
+
+  if (message == null || !context.mounted) return;
+
+  ref
+      .read(awaitingReviewSubscriptionsProvider.notifier)
+      .markSubmitted([subscription.id]);
+
+  await showPaymentProofSuccessDialog(
+    context: context,
+    message: message,
+  );
+  if (!context.mounted) return;
+
+  await ref.read(mySubscriptionsControllerProvider.notifier).refresh();
+  ref.invalidate(subscriptionStatusControllerProvider);
+}
+
 Future<String?> showPaymentSubmissionSheet({
   required BuildContext context,
   required MySubscriptionItem subscription,
@@ -22,6 +51,7 @@ Future<String?> showPaymentSubmissionSheet({
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
+    useRootNavigator: true,
     builder: (context) => PaymentSubmissionSheet(subscription: subscription),
   );
 }
@@ -246,10 +276,9 @@ class _PaymentSubmissionSheetState extends ConsumerState<PaymentSubmissionSheet>
                 transferAmount: amount,
                 transferPhone: phone,
                 receiptPath: _receiptImage!.path,
-                pendingSubscriptionIds: [widget.subscription.id],
               );
       if (!mounted) return;
-      Navigator.of(context).pop(response.message);
+      Navigator.of(context, rootNavigator: true).pop(response.message);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -259,10 +288,7 @@ class _PaymentSubmissionSheetState extends ConsumerState<PaymentSubmissionSheet>
           behavior: SnackBarBehavior.floating,
         ),
       );
-    } finally {
-      if (mounted && _isSubmitting) {
-        setState(() => _isSubmitting = false);
-      }
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 

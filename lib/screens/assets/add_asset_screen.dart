@@ -14,9 +14,10 @@ import 'package:dar_plus_app/features/location/data/models/city_item.dart';
 import 'package:dar_plus_app/features/location/data/models/country_item.dart';
 import 'package:dar_plus_app/features/location/data/models/region_item.dart';
 import 'package:dar_plus_app/features/location/presentation/providers/location_providers.dart';
+import 'package:dar_plus_app/features/packages/presentation/providers/packages_providers.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/screens/assets/select_location_screen.dart';
-import 'package:dar_plus_app/screens/profile/subscriptions_screen.dart';
+import 'package:dar_plus_app/utils/helpers/subscription_guard.dart';
 import 'package:dar_plus_app/utils/helpers/asset_time_helper.dart';
 import 'package:dar_plus_app/utils/ui/app_back_button.dart';
 import 'package:dar_plus_app/utils/ui/app_buttons.dart';
@@ -308,34 +309,27 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
 
   void _showAssetError(Object? error) {
     if (error is AssetApiException && error.isSubscriptionRequired) {
-      showDialog<void>(
+      showSubscriptionApiErrorDialog(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(tr.subscription_required_title),
-          content: Text(error.message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(tr.cancel),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const SubscriptionsScreen(),
-                  ),
-                );
-              },
-              child: Text(tr.renew_now),
-            ),
-          ],
-        ),
+        message: error.message,
       );
       return;
     }
 
     _showSnack(formatAssetApiError(error, fallback: tr.something_went_wrong));
+  }
+
+  Future<bool> _ensureCanAddAsset() async {
+    try {
+      final status = await ref.read(subscriptionStatusControllerProvider.future);
+      if (status == null || status.canAddListings) return true;
+      if (!mounted) return false;
+      await showSubscriptionBlockedDialog(context: context, status: status);
+      return false;
+    } catch (_) {
+      if (mounted) _showSnack(tr.something_went_wrong);
+      return false;
+    }
   }
 
   // ── Submit ────────────────────────────────────────────────────────────────
@@ -384,6 +378,11 @@ class _AddAssetScreenState extends ConsumerState<AddAssetScreen> {
     if (lng == null || lng < -180 || lng > 180) {
       _showSnack(tr.valid_longitude);
       return;
+    }
+
+    if (!_isEditMode) {
+      final canAdd = await _ensureCanAddAsset();
+      if (!canAdd) return;
     }
 
     final salePrice = double.tryParse(_priceCtrl.text.trim()) ?? 0;

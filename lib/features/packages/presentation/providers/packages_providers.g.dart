@@ -264,6 +264,66 @@ abstract class _$PaymentInfoController
   }
 }
 
+@ProviderFor(SubscriptionStatusController)
+const subscriptionStatusControllerProvider =
+    SubscriptionStatusControllerProvider._();
+
+final class SubscriptionStatusControllerProvider
+    extends
+        $AsyncNotifierProvider<
+          SubscriptionStatusController,
+          SubscriptionStatusResponse?
+        > {
+  const SubscriptionStatusControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'subscriptionStatusControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$subscriptionStatusControllerHash();
+
+  @$internal
+  @override
+  SubscriptionStatusController create() => SubscriptionStatusController();
+}
+
+String _$subscriptionStatusControllerHash() =>
+    r'7dd2815b9c34e7c58986567877e17f62155b6b73';
+
+abstract class _$SubscriptionStatusController
+    extends $AsyncNotifier<SubscriptionStatusResponse?> {
+  FutureOr<SubscriptionStatusResponse?> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref
+            as $Ref<
+              AsyncValue<SubscriptionStatusResponse?>,
+              SubscriptionStatusResponse?
+            >;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<
+                AsyncValue<SubscriptionStatusResponse?>,
+                SubscriptionStatusResponse?
+              >,
+              AsyncValue<SubscriptionStatusResponse?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
 @ProviderFor(SubscribeController)
 const subscribeControllerProvider = SubscribeControllerProvider._();
 
@@ -289,7 +349,7 @@ final class SubscribeControllerProvider
 }
 
 String _$subscribeControllerHash() =>
-    r'f4d209a93fe23bf9908e68bbe152555516529710';
+    r'ef8a8e015d0637d0c768bd357a11229354ccbfd0';
 
 abstract class _$SubscribeController
     extends $AsyncNotifier<SubscribeResponse?> {
@@ -338,7 +398,7 @@ final class UploadProofControllerProvider
 }
 
 String _$uploadProofControllerHash() =>
-    r'cadcf386a9c69ed9b55705ad52624ace7225d01d';
+    r'f0ba293596ae7af117bfc547de48f5014dc9c375';
 
 abstract class _$UploadProofController
     extends $AsyncNotifier<UploadProofResponse?> {

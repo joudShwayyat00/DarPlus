@@ -8,6 +8,7 @@ import '../../data/models/my_subscription_item.dart';
 import '../../data/models/package_item.dart';
 import '../../data/models/payment_info_response.dart';
 import '../../data/models/subscribe_response.dart';
+import '../../data/models/subscription_status_response.dart';
 import '../../data/models/upload_proof_response.dart';
 import '../../data/repositories/packages_repository_impl.dart';
 import '../../domain/repositories/packages_repository.dart';
@@ -67,6 +68,26 @@ class PaymentInfoController extends _$PaymentInfoController {
 }
 
 @riverpod
+class SubscriptionStatusController extends _$SubscriptionStatusController {
+  @override
+  FutureOr<SubscriptionStatusResponse?> build() async {
+    if (!ref.watch(isLoggedInProvider)) return null;
+    final user = ref.watch(profileControllerProvider).value;
+    if (user?.isOwner != true) return null;
+    return ref.read(packagesRepositoryProvider).getSubscriptionStatus();
+  }
+
+  Future<void> refresh() async {
+    state = await AsyncValue.guard(() async {
+      if (!ref.read(isLoggedInProvider)) return null;
+      final user = ref.read(profileControllerProvider).value;
+      if (user?.isOwner != true) return null;
+      return ref.read(packagesRepositoryProvider).getSubscriptionStatus();
+    });
+  }
+}
+
+@riverpod
 class SubscribeController extends _$SubscribeController {
   @override
   FutureOr<SubscribeResponse?> build() => null;
@@ -82,6 +103,7 @@ class SubscribeController extends _$SubscribeController {
       }
       ref.invalidate(profileControllerProvider);
       await ref.read(mySubscriptionsControllerProvider.notifier).refresh();
+      ref.invalidate(subscriptionStatusControllerProvider);
       return response;
     });
     if (state.hasError) throw state.error!;
@@ -99,32 +121,27 @@ class UploadProofController extends _$UploadProofController {
     required String transferAmount,
     required String transferPhone,
     required String receiptPath,
-    Iterable<int> pendingSubscriptionIds = const [],
   }) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard<UploadProofResponse?>(() async {
-      final response = await ref
-          .read(packagesRepositoryProvider)
-          .uploadSubscriptionProof(
-            transferName: transferName,
-            transferAmount: transferAmount,
-            transferPhone: transferPhone,
-            receiptPath: receiptPath,
-          );
-      if (response.status != true) {
-        throw Exception(response.message.isNotEmpty
+    final response = await ref
+        .read(packagesRepositoryProvider)
+        .uploadSubscriptionProof(
+          transferName: transferName,
+          transferAmount: transferAmount,
+          transferPhone: transferPhone,
+          receiptPath: receiptPath,
+        );
+    if (!_isSuccessfulStatus(response.status)) {
+      throw Exception(
+        response.message.isNotEmpty
             ? response.message
-            : 'Payment proof upload failed');
-      }
-      if (pendingSubscriptionIds.isNotEmpty) {
-        ref
-            .read(awaitingReviewSubscriptionsProvider.notifier)
-            .markSubmitted(pendingSubscriptionIds);
-      }
-      return response;
-    });
-    if (state.hasError) throw state.error!;
-    return state.value!;
+            : 'Payment proof upload failed',
+      );
+    }
+    return response;
+  }
+
+  bool _isSuccessfulStatus(bool? status) {
+    return status == true;
   }
 }
 

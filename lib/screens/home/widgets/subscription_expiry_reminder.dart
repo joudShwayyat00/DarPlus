@@ -1,24 +1,26 @@
 import 'package:dar_plus_app/configuration/app_colors.dart';
+import 'package:dar_plus_app/features/packages/data/models/subscription_status_response.dart';
 import 'package:dar_plus_app/main.dart';
 import 'package:dar_plus_app/utils/ui/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-/// UI-only reminder banner. Replace [daysRemaining] with API data later.
 class SubscriptionExpiryReminder extends StatelessWidget {
-  final int daysRemaining;
-  final VoidCallback onRenew;
+  final SubscriptionStatusResponse status;
+  final VoidCallback onAction;
   final VoidCallback? onDismiss;
 
   const SubscriptionExpiryReminder({
     super.key,
-    required this.daysRemaining,
-    required this.onRenew,
+    required this.status,
+    required this.onAction,
     this.onDismiss,
   });
 
   @override
   Widget build(BuildContext context) {
+    final style = _ReminderStyle.fromStatus(status);
+
     return Padding(
       padding: EdgeInsets.fromLTRB(5.w, 1.5.h, 5.w, 0),
       child: Container(
@@ -26,16 +28,13 @@ class SubscriptionExpiryReminder extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              const Color(0xFFFFF8E8),
-              AppColors.goldBrandColor.withAlpha(35),
-            ],
+            colors: style.gradientColors,
           ),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.goldBrandColor.withAlpha(90)),
+          border: Border.all(color: style.borderColor),
           boxShadow: [
             BoxShadow(
-              color: AppColors.goldBrandColor.withAlpha(35),
+              color: style.borderColor.withAlpha(50),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -51,12 +50,12 @@ class SubscriptionExpiryReminder extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(2.8.w),
                     decoration: BoxDecoration(
-                      color: AppColors.goldBrandColor.withAlpha(30),
+                      color: style.iconBackground,
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
-                      Icons.event_busy_rounded,
-                      color: AppColors.goldBrandColor,
+                      style.icon,
+                      color: style.iconColor,
                       size: 22,
                     ),
                   ),
@@ -66,7 +65,7 @@ class SubscriptionExpiryReminder extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          tr.subscription_expiring_soon,
+                          style.title,
                           style: appTextStyle(
                             context,
                             fontSize: 11.5.sp,
@@ -74,19 +73,21 @@ class SubscriptionExpiryReminder extends StatelessWidget {
                             color: Colors.black.withAlpha(230),
                           ),
                         ),
-                        SizedBox(height: 0.5.h),
-                        Text(
-                          tr.subscription_days_remaining(daysRemaining),
-                          style: appTextStyle(
-                            context,
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.goldBrandColor,
+                        if (style.subtitle != null) ...[
+                          SizedBox(height: 0.5.h),
+                          Text(
+                            style.subtitle!,
+                            style: appTextStyle(
+                              context,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w700,
+                              color: style.iconColor,
+                            ),
                           ),
-                        ),
+                        ],
                         SizedBox(height: 0.5.h),
                         Text(
-                          tr.subscription_renew_message,
+                          status.message,
                           style: appTextStyle(
                             context,
                             fontSize: 9.sp,
@@ -97,7 +98,7 @@ class SubscriptionExpiryReminder extends StatelessWidget {
                         ),
                         SizedBox(height: 1.2.h),
                         TextButton(
-                          onPressed: onRenew,
+                          onPressed: onAction,
                           style: TextButton.styleFrom(
                             minimumSize: Size.zero,
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -105,14 +106,14 @@ class SubscriptionExpiryReminder extends StatelessWidget {
                               horizontal: 3.5.w,
                               vertical: 0.8.h,
                             ),
-                            backgroundColor: AppColors.goldBrandColor,
+                            backgroundColor: style.iconColor,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: Text(
-                            tr.renew_now,
+                            style.actionLabel,
                             style: appTextStyle(
                               context,
                               fontSize: 9.5.sp,
@@ -145,6 +146,76 @@ class SubscriptionExpiryReminder extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ReminderStyle {
+  final String title;
+  final String? subtitle;
+  final String actionLabel;
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBackground;
+  final Color borderColor;
+  final List<Color> gradientColors;
+
+  const _ReminderStyle({
+    required this.title,
+    this.subtitle,
+    required this.actionLabel,
+    required this.icon,
+    required this.iconColor,
+    required this.iconBackground,
+    required this.borderColor,
+    required this.gradientColors,
+  });
+
+  factory _ReminderStyle.fromStatus(SubscriptionStatusResponse status) {
+    if (status.isPending) {
+      return _ReminderStyle(
+        title: tr.awaiting_admin_approval,
+        actionLabel: tr.my_subscriptions,
+        icon: Icons.hourglass_top_rounded,
+        iconColor: const Color(0xFF1565C0),
+        iconBackground: const Color(0xFF1565C0).withAlpha(30),
+        borderColor: const Color(0xFF1565C0).withAlpha(90),
+        gradientColors: [
+          const Color(0xFFE8F4FD),
+          const Color(0xFF1565C0).withAlpha(20),
+        ],
+      );
+    }
+
+    if (status.isExpired || status.status != true) {
+      return _ReminderStyle(
+        title: tr.subscription_status_expired,
+        actionLabel: tr.renew_now,
+        icon: Icons.event_busy_rounded,
+        iconColor: const Color(0xFFC0392B),
+        iconBackground: const Color(0xFFC0392B).withAlpha(25),
+        borderColor: const Color(0xFFC0392B).withAlpha(90),
+        gradientColors: [
+          const Color(0xFFFFF0EE),
+          const Color(0xFFC0392B).withAlpha(18),
+        ],
+      );
+    }
+
+    return _ReminderStyle(
+      title: tr.subscription_expiring_soon,
+      subtitle: status.daysRemaining == null
+          ? null
+          : tr.subscription_days_remaining(status.daysRemaining!),
+      actionLabel: tr.renew_now,
+      icon: Icons.event_busy_rounded,
+      iconColor: AppColors.goldBrandColor,
+      iconBackground: AppColors.goldBrandColor.withAlpha(30),
+      borderColor: AppColors.goldBrandColor.withAlpha(90),
+      gradientColors: [
+        const Color(0xFFFFF8E8),
+        AppColors.goldBrandColor.withAlpha(35),
+      ],
     );
   }
 }

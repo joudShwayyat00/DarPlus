@@ -6,6 +6,7 @@ import '../models/my_subscription_item.dart';
 import '../models/package_item.dart';
 import '../models/payment_info_response.dart';
 import '../models/subscribe_response.dart';
+import '../models/subscription_status_response.dart';
 import '../models/upload_proof_response.dart';
 
 class SubscribeException implements Exception {
@@ -36,6 +37,15 @@ class PackagesRepositoryImpl implements PackagesRepository {
     } on DioException catch (e) {
       if (_isEmptySubscriptionsResponse(e)) return [];
       throw Exception(_dioMessage(e, 'Failed to load subscriptions'));
+    }
+  }
+
+  @override
+  Future<SubscriptionStatusResponse> getSubscriptionStatus() async {
+    try {
+      return await _client.getSubscriptionStatus();
+    } on DioException catch (e) {
+      throw Exception(_dioMessage(e, 'Failed to load subscription status'));
     }
   }
 
