@@ -615,5 +615,20 @@
   "payment_amount": "Amount",
   "upload_receipt_hint": "Upload a screenshot or photo of your bank transfer so we can verify your payment.",
   "payment_image_required": "Please upload a payment receipt image",
-  "tap_to_upload_receipt": "Tap to upload receipt"
+  "tap_to_upload_receipt": "Tap to upload receipt",
+  "subscribe_and_pay": "Subscribe & upload payment",
+  "subscribe_flow_title": "Subscribe in 3 easy steps",
+  "payment_step_choose_plan": "Choose a plan",
+  "payment_step_transfer": "Transfer to bank account",
+  "payment_step_upload": "Upload payment receipt",
+  "view_active_subscriptions": "View my active subscriptions",
+  "pending_payment_banner": "Payment pending — upload your receipt",
+  "no_active_subscriptions_title": "No active subscription",
+  "no_active_subscriptions_message": "Subscribe to a plan to start listing your properties. Payment and receipt upload are done from Browse plans.",
+  "transfer_name": "Transfer name",
+  "please_fill_all_fields": "Please fill in all required fields",
+  "awaiting_admin_approval": "Awaiting admin approval",
+  "awaiting_admin_approval_message": "Your payment proof was submitted. An admin will review and activate your subscription shortly.",
+  "payment_proof_submitted_title": "Payment proof submitted!",
+  "pending_payment_upload_hint": "Your subscription is created. Please upload your bank transfer receipt to complete activation."
 }

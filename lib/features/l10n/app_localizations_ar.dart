@@ -1770,4 +1770,52 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tap_to_upload_receipt => 'اضغط لرفع الإيصال';
+
+  @override
+  String get subscribe_and_pay => 'اشترك وارفع الدفع';
+
+  @override
+  String get subscribe_flow_title => 'اشترك في 3 خطوات بسيطة';
+
+  @override
+  String get payment_step_choose_plan => 'اختر الباقة';
+
+  @override
+  String get payment_step_transfer => 'حوّل إلى الحساب البنكي';
+
+  @override
+  String get payment_step_upload => 'ارفع إيصال الدفع';
+
+  @override
+  String get view_active_subscriptions => 'عرض اشتراكاتي النشطة';
+
+  @override
+  String get pending_payment_banner => 'الدفع معلّق — ارفع إيصالك';
+
+  @override
+  String get no_active_subscriptions_title => 'لا يوجد اشتراك نشط';
+
+  @override
+  String get no_active_subscriptions_message =>
+      'اشترك في باقة لبدء عرض عقاراتك. الدفع ورفع الإيصال من صفحة تصفح الباقات.';
+
+  @override
+  String get transfer_name => 'اسم المحوّل';
+
+  @override
+  String get please_fill_all_fields => 'يرجى تعبئة جميع الحقول المطلوبة';
+
+  @override
+  String get awaiting_admin_approval => 'بانتظار موافقة الإدارة';
+
+  @override
+  String get awaiting_admin_approval_message =>
+      'تم إرسال إثبات الدفع. ستقوم الإدارة بمراجعته وتفعيل اشتراكك قريباً.';
+
+  @override
+  String get payment_proof_submitted_title => 'تم إرسال إثبات الدفع!';
+
+  @override
+  String get pending_payment_upload_hint =>
+      'تم إنشاء اشتراكك. يرجى رفع إيصال التحويل البنكي لإكمال التفعيل.';
 }

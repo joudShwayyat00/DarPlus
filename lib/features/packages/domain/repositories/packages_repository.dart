@@ -1,8 +1,8 @@
 import '../../data/models/my_subscription_item.dart';
 import '../../data/models/package_item.dart';
-import '../../data/models/payment_callback_response.dart';
 import '../../data/models/payment_info_response.dart';
 import '../../data/models/subscribe_response.dart';
+import '../../data/models/upload_proof_response.dart';
 
 abstract class PackagesRepository {
   Future<List<PackageItem>> getPackages(String lang);
@@ -13,10 +13,10 @@ abstract class PackagesRepository {
 
   Future<SubscribeResponse> subscribe(int packageId);
 
-  Future<PaymentCallbackResponse> submitPaymentCallback({
-    required int subscriptionId,
-    required String amount,
-    String? transactionId,
-    required String imagePath,
+  Future<UploadProofResponse> uploadSubscriptionProof({
+    required String transferName,
+    required String transferAmount,
+    required String transferPhone,
+    required String receiptPath,
   });
 }

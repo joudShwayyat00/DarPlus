@@ -7,7 +7,15 @@ part of 'subscribe_response.dart';
 // **************************************************************************
 
 SubscribeResponse _$SubscribeResponseFromJson(Map<String, dynamic> json) =>
-    SubscribeResponse(message: json['message'] as String);
+    SubscribeResponse(
+      status: json['status'] as bool?,
+      message: json['message'] as String,
+      subscriptionId: (json['subscription_id'] as num?)?.toInt(),
+    );
 
 Map<String, dynamic> _$SubscribeResponseToJson(SubscribeResponse instance) =>
-    <String, dynamic>{'message': instance.message};
+    <String, dynamic>{
+      'status': instance.status,
+      'message': instance.message,
+      'subscription_id': instance.subscriptionId,
+    };

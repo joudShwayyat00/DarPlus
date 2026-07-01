@@ -70,7 +70,7 @@ class ApiConstants {
   static const String subscribe = "api/subscribe";
   static const String mySubscriptions = "api/my_subscriptions";
   static const String paymentInfo = "api/payment-info";
-  static const String paymentsCallback = "api/payments/callback";
+  static const String uploadSubscriptionProof = "api/subscription/upload-proof";
   // Notifications (language suffix is provided as path param)
   static const String notifications = "api/notifications";
   // FCM device token

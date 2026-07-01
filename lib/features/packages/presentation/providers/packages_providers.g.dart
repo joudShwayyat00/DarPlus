@@ -268,7 +268,7 @@ abstract class _$PaymentInfoController
 const subscribeControllerProvider = SubscribeControllerProvider._();
 
 final class SubscribeControllerProvider
-    extends $AsyncNotifierProvider<SubscribeController, String?> {
+    extends $AsyncNotifierProvider<SubscribeController, SubscribeResponse?> {
   const SubscribeControllerProvider._()
     : super(
         from: null,
@@ -289,20 +289,22 @@ final class SubscribeControllerProvider
 }
 
 String _$subscribeControllerHash() =>
-    r'bb2a3bab266e62f1d38f63a6a322de7a9144efed';
+    r'22779a5a972195146255cf273ce31d2fc39da972';
 
-abstract class _$SubscribeController extends $AsyncNotifier<String?> {
-  FutureOr<String?> build();
+abstract class _$SubscribeController
+    extends $AsyncNotifier<SubscribeResponse?> {
+  FutureOr<SubscribeResponse?> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<String?>, String?>;
+    final ref =
+        this.ref as $Ref<AsyncValue<SubscribeResponse?>, SubscribeResponse?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<String?>, String?>,
-              AsyncValue<String?>,
+              AnyNotifier<AsyncValue<SubscribeResponse?>, SubscribeResponse?>,
+              AsyncValue<SubscribeResponse?>,
               Object?,
               Object?
             >;
@@ -310,58 +312,107 @@ abstract class _$SubscribeController extends $AsyncNotifier<String?> {
   }
 }
 
-@ProviderFor(PaymentCallbackController)
-const paymentCallbackControllerProvider = PaymentCallbackControllerProvider._();
+@ProviderFor(UploadProofController)
+const uploadProofControllerProvider = UploadProofControllerProvider._();
 
-final class PaymentCallbackControllerProvider
+final class UploadProofControllerProvider
     extends
-        $AsyncNotifierProvider<
-          PaymentCallbackController,
-          PaymentCallbackResponse?
-        > {
-  const PaymentCallbackControllerProvider._()
+        $AsyncNotifierProvider<UploadProofController, UploadProofResponse?> {
+  const UploadProofControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'paymentCallbackControllerProvider',
+        name: r'uploadProofControllerProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$paymentCallbackControllerHash();
+  String debugGetCreateSourceHash() => _$uploadProofControllerHash();
 
   @$internal
   @override
-  PaymentCallbackController create() => PaymentCallbackController();
+  UploadProofController create() => UploadProofController();
 }
 
-String _$paymentCallbackControllerHash() =>
-    r'15a3a172054204728c4a773087f9b366782f6881';
+String _$uploadProofControllerHash() =>
+    r'd0dc24e25cb46c0c54b9a578d745cfdd294090ea';
 
-abstract class _$PaymentCallbackController
-    extends $AsyncNotifier<PaymentCallbackResponse?> {
-  FutureOr<PaymentCallbackResponse?> build();
+abstract class _$UploadProofController
+    extends $AsyncNotifier<UploadProofResponse?> {
+  FutureOr<UploadProofResponse?> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
     final ref =
         this.ref
-            as $Ref<
-              AsyncValue<PaymentCallbackResponse?>,
-              PaymentCallbackResponse?
-            >;
+            as $Ref<AsyncValue<UploadProofResponse?>, UploadProofResponse?>;
     final element =
         ref.element
             as $ClassProviderElement<
               AnyNotifier<
-                AsyncValue<PaymentCallbackResponse?>,
-                PaymentCallbackResponse?
+                AsyncValue<UploadProofResponse?>,
+                UploadProofResponse?
               >,
-              AsyncValue<PaymentCallbackResponse?>,
+              AsyncValue<UploadProofResponse?>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(AwaitingReviewSubscriptions)
+const awaitingReviewSubscriptionsProvider =
+    AwaitingReviewSubscriptionsProvider._();
+
+final class AwaitingReviewSubscriptionsProvider
+    extends $NotifierProvider<AwaitingReviewSubscriptions, Set<int>> {
+  const AwaitingReviewSubscriptionsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'awaitingReviewSubscriptionsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$awaitingReviewSubscriptionsHash();
+
+  @$internal
+  @override
+  AwaitingReviewSubscriptions create() => AwaitingReviewSubscriptions();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Set<int> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Set<int>>(value),
+    );
+  }
+}
+
+String _$awaitingReviewSubscriptionsHash() =>
+    r'84b6d67543820ce35435b3a98b22bcf22b0d4849';
+
+abstract class _$AwaitingReviewSubscriptions extends $Notifier<Set<int>> {
+  Set<int> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<Set<int>, Set<int>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Set<int>, Set<int>>,
+              Set<int>,
               Object?,
               Object?
             >;

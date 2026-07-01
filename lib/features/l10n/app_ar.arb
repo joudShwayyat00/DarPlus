@@ -615,5 +615,20 @@
   "payment_amount": "المبلغ",
   "upload_receipt_hint": "ارفع لقطة شاشة أو صورة للتحويل البنكي حتى نتمكن من التحقق من دفعتك.",
   "payment_image_required": "يرجى رفع صورة إيصال الدفع",
-  "tap_to_upload_receipt": "اضغط لرفع الإيصال"
+  "tap_to_upload_receipt": "اضغط لرفع الإيصال",
+  "subscribe_and_pay": "اشترك وارفع الدفع",
+  "subscribe_flow_title": "اشترك في 3 خطوات بسيطة",
+  "payment_step_choose_plan": "اختر الباقة",
+  "payment_step_transfer": "حوّل إلى الحساب البنكي",
+  "payment_step_upload": "ارفع إيصال الدفع",
+  "view_active_subscriptions": "عرض اشتراكاتي النشطة",
+  "pending_payment_banner": "الدفع معلّق — ارفع إيصالك",
+  "no_active_subscriptions_title": "لا يوجد اشتراك نشط",
+  "no_active_subscriptions_message": "اشترك في باقة لبدء عرض عقاراتك. الدفع ورفع الإيصال من صفحة تصفح الباقات.",
+  "transfer_name": "اسم المحوّل",
+  "please_fill_all_fields": "يرجى تعبئة جميع الحقول المطلوبة",
+  "awaiting_admin_approval": "بانتظار موافقة الإدارة",
+  "awaiting_admin_approval_message": "تم إرسال إثبات الدفع. ستقوم الإدارة بمراجعته وتفعيل اشتراكك قريباً.",
+  "payment_proof_submitted_title": "تم إرسال إثبات الدفع!",
+  "pending_payment_upload_hint": "تم إنشاء اشتراكك. يرجى رفع إيصال التحويل البنكي لإكمال التفعيل."
 }

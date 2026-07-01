@@ -6,8 +6,9 @@ import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../data/data_sources/packages_service_client.dart';
 import '../../data/models/my_subscription_item.dart';
 import '../../data/models/package_item.dart';
-import '../../data/models/payment_callback_response.dart';
 import '../../data/models/payment_info_response.dart';
+import '../../data/models/subscribe_response.dart';
+import '../../data/models/upload_proof_response.dart';
 import '../../data/repositories/packages_repository_impl.dart';
 import '../../domain/repositories/packages_repository.dart';
 
@@ -69,17 +70,20 @@ class PaymentInfoController extends _$PaymentInfoController {
 @riverpod
 class SubscribeController extends _$SubscribeController {
   @override
-  FutureOr<String?> build() => null;
+  FutureOr<SubscribeResponse?> build() => null;
 
-  Future<String> subscribe(int packageId) async {
+  Future<SubscribeResponse> subscribe(int packageId) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard<String>(() async {
+    state = await AsyncValue.guard<SubscribeResponse?>(() async {
       final response = await ref
           .read(packagesRepositoryProvider)
           .subscribe(packageId);
+      if (response.status == false) {
+        throw Exception(response.message);
+      }
       ref.invalidate(profileControllerProvider);
-      ref.invalidate(mySubscriptionsControllerProvider);
-      return response.message;
+      await ref.read(mySubscriptionsControllerProvider.notifier).refresh();
+      return response;
     });
     if (state.hasError) throw state.error!;
     return state.value!;
@@ -87,30 +91,51 @@ class SubscribeController extends _$SubscribeController {
 }
 
 @riverpod
-class PaymentCallbackController extends _$PaymentCallbackController {
+class UploadProofController extends _$UploadProofController {
   @override
-  FutureOr<PaymentCallbackResponse?> build() => null;
+  FutureOr<UploadProofResponse?> build() => null;
 
-  Future<String> submit({
-    required int subscriptionId,
-    required String amount,
-    String? transactionId,
-    required String imagePath,
+  Future<UploadProofResponse> submit({
+    required String transferName,
+    required String transferAmount,
+    required String transferPhone,
+    required String receiptPath,
+    Iterable<int> pendingSubscriptionIds = const [],
   }) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard<PaymentCallbackResponse?>(() async {
+    state = await AsyncValue.guard<UploadProofResponse?>(() async {
       final response = await ref
           .read(packagesRepositoryProvider)
-          .submitPaymentCallback(
-            subscriptionId: subscriptionId,
-            amount: amount,
-            transactionId: transactionId,
-            imagePath: imagePath,
+          .uploadSubscriptionProof(
+            transferName: transferName,
+            transferAmount: transferAmount,
+            transferPhone: transferPhone,
+            receiptPath: receiptPath,
           );
-      ref.invalidate(mySubscriptionsControllerProvider);
+      if (response.status != true) {
+        throw Exception(response.message);
+      }
+      if (pendingSubscriptionIds.isNotEmpty) {
+        ref
+            .read(awaitingReviewSubscriptionsProvider.notifier)
+            .markSubmitted(pendingSubscriptionIds);
+      }
+      await ref.read(mySubscriptionsControllerProvider.notifier).refresh();
       return response;
     });
     if (state.hasError) throw state.error!;
-    return state.value!.message;
+    return state.value!;
   }
+}
+
+@Riverpod(keepAlive: true)
+class AwaitingReviewSubscriptions extends _$AwaitingReviewSubscriptions {
+  @override
+  Set<int> build() => {};
+
+  void markSubmitted(Iterable<int> ids) {
+    state = {...state, ...ids};
+  }
+
+  bool isAwaiting(int subscriptionId) => state.contains(subscriptionId);
 }

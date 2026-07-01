@@ -1781,4 +1781,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tap_to_upload_receipt => 'Tap to upload receipt';
+
+  @override
+  String get subscribe_and_pay => 'Subscribe & upload payment';
+
+  @override
+  String get subscribe_flow_title => 'Subscribe in 3 easy steps';
+
+  @override
+  String get payment_step_choose_plan => 'Choose a plan';
+
+  @override
+  String get payment_step_transfer => 'Transfer to bank account';
+
+  @override
+  String get payment_step_upload => 'Upload payment receipt';
+
+  @override
+  String get view_active_subscriptions => 'View my active subscriptions';
+
+  @override
+  String get pending_payment_banner => 'Payment pending — upload your receipt';
+
+  @override
+  String get no_active_subscriptions_title => 'No active subscription';
+
+  @override
+  String get no_active_subscriptions_message =>
+      'Subscribe to a plan to start listing your properties. Payment and receipt upload are done from Browse plans.';
+
+  @override
+  String get transfer_name => 'Transfer name';
+
+  @override
+  String get please_fill_all_fields => 'Please fill in all required fields';
+
+  @override
+  String get awaiting_admin_approval => 'Awaiting admin approval';
+
+  @override
+  String get awaiting_admin_approval_message =>
+      'Your payment proof was submitted. An admin will review and activate your subscription shortly.';
+
+  @override
+  String get payment_proof_submitted_title => 'Payment proof submitted!';
+
+  @override
+  String get pending_payment_upload_hint =>
+      'Your subscription is created. Please upload your bank transfer receipt to complete activation.';
 }

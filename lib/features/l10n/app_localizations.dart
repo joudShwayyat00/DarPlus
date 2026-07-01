@@ -3463,6 +3463,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap to upload receipt'**
   String get tap_to_upload_receipt;
+
+  /// No description provided for @subscribe_and_pay.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe & upload payment'**
+  String get subscribe_and_pay;
+
+  /// No description provided for @subscribe_flow_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe in 3 easy steps'**
+  String get subscribe_flow_title;
+
+  /// No description provided for @payment_step_choose_plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a plan'**
+  String get payment_step_choose_plan;
+
+  /// No description provided for @payment_step_transfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer to bank account'**
+  String get payment_step_transfer;
+
+  /// No description provided for @payment_step_upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload payment receipt'**
+  String get payment_step_upload;
+
+  /// No description provided for @view_active_subscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'View my active subscriptions'**
+  String get view_active_subscriptions;
+
+  /// No description provided for @pending_payment_banner.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment pending — upload your receipt'**
+  String get pending_payment_banner;
+
+  /// No description provided for @no_active_subscriptions_title.
+  ///
+  /// In en, this message translates to:
+  /// **'No active subscription'**
+  String get no_active_subscriptions_title;
+
+  /// No description provided for @no_active_subscriptions_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe to a plan to start listing your properties. Payment and receipt upload are done from Browse plans.'**
+  String get no_active_subscriptions_message;
+
+  /// No description provided for @transfer_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer name'**
+  String get transfer_name;
+
+  /// No description provided for @please_fill_all_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all required fields'**
+  String get please_fill_all_fields;
+
+  /// No description provided for @awaiting_admin_approval.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting admin approval'**
+  String get awaiting_admin_approval;
+
+  /// No description provided for @awaiting_admin_approval_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment proof was submitted. An admin will review and activate your subscription shortly.'**
+  String get awaiting_admin_approval_message;
+
+  /// No description provided for @payment_proof_submitted_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment proof submitted!'**
+  String get payment_proof_submitted_title;
+
+  /// No description provided for @pending_payment_upload_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your subscription is created. Please upload your bank transfer receipt to complete activation.'**
+  String get pending_payment_upload_hint;
 }
 
 class _AppLocalizationsDelegate

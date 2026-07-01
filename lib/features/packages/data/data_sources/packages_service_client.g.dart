@@ -136,21 +136,21 @@ class _PackagesServiceClient implements PackagesServiceClient {
   }
 
   @override
-  Future<PaymentCallbackResponse> submitPaymentCallback(
-    int subscriptionId,
-    String amount,
-    String transactionId,
-    MultipartFile image,
+  Future<UploadProofResponse> uploadSubscriptionProof(
+    String transferName,
+    String transferAmount,
+    String transferPhone,
+    MultipartFile transferReceipt,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry('subscription_id', subscriptionId.toString()));
-    _data.fields.add(MapEntry('amount', amount));
-    _data.fields.add(MapEntry('transaction_id', transactionId));
-    _data.files.add(MapEntry('image', image));
-    final _options = _setStreamType<PaymentCallbackResponse>(
+    _data.fields.add(MapEntry('transfer_name', transferName));
+    _data.fields.add(MapEntry('transfer_amount', transferAmount));
+    _data.fields.add(MapEntry('transfer_phone', transferPhone));
+    _data.files.add(MapEntry('transfer_receipt', transferReceipt));
+    final _options = _setStreamType<UploadProofResponse>(
       Options(
             method: 'POST',
             headers: _headers,
@@ -159,16 +159,16 @@ class _PackagesServiceClient implements PackagesServiceClient {
           )
           .compose(
             _dio.options,
-            'api/payments/callback',
+            'api/subscription/upload-proof',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late PaymentCallbackResponse _value;
+    late UploadProofResponse _value;
     try {
-      _value = PaymentCallbackResponse.fromJson(_result.data!);
+      _value = UploadProofResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;

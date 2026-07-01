@@ -4,9 +4,9 @@ import '../../domain/repositories/packages_repository.dart';
 import '../data_sources/packages_service_client.dart';
 import '../models/my_subscription_item.dart';
 import '../models/package_item.dart';
-import '../models/payment_callback_response.dart';
 import '../models/payment_info_response.dart';
 import '../models/subscribe_response.dart';
+import '../models/upload_proof_response.dart';
 
 class PackagesRepositoryImpl implements PackagesRepository {
   final PackagesServiceClient _client;
@@ -32,25 +32,44 @@ class PackagesRepositoryImpl implements PackagesRepository {
 
   @override
   Future<SubscribeResponse> subscribe(int packageId) async {
-    return _client.subscribe(packageId);
+    try {
+      return await _client.subscribe(packageId);
+    } on DioException catch (e) {
+      throw Exception(_dioMessage(e, 'Subscription failed'));
+    }
   }
 
   @override
-  Future<PaymentCallbackResponse> submitPaymentCallback({
-    required int subscriptionId,
-    required String amount,
-    String? transactionId,
-    required String imagePath,
+  Future<UploadProofResponse> uploadSubscriptionProof({
+    required String transferName,
+    required String transferAmount,
+    required String transferPhone,
+    required String receiptPath,
   }) async {
-    final image = await MultipartFile.fromFile(
-      imagePath,
-      filename: imagePath.split('/').last,
+    final receipt = await MultipartFile.fromFile(
+      receiptPath,
+      filename: receiptPath.split('/').last,
     );
-    return _client.submitPaymentCallback(
-      subscriptionId,
-      amount,
-      transactionId ?? '',
-      image,
-    );
+    try {
+      return await _client.uploadSubscriptionProof(
+        transferName,
+        transferAmount,
+        transferPhone,
+        receipt,
+      );
+    } on DioException catch (e) {
+      throw Exception(_dioMessage(e, 'Payment proof upload failed'));
+    }
+  }
+
+  String _dioMessage(DioException error, String fallback) {
+    final data = error.response?.data;
+    if (data is Map) {
+      final message = data['message'];
+      if (message is String && message.trim().isNotEmpty) {
+        return message;
+      }
+    }
+    return fallback;
   }
 }
